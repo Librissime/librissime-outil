@@ -1,0 +1,4973 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%231F4E79'/%3E%3Cpath d='M28 26h30c5 0 9 4 9 9v39c0-3-3-6-6-6H28z' fill='white'/%3E%3Cpath d='M72 26H42c-5 0-9 4-9 9v39c0-3 3-6 6-6h33z' fill='%23D6E4F0'/%3E%3C/svg%3E">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pégase — Librissime</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1F4E79;
+    --blue: #2E75B6;
+    --light-blue: #EBF3FB;
+    --green: #1B5E20;
+    --light-green: #E8F5E9;
+    --yellow: #FFF8E1;
+    --yellow-dark: #F0A500;
+    --red: #C62828;
+    --light-red: #FDECEA;
+    --gray: #6B7280;
+    --gray-light: #F3F4F6;
+    --white: #FFFFFF;
+    --text: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    color: var(--text);
+  }
+
+  /* Header */
+  .header {
+    background: var(--navy);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-logo {
+    width: 32px;
+    height: auto;
+    background: white;
+    border-radius: 6px;
+    padding: 5px 7px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    font-weight: 300;
+  }
+
+  /* Main container */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 16px;
+  }
+
+  /* Desktop: two columns */
+  @media (min-width: 800px) {
+    .responsive-layout {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .col-left {
+      flex: 1;
+      min-width: 0;
+      max-width: 480px;
+    }
+    .col-right {
+      flex: 1.2;
+      min-width: 0;
+    }
+  }
+
+  /* Mobile: stacked */
+  @media (max-width: 799px) {
+    .responsive-layout {
+      display: flex;
+      flex-direction: column;
+    }
+    .col-left, .col-right {
+      width: 100%;
+    }
+  }
+
+  /* Card */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--navy);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ISBN Input */
+  .format-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .format-btn {
+    flex: 1;
+    padding: 8px 6px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    background: white;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .format-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .format-btn.active { border-color: var(--navy); background: var(--navy); color: white; }
+  .prix-neuf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--yellow);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7F4000;
+    margin-top: 8px;
+  }
+  .isbn-wrap {
+    display: flex;
+    gap: 10px;
+  }
+  .isbn-input {
+    flex: 1;
+    padding: 11px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+  }
+  .isbn-input:focus { border-color: var(--blue); }
+  .isbn-input::placeholder { color: #9CA3AF; font-size: 14px; letter-spacing: 0; font-weight: 300; }
+
+  .btn-search {
+    padding: 14px 20px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-search:hover { background: var(--blue); }
+  .btn-search:active { transform: scale(0.96); }
+  .btn-search:disabled { background: #9CA3AF; cursor: not-allowed; }
+
+  /* Book info */
+  .book-info {
+    background: var(--light-blue);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--blue);
+  }
+  .book-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .book-author {
+    font-size: 14px;
+    color: var(--blue);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .book-meta {
+    font-size: 12px;
+    color: var(--gray);
+  }
+
+  /* Author badge */
+  .author-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .badge-A { background: var(--light-green); color: var(--green); }
+  .badge-AC { background: var(--yellow); color: #7F4000; }
+  .badge-CD { background: var(--light-blue); color: var(--navy); }
+  .badge-D { background: #F3E5F5; color: #6A1B9A; }
+  .badge-refus { background: var(--light-red); color: var(--red); }
+  .badge-unknown { background: #F3F4F6; color: var(--gray); }
+
+  /* Form fields */
+  .form-group {
+    margin-bottom: 14px;
+  }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .form-select, .form-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    background: white;
+    color: var(--text);
+  }
+  .form-select:focus, .form-input:focus { border-color: var(--blue); }
+
+  /* Nouveauté section */
+  .nouveaute-section {
+    background: var(--yellow);
+    border-radius: 10px;
+    padding: 14px;
+    border: 1px solid #F0A500;
+    margin-top: 10px;
+  }
+  .nouveaute-section .form-label { color: #7F4000; }
+
+  /* Checkboxes */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .checkbox-item:hover { border-color: var(--blue); background: var(--light-blue); }
+  .checkbox-item input { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
+  .checkbox-item label { font-size: 13px; cursor: pointer; font-weight: 400; }
+
+  /* Calculate button */
+  .btn-calculate {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .btn-calculate:hover { opacity: 0.92; }
+  .btn-calculate:active { transform: scale(0.98); }
+  .btn-calculate:disabled { background: #9CA3AF; cursor: not-allowed; }
+
+  /* Result card */
+  .result-card {
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .result-accept { background: linear-gradient(135deg, #1B5E20, #2E7D32); color: white; }
+  .result-ac { background: linear-gradient(135deg, #E6A700, #F5C518); color: #4A3000; }
+  .result-credit { background: linear-gradient(135deg, #1F4E79, #2E75B6); color: white; }
+  .result-don { background: linear-gradient(135deg, #6A1B9A, #9C27B0); color: white; }
+  .result-reject { background: linear-gradient(135deg, #7f0000, #C62828); color: white; }
+  .result-consult { background: linear-gradient(135deg, #7F4000, #F0A500); color: white; }
+
+  .nouveaute-banner {
+    background: #FF6B00;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+    animation: pulse-banner 2s ease-in-out infinite;
+  }
+  @keyframes pulse-banner {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  .result-book-header {
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .result-book-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .result-book-author {
+    font-size: 14px;
+    opacity: 0.92;
+    margin-bottom: 2px;
+  }
+  .result-book-meta {
+    font-size: 12px;
+    opacity: 0.75;
+  }
+  .result-section {
+    font-size: 13px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+  }
+  .result-icon { font-size: 26px; margin-bottom: 4px; }
+  /* Yellow card: darker boxes for contrast with dark text */
+  .result-ac .result-book-header,
+  .result-ac .amount-box,
+  .result-ac .sell-price-box {
+    background: rgba(74, 48, 0, 0.12);
+  }
+  .result-decision {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    margin-bottom: 6px;
+  }
+  .result-detail {
+    font-size: 14px;
+    opacity: 0.9;
+    line-height: 1.6;
+  }
+
+  .result-amounts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .amount-box {
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .amount-label { font-size: 11px; opacity: 0.8; margin-bottom: 4px; }
+  .amount-value { font-size: 22px; font-weight: 700; font-family: 'Playfair Display', serif; }
+
+  .sell-price-box {
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sell-price-label { font-size: 12px; opacity: 0.85; }
+  .sell-price-value { font-size: 18px; font-weight: 700; }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 3px solid #e5e7eb;
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Error */
+  .error-box {
+    background: var(--light-red);
+    border: 1px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+
+  /* Reset button */
+  .btn-reset {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: var(--navy);
+    border: 2px solid var(--navy);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-reset:hover { background: var(--light-blue); }
+
+  /* Batch mode toggle */
+  .mode-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid var(--navy);
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 9px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    color: var(--navy);
+    text-align: center;
+  }
+  .mode-btn.active { background: var(--navy); color: white; }
+
+  /* Batch list */
+  .batch-list {
+    margin-top: 12px;
+  }
+  .batch-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .batch-item-accept { background: #E8F5E9; color: #1B5E20; }
+  .batch-item-ac { background: #FFF8E1; color: #4A3000; }
+  .batch-item-credit { background: #EBF3FB; color: #1F4E79; }
+  .batch-item-don { background: #F3E5F5; color: #6A1B9A; }
+  .batch-item-reject { background: #FDECEA; color: #C62828; }
+  .batch-item-consult { background: #FFF3E0; color: #7F4000; }
+  .batch-item-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .batch-item-title {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .batch-item-detail { font-size: 11px; opacity: 0.8; }
+  .batch-item-amount { font-weight: 700; font-size: 14px; margin: 0 10px; white-space: nowrap; }
+  .batch-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.5;
+    padding: 4px;
+  }
+  .batch-remove:hover { opacity: 1; }
+
+  .batch-totals {
+    background: var(--navy);
+    color: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+    font-size: 13px;
+  }
+  .batch-total-item { text-align: center; }
+  .batch-total-label { font-size: 11px; opacity: 0.75; }
+  .batch-total-value { font-size: 18px; font-weight: 700; }
+
+  .batch-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .btn-batch {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .btn-batch:hover { opacity: 0.9; }
+  .btn-fin { background: var(--navy); color: white; }
+  .btn-nouveau { background: white; color: var(--navy); border: 2px solid var(--navy); }
+
+  /* Summary / receipt */
+  .batch-summary {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: 12px;
+  }
+  .summary-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--navy);
+  }
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+  }
+  .summary-line-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .summary-line-offer { font-weight: 600; margin-left: 10px; white-space: nowrap; }
+  .summary-totals {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 2px solid var(--navy);
+  }
+  .summary-total-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .summary-grand-total {
+    font-size: 18px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--navy);
+  }
+
+  /* Hidden */
+        #pegaseToast {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    z-index: 2000;
+    opacity: 0;
+    transition: bottom 0.35s ease, opacity 0.35s ease;
+    pointer-events: none;
+  }
+  #pegaseToast.toast-show {
+    bottom: 40px;
+    opacity: 1;
+  }
+          /* Écran d'accueil */
+  #accueilScreen {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 8px 4px 40px;
+  }
+  .accueil-intro {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    text-align: center;
+    margin: 12px 0 22px;
+    font-weight: 600;
+  }
+  .accueil-grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .service-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    background: white;
+    border: 2px solid #E0E6ED;
+    border-radius: 16px;
+    padding: 24px 16px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .service-btn:hover:not([disabled]) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(31,78,121,0.15);
+    border-color: var(--navy);
+  }
+  .service-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .service-icone { font-size: 40px; line-height: 1; }
+  .service-nom { font-size: 17px; font-weight: 700; color: var(--navy); }
+  .service-desc { font-size: 12.5px; color: #777; }
+  .service-eval { border-color: #1F4E79; }
+  .service-admin { border-color: #B08D00; }
+  .btn-accueil {
+    margin-left: auto;
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-accueil:hover { background: rgba(255,255,255,0.28); }
+  .header-titre { display: flex; flex-direction: column; }
+  .alerte-demande {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, #C62828, #E53935);
+    color: white;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(198,40,40,0.45);
+    animation: alertePulse 1.1s ease-in-out infinite;
+    border: 3px solid #FFCDD2;
+  }
+  .alerte-demande:hover { filter: brightness(1.05); }
+  @keyframes alertePulse {
+    0%, 100% { box-shadow: 0 4px 18px rgba(198,40,40,0.45); }
+    50% { box-shadow: 0 4px 26px rgba(198,40,40,0.85); }
+  }
+  .alerte-demande-icone {
+    font-size: 38px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .alerte-demande-texte {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .alerte-demande-texte strong {
+    font-size: 18px;
+    letter-spacing: 0.5px;
+  }
+  .alerte-demande-clic {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 12px;
+    text-decoration: underline;
+    opacity: 0.9;
+  }
+  .btn-demandes {
+    width: 100%;
+    margin-top: 8px;
+    padding: 11px;
+    background: white;
+    color: #00897B;
+    border: 2px solid #00897B;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-demandes:hover { background: #E0F2F1; }
+  .btn-depot {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    background: #8E24AA;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-depot:hover { background: #7B1FA2; }
+  .bandeau-depot {
+    background: #F3E5F5;
+    border: 2px solid #8E24AA;
+    border-radius: 10px;
+    padding: 12px 40px 12px 14px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #4A148C;
+    position: relative;
+  }
+  .bandeau-x {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: white;
+    border: 1px solid #8E24AA;
+    color: #8E24AA;
+    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .btn-lots-saved {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px;
+    background: white;
+    color: var(--navy);
+    border: 2px solid var(--navy);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-lots-saved:hover { background: #F0F4F8; }
+  .lots-screen {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg, #EEF2F6);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 16px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .lots-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .lots-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .lots-close {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+  }
+  .lots-resultats { margin-top: 8px; }
+  .lot-card {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    transition: transform 0.1s;
+  }
+  .lot-card:hover { transform: translateY(-1px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  .lot-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .lot-card-nom { font-weight: 600; font-size: 15px; color: var(--navy); }
+  .lot-card-statut {
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+  .lot-card-info { font-size: 12px; color: #666; }
+  .detail-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+  }
+  .detail-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+      .lot-livre-ligne { position: relative; }
+  .btn-retirer-livre {
+    background: white;
+    border: 1px solid #C62828;
+    color: #C62828;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .btn-retirer-livre:hover { background: #FDECEA; }
+  .btn-supprimer {
+    width: 100%;
+    padding: 11px;
+    background: white;
+    color: #C62828;
+    border: 2px solid #C62828;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-supprimer:hover { background: #FDECEA; }
+  .lot-alerte {
+    color: #C62828;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .lot-card-alerte {
+    border-left: 4px solid #C62828;
+  }
+  .contact-line {
+    font-size: 13px;
+    padding: 4px 0;
+    color: #444;
+    border-bottom: 1px solid #f3f3f3;
+  }
+  .client-form {
+    background: #F8FAFC;
+    border: 2px solid var(--navy);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .client-form textarea.form-input {
+    resize: vertical;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .hidden { display: none; }
+
+  /* Slack reminder */
+  .slack-note {
+    background: #E8EAF6;
+    border-left: 4px solid #3949AB;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #1A237E;
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* Steps indicator */
+  .steps {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .step {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #e5e7eb;
+    transition: background 0.3s;
+  }
+  .step.active { background: var(--blue); }
+  .step.done { background: var(--navy); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img class="header-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKIAAADwCAYAAACDtL/nAAAQBElEQVR4nO3bzW9c133G8ef5nTsz98778FUSKVEUX4YvQ1KiFNuJEVuJjbpAEMCxa8dw0xYtUqDIP9ClIqCLLutdd0XRRRdeFChgIJsiTbositRAHG2cLBIvGnhht6ZtiTNzTxd3hhySQ5mUKOmQej6AAVEYk9LlV+fM+d1LQuT4CNwiAMs+vN05gU8ocj+ewJsGrBC4CeBmF6A/6a+iEKWvt8qtEhgncNMDrgukw17byJV+MJW31atIPx///PO/eQeHvPAYX1yeQgNb600AN1PAUmDYQteaLBReXI6ic6uIJlpAZcMYz9PKY+Zm2Gn/92dbn35/HOC9bPUc+kmO8geSM6wX3K8I/Ki3yiE9ZGuN8/nvXGS8ccVh8gYRXzfW5sHKjLlalagCLPRe2oH32ykZ+073zm+3Pnlt+WFDjB70byjB2b/KecC6wO1eGO8OvraWJH+5mLrJjQgTTbqRFq20TMTTtBFHVgA4ZE214X0n9eik8NvIYvO9Q0rBwfsTaUgr4qk07ABhfshiZHH8/LR31xYju7gKNq6RSYtWu2isTIANkDGyDLrwvg2gmwI+BVL2VjgC5MFUfEqWrNO587utT19f0Ip4th1ygKAH0M1ecrv/2lI+//0pl19YB8s3jONLZrVFMJ41a8RkDUAOWSedXnRpx/st7AYHAjQAtvPhY6IQw7E/ut4B4vaQFebS+Th+ZdZycwtmla8RpauelVljdTLbWhNkW2sKjzbgu6n391LgLoDUsLvKRTtf+glTiE/ELcsOEPtncweiyxcKr1xwbr0FG1+hNVq0+ipRWKBVK2YNAAVkIe2scl3vv/TZ1rqzrFlvpcPODDowT/6fwtl2zNnc29MR1xbNVW8QySZYWTBWz9PqMVkEkAfge6tcxwO+97n6BwgiW+keB71HDBWBNwYPEIdvrcnGVMGeXTJMrVp0fslQWQfjRVp53DgKMEG2cnUHVrltD9zD4Vvr6V5TFOLxDaxyH/Sie6kDpB54d/8BIi4UXrtg+dVVpNXr5mots9E5sLBgrJdgVRD92Vwb3nfgkXbhv9i/tbrd0MLcWh/W6f5n9OgdMpsbtvuUJqLk1ZkotzpvqD5DlK6RlVmz6jmzRh4soX+AyN7PdfpjEgxsrUPGJKE62a35tPytH4dDttZhs7mvX/S2uRRxehFuco2WbAKFBbN6lTYCYmA2l51au4D3Xz2bO030HvFhHXaAGLa1FvP5P75suUvrtPpGZOfnPIvrZHzZbKSQ3YHIDhC9U6uH76YeW37fbM7tfOlTHd+J2/lenPWrcoyb++Pn4vjNWYum18jyVVh11Vi/QkumyFEOzub6t72yD1LsO0A8rr/bE/ZAK+LA9+PHeyYIZ+iqHTabOyDJ51+YjqLnrsDObcCVrhvKTbJ8xaxRgdVB5LOm/O5sLttaPbL3cv4pi26YI4XYC++mHfL+moXC27OWW796Gq/k8WZzxbcuOzYXXDR5lShdJ+JlWOmCszEHVrIJiO9vrdu9W2f9A8TO1noar9Mj9kArYi5X+otmzlZuOI4/D6s+R1YWzEYKob9HPMZsbm26YF9vGi8vOE6uwkqbtMIiWRkzjgAsYvcA0Tu1+rtpFmGYt71Ov+vFJLm+4nIrz4Bj3zBWnqGV52njzO4IpfB+Gx7dbighDpnN9bfWYQeIV2ecm12hm1oxN7ZEVFpgYZ6uVjRWAcTYPUD0Z3P7DxDh3/Y6vX4aAd/qlCp/9sOo8Ow7RILse9LJwvPtLrDtswWABOieRIhDZnOuu3eV60dXHYnjP2padG4NuNA0V28RxWVacYrWsOzUGqG/ysF3Uu+7KfAZ9s3mBk6t8rh4NorEqPf+f+8B21HvOcaB78fuAvCIQzzw3FwKsL+1pgOrHOP4m9PeNlfoRtcdzy2ZNZpk0gTLY7Qasn9VvZv7aAPe927u79laB1Y5jUqeOHa6QIeAjwBE9/t+nFSI+w4QQHbba+hzc8Vc7q15l59p0SZWnI0tkOUWmMwa6wltdzaXrXJtD++7Hvufmzv7t73OgCNPFh4kxP0HiH2PpA+anYzjl5fozrfMRteMY01YZZ6Mp2kjyJ4ocdi7tbbT7Ob+nq1VB4gz7n4hcvcHb/bP5g4cIHKFwndnnFtswiZatHNNWnmNKCzSqlWzGg5/bq4/m9t/gNDW+jQZCNETeNf2zuaGHSBQT5K3mt5mF1x0bpVorJHVJTK+RGvkyBKyrXX3DkR2gNiztdruG1ZAwclAiIPv53ri65cK/tkFl5uZo6tfI6obtGSerIzTGr0DxOBzc0MfSd+3yokcFCGrwxeL3zvv3fINcrJlbFwlkxUinoM1Eh54bq7t4X3q8blmc3IiIuCnDvhWx9y3/y4qvPRmtij2t9b+HYhO6jH4M62azcnJ2t2ardEGCl3vP20Dd3MDz83pACGP3E6IZG4L6LjsCQA6BSeP08Abuf5PgYk8fjpRSBAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAUogRBIUoQFKIEQSFKEBSiBEEhShAGQjT/5P4Y8rSL+r/w/l4MsAP4LrJAmf3HJ/aHk6fHQIifj5PFCGhH2cdtAGkXSD3gAaS9OKk45cRFwL+nANBN7/zt9rb7L0NpDSw1wcIVs3qeLAPIIYuxDe87KeBTIAXge6tmP1CRBxMBt1MAuLv1zs8B/Lz3+65Q+MPLzm0swaobxrEW3cgimMwbqzVY1YgisgY7A6un90A6EKe2djmaaPeXtwy4acBND1j33r2f/Br4ya8BvLf7mvnxOH55iW5ygza2TKu2HBuzsGSKHHFkAsABSHtx9ldPbe1yfwMh3k77qyMAArcIrBIYZxYnUoAf37374ccA/mPgcyT5/J9cttylq84aG2BjmVZeNtYu0GolsmxEHh4eu6un7/Ti1NYuAPaEuIcHbg8Z53gCbxqwQuAmgJspYF9ub//THWzjDoB/7n/eJHnxnNkzTdjYVY/Spllj0Vi/SCtN0moRkCA7nHd7cXYHtnY/EKf6fBocFuIh6AF0s1/f3vnNbPWE9eL0gHW+/PJnHwE/+wjAvw18gmqx+FdzcFPrhsp1sNqCq80aytO00YgsItvaPTzagG/3vt6eg5EpzrPnmCEO1V8904NxHtja/++LL/7+FwB+AeAfe6/NFwpvXLLcwhptrEVUNoy1ebA0a65eBasRkeu9tAPvO9DB6Ow5iRCHOWRrP7B6poBt37v37oe4hw8B/MvuS1uTcfmVpvNjG3DlTXB0zrF6BVacIusuWz17WzvagB+ceXoC3rS1nx6PKsTDHHH1dF3gl7+/u/XL32N3pAQAlVzxz684XLjq3MQKrNoi63NkMmvWyJMl7J15dlMgHZh5Ks7Hi73rj6+8ffy4QxzmCAejH/vsdfys/cU/vN8G3h94oSsUvjPjrdmK3MSKsb4ON3GFjJtkqW5WM6LUuxKaeT5WnglZNe/v+uzWceqzMR4PTElCCPEQRzoYpdnM873fAO/9Zhv4193//8pEHH+7yej8Ku1C02xkhcivk8VztFGXrZ4GIO1t7f3VUzPPh/exB0CffvRBt/3+B7DcHG0sJsuABzy2Ad/uz5gJeDsLV/mwg9Gw7aCSy33vissvNGlTK8bqNbK0TEsumo3GZBW7W/vg6gmvmed+PiVL1unc+d3Wp68vALzXm2zsv+4sFH4wFxXWrpPj3yTrz5LlJdpoObt9nIV5hi/osJkn0yEvdIivT8XRC7POLraAyiaRXIOVZ5zVRmgNAAXsnXnqYZCjhegJOJ+9R98Vx39wkdHzm5Gbeg5ofANWXHuarhwwfObZPeS99Eiu+MNLeTfb8qzdMBRbsPqcsTRNG4myrb13OxMd4MDDIGf9YHT0FXHvjvVSZ3+YwNXxs3qVjqN3oX5F4Ee96zHsYgEACvn8a5dcfnaDNrlqHFkhastgMkerFc1qyFbP/tben3mmfu+TSmfhYHTkEIe4ZQNvpboA/Wm/Go/SsINROvQ6JxtThfTZJYumls2mVmjJJhjPGyujZmMA+08qdQHfgT8TD4M8TIgHPpfedB/TITPPoatnI5d7ezoqLDWNY5tEsklLlmiNCVotGfKcZ3/EgYGtHeEejE4yxNP1TzBgtyzb2ncORt1DTu0x4pcnivbMMqy6aa6+Ro4seJbmHct1sgYw6b20v7XvfxiEgWztCvG02L96Hr61Y348jl9ctNzlRbiJdUNlg8ivkOVJujEQRRAOfmfm2UkB9A5GT2prV4in2XFmntV8/o1pV1iZNzSug6VNWH3eWJ4xqyVkBUAeAwcjD3TTbPV8HAcjhXgGHXnmaXH8/LS3zSW68TXHc0u06lWwsGCs1shRkDH6B6MhD4PY7vb+sN96hfi0OMbBqDQRJa/O5KPmMlD7mrG2QqtdJosXaY1cNvOMcLIzT4X4NBuI84OvOhjlC4XvXrLc4jptomUcW/GsrBmSGbN6iVZHdmonHuxhEIUoBxF4Y/+PcAw7GDFB87yPX5xntNAyK22C1aaxdoWWXCAbGHzO8/4zTyhEOZLjzDzLueJbCw4XW3SXFp3VroHJClm8YDZWIEsgcr0fgOvPPNM2mVine+ejrU9eX1KIchzMOjnSwSiPwosXStELc57VG3CVDeNIk0zmyErNWAPcGDrt//xk65PXzitEOQnHeBhkdjKOX56z3Myi2cUbafd/Rr/Y+us/BdDOPo9ClJN1nK39JL6YyHEceeZ5LP8Pl7t8zyc73wkAAAAASUVORK5CYII=" alt="Librissime">
+  <div class="header-titre">
+    <h1>Pégase</h1>
+    <p>Librissime — Outil d'évaluation</p>
+  </div>
+  <button id="btnAccueil" class="btn-accueil hidden" onclick="retourAccueil()">🏠 Accueil</button>
+</div>
+
+<div class="container">
+
+  <!-- ÉCRAN D'ACCUEIL (porte d'entrée de Pégase) -->
+  <div id="accueilScreen">
+    <div class="accueil-intro">Choisissez un service</div>
+    <div class="accueil-grille">
+      <button class="service-btn service-eval" onclick="allerAuService('evaluation')">
+        <span class="service-icone">📖</span>
+        <span class="service-nom">Évaluation</span>
+        <span class="service-desc">Scanner et évaluer des livres</span>
+      </button>
+      <button class="service-btn service-lots" onclick="allerAuService('lots')">
+        <span class="service-icone">📋</span>
+        <span class="service-nom">Lots sauvegardés</span>
+        <span class="service-desc">Retrouver un lot client</span>
+      </button>
+      <button class="service-btn service-depots" onclick="allerAuService('depots')">
+        <span class="service-icone">📦</span>
+        <span class="service-nom">Dépôts clients</span>
+        <span class="service-desc">Livres à évaluer plus tard</span>
+      </button>
+      <button class="service-btn service-demandes" onclick="allerAuService('demandes')">
+        <span class="service-icone">🔎</span>
+        <span class="service-nom">Demandes clients</span>
+        <span class="service-desc">Livres recherchés par les clients</span>
+      </button>
+      <button class="service-btn service-admin" onclick="allerAuService('admin')">
+        <span class="service-icone">🔐</span>
+        <span class="service-nom">Administration</span>
+        <span class="service-desc">Accès protégé</span>
+      </button>
+      <button class="service-btn service-inventaire" onclick="allerAuService('inventaire')" disabled>
+        <span class="service-icone">📚</span>
+        <span class="service-nom">Inventaire</span>
+        <span class="service-desc">Bientôt disponible</span>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Écran Lots sauvegardés (recherche + consultation) -->
+  <div id="lotsScreen" class="lots-screen hidden">
+    <div class="lots-header">
+      <span class="lots-title">📋 Lots sauvegardés</span>
+      <button class="lots-close" onclick="fermerRechercheLots()">✕ Fermer</button>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">Succursale</label>
+        <select id="rech-succursale" class="form-input" onchange="rechercherLots()">
+          <option value="Trois-Rivières">Trois-Rivières</option>
+          <option value="Shawinigan">Shawinigan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rechercher par nom ou prénom</label>
+        <input type="text" id="rech-texte" class="form-input" placeholder="Tapez un nom ou prénom…" oninput="rechercherLots()">
+      </div>
+      <button class="btn-depot" onclick="ouvrirFormulaireDepot()">➕ Nouveau dépôt (à évaluer plus tard)</button>
+    </div>
+    <div id="depotFormZone"></div>
+    <div id="lotsResultats" class="lots-resultats"></div>
+    <div id="lotDetail" class="hidden"></div>
+  </div>
+
+  <!-- Écran Demandes clients (livres recherchés) -->
+  <div id="demandesScreen" class="lots-screen hidden">
+    <div class="lots-header">
+      <span class="lots-title">🔎 Demandes clients</span>
+      <button class="lots-close" onclick="fermerDemandes()">✕ Fermer</button>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">Succursale</label>
+        <select id="dem-rech-succursale" class="form-input" onchange="rechercherDemandes()">
+          <option value="Trois-Rivières">Trois-Rivières</option>
+          <option value="Shawinigan">Shawinigan</option>
+          <option value="__toutes__">Toutes les succursales</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rechercher (titre, auteur ou nom du client)</label>
+        <input type="text" id="dem-rech-texte" class="form-input" placeholder="Tapez pour rechercher…" oninput="rechercherDemandes()">
+      </div>
+      <button class="btn-depot" onclick="ouvrirFormulaireDemande()">➕ Nouvelle demande</button>
+    </div>
+    <div id="demandeFormZone"></div>
+    <div id="demandesResultats" class="lots-resultats"></div>
+    <div id="demandeDetail" class="hidden"></div>
+  </div>
+
+  <!-- Responsive layout -->
+  <div class="responsive-layout hidden" id="evaluationScreen">
+    <!-- LEFT COLUMN: Controls -->
+    <div class="col-left">
+      <!-- Mode toggle -->
+  <div class="card" id="modeCard">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-mode-unique" onclick="setMode('unique')">📖 Scan unique</button>
+      <button class="mode-btn" id="btn-mode-batch" onclick="setMode('batch')">📦 Mode lot</button>
+    </div>
+    <button class="btn-lots-saved" onclick="ouvrirRechercheLots()">📋 Lots sauvegardés</button>
+    <button class="btn-demandes" onclick="ouvrirDemandes()">🔎 Demandes clients</button>
+  </div>
+
+      <!-- STEP 1: Format + ISBN -->
+  <div class="card" id="step1">
+    <div class="card-title">📐 Format du livre</div>
+    <div class="format-selector">
+      <button class="format-btn" id="btn-poche" onclick="selectFormat('poche')">📖 Poche</button>
+      <button class="format-btn" id="btn-grand" onclick="selectFormat('grand')">📗 Grand format</button>
+      <button class="format-btn" id="btn-relie" onclick="selectFormat('relie')">📘 Relié</button>
+    </div>
+    <div class="card-title">🔍 Scanner ou entrer l'ISBN</div>
+    <div class="isbn-wrap">
+      <input type="text" class="isbn-input" id="isbnInput"
+        placeholder="Ex: 9782070360246"
+        maxlength="17"
+        autofocus
+        onkeydown="if(event.key==='Enter') searchBook()">
+      <button class="btn-search" id="searchBtn" onclick="searchBook()">🔍</button>
+    </div>
+    <div id="searchError" class="error-box hidden"></div>
+  </div>
+
+      <!-- Manual entry -->
+  <div id="manualEntryCard" class="card hidden">
+    <div class="card-title" style="color:#C62828;">⚠️ Livre non trouvé</div>
+    <p style="font-size:13px; color:#555; margin-bottom:12px;">
+      Ce livre est trop récent ou peu référencé. Entrez les informations manuellement.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <input id="manualTitle" class="form-input" placeholder="Titre du livre">
+      <input id="manualAuthor" class="form-input" placeholder="Auteur (Nom, Prénom)">
+      <input id="manualYear" class="form-input" placeholder="Année de publication (ex: 2024)" maxlength="4">
+      <button onclick="confirmManualEntry()" style="padding:12px; background:#1F4E79; color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer;">
+        Confirmer →
+      </button>
+    </div>
+  </div>
+
+      <!-- Loading -->
+  <div id="loadingDiv" class="card hidden">
+    <div class="loading">
+      <div class="spinner"></div>
+      Recherche en cours...
+    </div>
+  </div>
+
+      <!-- STEP 2: Book found + form -->
+  <div id="step2" class="hidden">
+    <div id="bookInfoDiv" class="card">
+      <div class="card-title">⚙️ Ajuster selon le livre</div>
+      <!-- État -->
+      <div class="form-group">
+        <label class="form-label">🔍 État du livre</label>
+        <select class="form-select" id="etatSelect" onchange="if(bookData) calculate()">
+          <option value="">— Choisir —</option>
+          <option value="tres_bon">Très bon / Bon</option>
+          <option value="acceptable">Acceptable (légère usure)</option>
+          <option value="abime">Abîmé mais intéressant</option>
+        </select>
+      </div>
+
+      <!-- Cas spéciaux -->
+      <div class="form-group">
+        <label class="form-label">⚡ Cas particuliers</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="chkFolio" onchange="if(bookData) calculate()" />
+            <label for="chkFolio">Collection Folio 2€ ou 3€</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="chkClassique" onchange="if(bookData) calculate()" />
+            <label for="chkClassique">Auteur classique (écrit jusqu'au début du XXe siècle)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nouveauté section -->
+      <div id="nouveauteSection" class="nouveaute-section hidden">
+        <div class="form-label" style="font-size:15px;">📅 NOUVEAUTÉ</div>
+        <p style="font-size:13px; color:#7F4000; margin-bottom:10px; font-weight:500;">
+          Le résultat ci-dessus utilise le prix de base. Pour un calcul plus précis, entrez le prix neuf (Amazon vendu par Amazon ou Renaud-Bray) :
+        </p>
+        <input type="number" class="form-input" id="prixNeufInput"
+          placeholder="Prix neuf si connu (ex: 29.95)" step="0.01" min="0"
+          oninput="if(bookData) calculate()"
+          style="border-color: #F0A500; border-width: 2px; font-size:16px; font-weight:600;">
+      </div>
+
+      <br>
+      <div style="font-size:12px; color:var(--gray); text-align:center; margin-top:8px; font-style:italic;">
+        Le résultat se met à jour automatiquement
+      </div>
+    </div>
+  </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Results -->
+    <div class="col-right">
+      <!-- STEP 3: Result -->
+  <div id="step3" class="hidden">
+    <div id="resultCard" class="result-card"></div>
+    <button class="btn-reset" onclick="reset()">← Nouveau livre</button>
+  </div>
+
+      <!-- Batch list (visible only in batch mode) -->
+  <div id="batchCard" class="card hidden">
+    <div class="card-title">📦 Lot en cours</div>
+    <div id="batchList" class="batch-list"></div>
+    <div id="batchTotals" class="batch-totals hidden">
+      <div class="batch-total-item">
+        <div class="batch-total-label">Argent</div>
+        <div class="batch-total-value" id="batchTotalCash">0.00 $</div>
+      </div>
+      <div class="batch-total-item">
+        <div class="batch-total-label">Crédit</div>
+        <div class="batch-total-value" id="batchTotalCredit">0.00 $</div>
+      </div>
+      <div class="batch-total-item">
+        <div class="batch-total-label">Dons</div>
+        <div class="batch-total-value" id="batchTotalDons">0</div>
+      </div>
+      <div class="batch-total-item">
+        <div class="batch-total-label">Refus</div>
+        <div class="batch-total-value" id="batchTotalRefus">0</div>
+      </div>
+    </div>
+    <div class="batch-actions">
+      <button class="btn-batch btn-nouveau" onclick="nouveauLot()">🔄 Nouveau lot</button>
+      <button class="btn-batch btn-fin" onclick="finDuLot()">✅ Fin du lot</button>
+    </div>
+  </div>
+
+      <!-- Batch summary (shown when Fin du lot is clicked) -->
+  <div id="batchSummary" class="batch-summary hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// AUTHOR LIST — intégrée directement (v7.0)
+// Mise à jour : juin 2025
+// ═══════════════════════════════════════════════════════
+const AUTHORS = {
+  "a., alex": "A/C",
+  "abbott, jeff": "D",
+  "abbott, megan": "D",
+  "abercrombie, joe": "C/D",
+  "ablow, keith": "D",
+  "abécassis, éliette": "D",
+  "achebe, chinua": "A/C",
+  "adam, olivier": "D",
+  "adams, douglas": "A/C",
+  "addison, marilou": "C/D",
+  "adichie, chimamanda ngozi": "A/C",
+  "adler-olsen, jussi": "A/C",
+  "ahnhem, stefan": "D",
+  "aichner, bernhard": "D",
+  "ajar, émile": "C/D",
+  "alger, christina": "D",
+  "allende, isabel": "A/C",
+  "amis, martin": "A/C",
+  "anderson, poul": "A/C",
+  "andrews, russell": "D",
+  "angers, françois-réal": "D",
+  "ankaoua, maud": "A/C",
+  "apostolska, aline": "D",
+  "aquin, hubert": "A/C",
+  "arcan, nelly": "A/C",
+  "archambault, gilles": "D",
+  "archer, jeffrey": "D",
+  "archibald, samuel": "A/C",
+  "arledge, m.j.": "D",
+  "armstrong, campbell": "D",
+  "asimov, isaac": "A",
+  "asselin, olivar": "D",
+  "assouline, pierre": "D",
+  "atalla, nora": "D",
+  "atwood, margaret": "A/C",
+  "aubert de gaspé": "D",
+  "aubin, marc": "D",
+  "aubry, suzanne": "C/D",
+  "austen, jane": "A/C",
+  "auster, paul": "C/D",
+  "backman, fredrik": "C/D",
+  "baer, neal": "D",
+  "bailey, tessa": "A/C",
+  "baldacci, david": "D",
+  "banks, iain m.": "D",
+  "bannalec, jean-luc": "D",
+  "barbe, jean": "C/D",
+  "barbeau, victor": "D",
+  "barbeau-lavalette, anaïs": "A/C",
+  "barbery, muriel": "A/C",
+  "barcelo, françois": "D",
+  "barclay, linwood": "D",
+  "bardugo, leigh": "C/D",
+  "baricco, alessandro": "C/D",
+  "barjavel, rené": "D",
+  "barker, clive": "C/D",
+  "barnett, s.k.": "D",
+  "barry, robertine": "D",
+  "barthe, joseph-guillaume": "D",
+  "barton, fiona": "D",
+  "bataille, j.c.": "D",
+  "baudelaire, charles": "A/C",
+  "bauwen, patrick": "D",
+  "baxter, stephen": "C/D",
+  "beauchemin, yves": "C/D",
+  "beaudoin, philippe": "D",
+  "beaugrand, honoré": "A",
+  "beaulieu, victor-lévy": "C/D",
+  "beaulieu-beaudoin, laurence": "D",
+  "beauregard, alphonse": "D",
+  "beauvoir, simone de": "A",
+  "beckett, samuel": "A/C",
+  "beigbeder, frédéric": "A/C",
+  "bellavance, dominique": "D",
+  "belleau, janick": "D",
+  "belmar, pierre": "D",
+  "ben jelloun, tahar": "D",
+  "berest, anne": "C/D",
+  "bergeron, pierre": "D",
+  "bernanos, georges": "A",
+  "bernard, évelyne": "D",
+  "bernier, jean-philippe": "D",
+  "berry, steve": "A/C",
+  "bersianik, louky": "D",
+  "bertrand, dominique": "C/D",
+  "bertrand, jannette": "C/D",
+  "bessette, arsène": "D",
+  "beuglet, nicolas": "C/D",
+  "beukes, lauren": "D",
+  "bibaud, michel": "D",
+  "billingham, mark": "D",
+  "bind, julie": "D",
+  "binet, laurent": "D",
+  "birkegaard, mikkel": "D",
+  "bisson, lucille": "D",
+  "bissoondath, neil": "D",
+  "black, holly": "A/C",
+  "blackwood, algernon": "A/C",
+  "blais, françois": "A/C",
+  "blais, marie-claire": "D",
+  "blatty, william peter": "A",
+  "blouin, lise": "D",
+  "bobin, christian": "C/D",
+  "bock-côté, mathieu": "A/C",
+  "boissard, janine": "D",
+  "bolduc, mario": "D",
+  "bombardier, denise": "D",
+  "bordage, pierre": "A",
+  "borduas, paul-émile": "A/C",
+  "borges, jorge luis": "A/C",
+  "bouchard, roxanne": "C/D",
+  "bouchard, serge": "A/C",
+  "boucher de boucherville": "D",
+  "boucher, denise": "D",
+  "boulanger-racine, éliane": "D",
+  "boulerice, simon": "A/C",
+  "boulgakov, mikhaïl": "A/C",
+  "boulianne, danielle": "C/D",
+  "boulle, pierre": "A",
+  "bourassa, marie-eve": "C/D",
+  "bourbeau, françois-alexandre": "D",
+  "bourdin, françoise": "D",
+  "bourgault, catherine": "A/C",
+  "bourgault, pierre": "C/D",
+  "bourget, édith": "D",
+  "bourgoin, stéphane": "C/D",
+  "bouthillette, benoit": "C/D",
+  "bowden, oliver": "C/D",
+  "box, c.j.": "C/D",
+  "boyd, william": "D",
+  "bradbury, ray": "A/C",
+  "brault, jacques": "D",
+  "braverman, roy": "D",
+  "brecht, bertolt": "A/C",
+  "brett, peter v.": "D",
+  "brisebois, robert w.": "C/D",
+  "brochu, andré": "D",
+  "brooks, terry": "C/D",
+  "bross, l.e.": "REFUS",
+  "brossard, nicole": "D",
+  "brouillet, chrystine": "C/D",
+  "brouillette, daniel": "A/C",
+  "brown, dan": "D",
+  "brunet, andrée-anne": "C/D",
+  "brunet, francine": "C/D",
+  "brussolo, serge": "D",
+  "buies, arthur": "C/D",
+  "bukowski, charles": "A",
+  "burgess, anthony": "A/C",
+  "burke, alafair": "D",
+  "burke, james lee": "D",
+  "burroughs, william s.": "A/C",
+  "bussi, michel": "A/C",
+  "bussières, arthur de": "D",
+  "butcher, jim": "A/C",
+  "butler, octavia": "C/D",
+  "buzzati, dino": "C/D",
+  "byrne, rhonda": "C/D",
+  "byrnes, michael": "D",
+  "bédard, patrice": "D",
+  "bégin, joel": "C/D",
+  "bénédicte, lou": "C/D",
+  "bérard, judith": "C/D",
+  "cadieux, pauline": "D",
+  "cailloux, andré": "D",
+  "caine, rachel": "D",
+  "calvino, italo": "C/D",
+  "cambau, laure": "C/D",
+  "camilleri, andrea": "D",
+  "camus, albert": "A/C",
+  "camut, jérôme": "D",
+  "canetti, elias": "C/D",
+  "capote, truman": "A/C",
+  "card, orson scott": "C/D",
+  "carnegie, dale": "D",
+  "caron, pierre": "D",
+  "carr, jack": "A/C",
+  "carrier, roch": "D",
+  "carrisi, donato": "C/D",
+  "carré, john le": "D",
+  "carter, chris": "D",
+  "cartier, george-étienne": "D",
+  "casgrain, henri-raymond": "D",
+  "castle, richard": "D",
+  "cauque, romaine": "D",
+  "cazin, jocelyne": "D",
+  "cendrars, blaise": "A",
+  "chabon, michael": "A/C",
+  "chabot, denys": "D",
+  "chalandon, sorj": "A/C",
+  "chalmet, véronique": "C/D",
+  "chambers, becky": "C/D",
+  "champetier, joël": "D",
+  "chandra, vikram": "D",
+  "chapman, william": "D",
+  "charbonneau, alexandre": "D",
+  "charland, jean-pierre": "C/D",
+  "chattam, maxime": "A/C",
+  "chauveau, pierre-joseph-olivier": "D",
+  "chekhov, anton": "A/C",
+  "chen, ying": "D",
+  "chevarier, corinne": "C/D",
+  "chevrier, louise": "D",
+  "chiang, ted": "D",
+  "child, lee": "D",
+  "chopra, deepak": "D",
+  "choquette, ernest": "D",
+  "christie, agatha": "A/C",
+  "circé-côté, éva": "D",
+  "cisneros, sandra": "C/D",
+  "cixin, liu": "A",
+  "clancy, tom": "D",
+  "clare, cassandra": "D",
+  "clark, carol higgins": "REFUS",
+  "clark, mary higgins": "REFUS",
+  "clark, mary jane": "REFUS",
+  "clarke, arthur c.": "C/D",
+  "claudel, paul": "A/C",
+  "claudel, philippe": "C/D",
+  "clear, james": "A/C",
+  "cline, ernest": "C/D",
+  "cloutier, raymond": "D",
+  "clément, paul": "D",
+  "clézio, j.m.g. le": "D",
+  "coates, darcy": "C/D",
+  "coben, harlan": "A/C",
+  "coderre, émile": "D",
+  "coelho, paulo": "A/C",
+  "coetzee, amanda": "D",
+  "cohen, leonard": "A",
+  "colette": "A/C",
+  "collette, jean-yves": "D",
+  "collins, larry": "D",
+  "collins, max allan": "D",
+  "conan, laure": "D",
+  "condo, marie": "A/C",
+  "connelly, michael": "A/C",
+  "connolly, john": "D",
+  "conrad, joseph": "C/D",
+  "cook, robin": "D",
+  "cook, thomas h.": "D",
+  "cooke, claire": "D",
+  "cooper, glenn": "D",
+  "cordy, michael": "D",
+  "corey, james s.a.": "A/C",
+  "corneil, bernard": "D",
+  "cornwell, patricia": "D",
+  "corriveau, hugues": "D",
+  "cortázar, julio": "A/C",
+  "cotnoir, louise": "D",
+  "courtemanche, gil": "D",
+  "cousture, arlette": "D",
+  "covey, stephen": "D",
+  "covin, alec": "D",
+  "crais, robert": "D",
+  "crichton, michael": "A/C",
+  "croft, esther": "D",
+  "crouch, blake": "C/D",
+  "cussler, clive": "C/D",
+  "cuthbert, ross": "D",
+  "cutter, nick": "A/C",
+  "cyr, gilles": "D",
+  "céline, louis-ferdinand": "A",
+  "côté, jacques": "C/D",
+  "côté, laurence": "A/C",
+  "d'ormesson, jean": "C/D",
+  "d, fanny": "C/D",
+  "da costa, mélissa": "A/C",
+  "dahl, arne": "D",
+  "dallaire, louis-françois": "C/D",
+  "dalpé, jean marc": "D",
+  "damasio, alain": "D",
+  "dantin, louis": "D",
+  "daoud, kamel": "D",
+  "darlton, clark": "D",
+  "dashner, james": "A/C",
+  "daveluy, marie-claire": "D",
+  "david, jessyca": "C/D",
+  "david, michel": "D",
+  "de balzac, honoré": "A/C",
+  "de cataldo, giancarlo": "D",
+  "de cervantes, miguel": "A/C",
+  "de friberg, patrick": "D",
+  "de maupassant, guy": "D",
+  "de rosnay, tatiana": "C/D",
+  "de saint-denys garneau": "D",
+  "de sales laterrière": "D",
+  "de vigan, delphine": "C/D",
+  "deaver, jeffery": "D",
+  "decobert, nadine": "D",
+  "del arbol, victor": "A/C",
+  "delacourt, grégoire": "C/D",
+  "delany, samuel": "D",
+  "delbianco, rae": "D",
+  "delisle, guy": "A/C",
+  "demers, dominique": "A/C",
+  "demille, nelson": "D",
+  "dentinger, yannick": "D",
+  "deon meyer": "A/C",
+  "desautels, denise": "D",
+  "desbiens, patrick": "D",
+  "descheneaux, nadine": "A/C",
+  "desjardins, india": "D",
+  "desmazes, yves": "D",
+  "despatie, stéphane": "D",
+  "desrochers, jean-simon": "C/D",
+  "desrosiers, léo-paul": "D",
+  "dessaulles, louis-antoine": "D",
+  "destombes, sandrine": "A/C",
+  "diaz, sébastien": "A/C",
+  "dick, philip k.": "A",
+  "dickens, charles": "A/C",
+  "dicker, joël": "A/C",
+  "dickinson, emily": "C/D",
+  "dickner, nicolas": "A/C",
+  "dionne, charles": "A",
+  "djian, philippe": "C/D",
+  "doerr, anthony": "C/D",
+  "dompierre, violaine": "D",
+  "donaldson, stephen r.": "A/C",
+  "dor, georges": "D",
+  "dos passos, john": "A/C",
+  "dos santos, j.r.": "A/C",
+  "dostoïevski, fiodor": "A/C",
+  "douglas, penelope": "A/C",
+  "drouin, dominique": "C/D",
+  "drummond, emma": "D",
+  "du calvet": "D",
+  "du maurier, daphné": "C/D",
+  "dubois, jean-paul": "D",
+  "dubuc, maryse": "A/C",
+  "dubé, marcel": "D",
+  "ducharme, réjean": "A",
+  "duchesne, christiane": "D",
+  "dufresne, caroline": "C/D",
+  "dugas, marcel": "D",
+  "dugoni, robert": "D",
+  "duhamel, roger": "D",
+  "dumais, danielle": "D",
+  "dumas, alexandre": "A/C",
+  "dumont, fernand": "D",
+  "dupont, éric": "C/D",
+  "dupras, anne-marie": "A/C",
+  "dupré, louise": "D",
+  "dupuy, marie-bernadette": "C/D",
+  "duras, marguerite": "A",
+  "dyer, wayne": "D",
+  "eco, umberto": "A/C",
+  "eddings, david": "C/D",
+  "edvardsson, m.t.": "D",
+  "edwardson, ake": "D",
+  "elliot, kendra": "D",
+  "ellory, r.j.": "C/D",
+  "ellroy, james": "D",
+  "erikson, steven": "C/D",
+  "ethier, catherine": "A/C",
+  "eugenides, jeffrey": "D",
+  "evanovich, janet": "D",
+  "evans, nicholas": "D",
+  "everell, geneviève": "D",
+  "expert, jacques": "D",
+  "exupery, antoine de saint": "A",
+  "faletti, giorgio": "D",
+  "farhoud, abla": "A/C",
+  "farrow, john": "D",
+  "faucher de saint-maurice": "A",
+  "faucon, benjamin": "D",
+  "faulkner, william": "A",
+  "favreau-chalifour, marie-pier": "D",
+  "faye, gaël": "D",
+  "feist, raymond e.": "C/D",
+  "ferguson, trevor": "D",
+  "ferney, alice": "C/D",
+  "ferrante, elena": "C/D",
+  "ferron, jacques": "C/D",
+  "ferré, christophe": "D",
+  "fezzani, nadia": "D",
+  "filippini, anouk": "C/D",
+  "filteau-chiba, gabrielle": "A",
+  "finn, a.j.": "D",
+  "fisher, marc": "D",
+  "fitzek, sebastien": "D",
+  "fitzgerald, f. scott": "A/C",
+  "flaubert, gustave": "A/C",
+  "fleurance, jacques p.": "D",
+  "flynn, gillian": "A/C",
+  "foenkinos, david": "A/C",
+  "folch-ribas, jacques": "D",
+  "folco, michel": "A/C",
+  "foley, christine": "C/D",
+  "follett, ken": "A/C",
+  "folsom, allan": "D",
+  "fontaine, myriam": "D",
+  "forbes, éric": "C/D",
+  "ford, clyde w.": "D",
+  "ford, richard": "A/C",
+  "forster, e.m.": "C/D",
+  "fortier, dominique": "C/D",
+  "fortier, jean-michel": "C/D",
+  "fortin, justine": "REFUS",
+  "fortune, carley": "C/D",
+  "fossum, karin": "C/D",
+  "fournier, jules": "D",
+  "fowler, christopher": "D",
+  "franzen, jonathan": "A/C",
+  "french, nicci": "D",
+  "french, tana": "A/C",
+  "frenette, christiane": "D",
+  "frobenius, nikolaj": "D",
+  "frost, robert": "C/D",
+  "fréchette, louis-honoré": "A",
+  "gabaldon, diana": "D",
+  "gagnon, akim": "A",
+  "gaignon, gary": "D",
+  "gailey, samuel w.": "D",
+  "gaiman, neil": "A/C",
+  "galbraith, robert": "C/D",
+  "gallo, max": "A/C",
+  "gamache, marcel": "D",
+  "garcía márquez, gabriel": "A/C",
+  "gardner, lisa": "A/C",
+  "garmus, bonnie": "C/D",
+  "garneau, alfred": "D",
+  "garnier, alicia": "C/D",
+  "gartempe, julie": "D",
+  "gary, romain": "A/C",
+  "gaudet-smet, françoise": "D",
+  "gaultier, karel": "D",
+  "gauthier, bertrand": "D",
+  "gauvreau, claude": "D",
+  "gavalda, anna": "D",
+  "gay, william": "D",
+  "gendreau, vickie": "D",
+  "george, elizabeth": "D",
+  "germain, rafaele": "C/D",
+  "gerritsen, tess": "C/D",
+  "gevrey, chantal": "D",
+  "giacometti ravenne": "C/D",
+  "giacometti, éric": "A/C",
+  "gibbings, david": "D",
+  "gibson, william": "A/C",
+  "gide, andré": "A/C",
+  "giebel, karine": "A/C",
+  "gilbert-dumas, mylène": "C/D",
+  "gill, charles": "D",
+  "giono, jean": "A/C",
+  "giordano, raphaëlle": "A/C",
+  "girard, katherine": "A/C",
+  "girard-audet, catherine": "C/D",
+  "giroux, andré": "D",
+  "gladwell, malcolm": "D",
+  "glorieux, karine": "C/D",
+  "glukhovsky, dimitri": "A",
+  "godbout, jacques": "D",
+  "godin, patrice": "C/D",
+  "gogol, nikolaï": "A",
+  "golden, christie": "A/C",
+  "goodkind, terry": "C/D",
+  "goodwillie, david": "D",
+  "gorgun, kenan": "D",
+  "goscinny, rené": "A",
+  "goudreault, david": "A/C",
+  "gounelle, laurent": "A/C",
+  "grace, hannah": "A/C",
+  "grafton, sue": "D",
+  "grandbois, alain": "D",
+  "grandpré, pierre de": "D",
+  "grangé, jean-christophe": "C/D",
+  "grass, günter": "A/C",
+  "gratton, andrée-anne": "D",
+  "gray, martin": "D",
+  "greaney, mark": "D",
+  "green, jonathan": "D",
+  "greif, hans-jürgen": "D",
+  "grelet, nadine": "D",
+  "grenier, daniel": "A/C",
+  "griffiths, neil": "D",
+  "grignon, claude-henri": "D",
+  "grimaldi, virginie": "A/C",
+  "grisham, john": "C/D",
+  "groovie, annie": "A/C",
+  "groulx, lionel": "D",
+  "guay-poliquin, christian": "A/C",
+  "guillory, jasmine": "A/C",
+  "guèvremont, germaine": "D",
+  "gélinas, ariane": "C/D",
+  "gélinas, gratien": "D",
+  "haig, matt": "C/D",
+  "hamelin, clod": "REFUS",
+  "hamilton, peter": "D",
+  "hamsun, knut": "C/D",
+  "hannah, kristin": "D",
+  "hannah, sophie": "D",
+  "harari, yuval noah": "A/C",
+  "harbach, chad": "D",
+  "hardy, thomas": "C/D",
+  "harris, thomas": "D",
+  "hart, john": "D",
+  "harton, catherine": "D",
+  "harvey, jean-charles": "C/D",
+  "harvey, kenneth j.": "D",
+  "hawken, sam": "D",
+  "hawkins, paula": "D",
+  "hawthorne, nathaniel": "C/D",
+  "hay, louise": "D",
+  "hayder, mo": "D",
+  "hayes, samantha": "D",
+  "hayle, olivia": "C/D",
+  "hayman, james": "D",
+  "haynes, elizabeth": "D",
+  "hazelwood, ali": "A/C",
+  "heinlein, robert a.": "C/D",
+  "heitz, markus": "D",
+  "hejazipour, mitra": "D",
+  "hemingway, ernest": "A/C",
+  "hendricks, greer": "D",
+  "hendrix, grady": "D",
+  "henry, emily": "A/C",
+  "herbert, frank": "A/C",
+  "herbert, james": "C/D",
+  "hergé": "A",
+  "hesse, hermann": "A/C",
+  "hibbert, talia": "A/C",
+  "higgins, jack": "D",
+  "hill, joe": "A/C",
+  "hillerman, tony": "D",
+  "hilton, l.s.": "D",
+  "hjorth & rosenfeldt": "D",
+  "hoag, tami": "C/D",
+  "hoang, helen": "A/C",
+  "hobb, robin": "C/D",
+  "holt, jim": "D",
+  "honda, tetsuya": "D",
+  "hoover, colleen": "A/C",
+  "hornet, paul": "D",
+  "horowitz, anthony": "D",
+  "hosp, david": "D",
+  "hosseini, khaled": "C/D",
+  "hotte, sylvain": "D",
+  "houde, nicole": "D",
+  "houellebecq, michel": "A/C",
+  "houle, patricia": "D",
+  "howey, hugh": "A",
+  "huang, ana": "A/C",
+  "hug, nathalie": "D",
+  "hughes, yves": "D",
+  "hugo, victor": "A/C",
+  "hummel, maria": "D",
+  "huneault, robert": "D",
+  "hurwitz, gregg": "D",
+  "huxley, aldous": "A/C",
+  "hébert, anne": "D",
+  "hébert, sara": "C/D",
+  "hémon, louis": "A/C",
+  "hénault, gilles": "D",
+  "ibsen, henrik": "A/C",
+  "iles, greg": "D",
+  "indridason, arnaldur": "C/D",
+  "ionesco, eugène": "A/C",
+  "isabel, sandra": "D",
+  "isayama, hajime": "A/C",
+  "ishiguro, kazuo": "A/C",
+  "jackson, lisa": "D",
+  "jacob, suzanne": "D",
+  "jacobs, r.j.": "D",
+  "jacq, christian": "D",
+  "james, p.d.": "D",
+  "james, peter": "D",
+  "jansson, anna": "C/D",
+  "jardin, alexandre": "C/D",
+  "jasmin, claude": "D",
+  "jautard, valentin": "D",
+  "jean, michel": "A",
+  "jemisin, n.k.": "C/D",
+  "jenkins reid, taylor": "C/D",
+  "jennings, maureen": "D",
+  "jewell, lisa": "C/D",
+  "jimenez, abby": "A/C",
+  "jobidon, gilles": "D",
+  "johnson, sylvain": "C/D",
+  "jonasson, ragnar": "C/D",
+  "jordan, robert": "C/D",
+  "joyce, james": "C/D",
+  "kabra, pierre": "D",
+  "kafka, franz": "A/C",
+  "kanapé fontaine, natasha": "A",
+  "kapesh, an antane": "A",
+  "karp, marshall": "D",
+  "kawabata, yasunari": "A/C",
+  "kawaguchi, toshikazu": "A/C",
+  "kennedy, douglas": "C/D",
+  "kennedy, elle": "A/C",
+  "kepler, lars": "A/C",
+  "kerangal, maylis de": "A/C",
+  "kerouac, jack": "A",
+  "khadra, yasmina": "C/D",
+  "khara, david s.": "D",
+  "king, stephen": "A",
+  "kipling, rudyard": "A",
+  "kishimoto, masashi": "A/C",
+  "kiyosaki, robert": "D",
+  "kleypas, lisa": "D",
+  "koontz, dean": "C/D",
+  "kristof, agota": "A/C",
+  "kristoff, jay": "C/D",
+  "kubica, mary": "A/C",
+  "kundera, milan": "A/C",
+  "kvensler, ulf": "C/D",
+  "laberge, marie": "A/C",
+  "labrie, pierre": "D",
+  "labrèche, marie-sissi": "D",
+  "lackey, mercedes": "A",
+  "lacombe, diane": "D",
+  "lacoursière, louise": "C/D",
+  "laferrière, dany": "A/C",
+  "laflamme, steve": "A",
+  "lafon, marie-hélène": "C/D",
+  "lafond, jérôme": "D",
+  "lafontaine, georges": "D",
+  "laframboise, yves": "A/C",
+  "lagercrantz, david": "C/D",
+  "lahiri, jhumpa": "A/C",
+  "lalonde, robert": "A/C",
+  "lalonde-roux, sophie": "A/C",
+  "lamontagne-beauregard, blanche": "D",
+  "lamothe, serge": "D",
+  "langlois, valérie": "C/D",
+  "languirand, jacques": "D",
+  "lapena, shari": "A/C",
+  "lapierre-dallaire, michelle": "A/C",
+  "lapointe, paul-marie": "D",
+  "larsson, stieg": "C/D",
+  "larue, monique": "D",
+  "lasnier, rina": "D",
+  "latulippe, martine": "A/C",
+  "laure, carole": "C/D",
+  "lauren, christina": "A/C",
+  "laverdière, marthe": "A/C",
+  "laverdure, bertrand": "D",
+  "lavigne, guy": "D",
+  "lavoie, marie-renée": "A/C",
+  "lawrence, d.h.": "C/D",
+  "lawrence, mark": "D",
+  "le carré, john": "C/D",
+  "le fanu, joseph sheridan": "C/D",
+  "le guin, ursula k.": "C/D",
+  "le tellier, hervé": "C/D",
+  "lebas, mélanie": "D",
+  "leblanc, perrine": "C/D",
+  "leclerc, félix": "A/C",
+  "ledig, agnès": "A/C",
+  "legardinier, gilles": "C/D",
+  "legault, émile": "D",
+  "lehr, dick": "D",
+  "leiber, fritz": "A/C",
+  "lem, stanislaw": "A",
+  "lemaitre, pierre": "A/C",
+  "lemelin, roger": "D",
+  "lemieux, jean": "D",
+  "lemoine, wilfrid": "D",
+  "lenoir, frédéric": "A/C",
+  "leon, donna": "C/D",
+  "lepage, robert": "A/C",
+  "leroux, catherine": "A/C",
+  "lessard, jacqueline": "D",
+  "lester, normand": "C/D",
+  "levy, marc": "C/D",
+  "lewis, clive staples": "A/C",
+  "llosa, mario vargas": "C/D",
+  "london, jack": "A/C",
+  "loranger, jean-aubert": "D",
+  "lovecraft, h.p.": "A",
+  "lozeau, albert": "D",
+  "lu, marie": "C/D",
+  "ludlum, robert": "D",
+  "lussier, laurent": "C/D",
+  "lynch, scott": "D",
+  "läckberg, camilla": "A/C",
+  "lévesque, raymond": "D",
+  "maas, sarah j.": "A",
+  "mackintosh, clare": "D",
+  "maclennan, hugh": "D",
+  "mailhot, robert j": "D",
+  "malerman, josh": "A/C",
+  "malraux, andré": "A/C",
+  "mancook, ian": "C/D",
+  "mankell, henning": "C/D",
+  "mann, thomas": "A",
+  "manson, mark": "A/C",
+  "marcel, jean": "D",
+  "marchamps, guy": "D",
+  "marchand, clément": "D",
+  "marineau, michèle": "A/C",
+  "marmette, joseph": "D",
+  "marsons, angela": "D",
+  "martel, yann": "C/D",
+  "martigny, paul de": "D",
+  "martin, george r.r.": "C/D",
+  "martin-lugand, agnès": "A/C",
+  "martineau, maureen": "D",
+  "masterton, graham": "A",
+  "matheson, richard": "A",
+  "mathieu, nicolas": "D",
+  "maude-beauchesne, sarah": "A/C",
+  "maugham, w. somerset": "D",
+  "maupin, armistead": "D",
+  "mavrikakis, catherine": "C/D",
+  "may, peter": "C/D",
+  "mazza, marianna": "A/C",
+  "mcbain, ed": "D",
+  "mccammon, robert": "C/D",
+  "mccarthy, cormac": "A/C",
+  "mcclellan, brian": "D",
+  "mcconaughey, matthew": "D",
+  "mcculloch, amy": "D",
+  "mcculloch, colleen": "D",
+  "mcdermid, val": "D",
+  "mcfarlane, mhairi": "A/C",
+  "mckenzie, catherine": "D",
+  "mckenzie, sophie": "D",
+  "mckinley, tamara": "D",
+  "mclachlin, beverly": "D",
+  "meltzer, brad": "D",
+  "melville, herman": "A/C",
+  "memmi, albert": "A",
+  "mesplet, fleury": "D",
+  "meunier, hugo": "A/C",
+  "meyer, deon": "C/D",
+  "michaelides, alex": "D",
+  "michaud, andrée a.": "A/C",
+  "michaud, martin": "C/D",
+  "micone, marco": "D",
+  "miller, arthur": "A/C",
+  "miller, henry": "A/C",
+  "miller, madeline": "D",
+  "mina, denise": "D",
+  "minier, bernard": "C/D",
+  "miranda, megan": "D",
+  "miron, gaston": "A/C",
+  "mishima, yukio": "A",
+  "mistral, christian": "D",
+  "modiano, patrick": "A/C",
+  "mofina, rick": "D",
+  "molière": "A/C",
+  "moncomble, morgane": "A",
+  "montaigne, michel de": "A/C",
+  "monticone, ugo": "D",
+  "moorcock, michael": "D",
+  "morahan de lauzon": "A",
+  "moriarty, liane": "D",
+  "morin, stéfanie": "REFUS",
+  "morissette, guillaume": "D",
+  "morley, michael": "D",
+  "morris, ben": "C/D",
+  "morrison, boyd": "C/D",
+  "morrissette, guillaume": "A",
+  "mouawad, wajdi": "A/C",
+  "moyes, jojo": "C/D",
+  "mull, brandon": "C/D",
+  "munro, alice": "C/D",
+  "murakami, haruki": "A/C",
+  "musso, guillaume": "C/D",
+  "myre, suzanne": "C/D",
+  "nabokov, vladimir": "A",
+  "ndiaye, marie": "C/D",
+  "nebot, didier": "D",
+  "nelligan, émile": "D",
+  "nepveu, pierre": "D",
+  "neruda, pablo": "A/C",
+  "nesbo, jo": "A/C",
+  "nesbø, jo": "A/C",
+  "neuhaus, nele": "D",
+  "neuvel, sylvain": "D",
+  "nevers, edmond de": "D",
+  "nevill, adam": "A/C",
+  "newman, ruth": "D",
+  "newport, cal": "C/D",
+  "ng, celeste": "C/D",
+  "nicol, patrick": "C/D",
+  "nicolae, laura": "C/D",
+  "nicole, amber v.": "A/C",
+  "niel, colin": "D",
+  "niven, jennifer": "A/C",
+  "norek, olivier": "A/C",
+  "nothomb, amélie": "A/C",
+  "novik, naomi": "A/C",
+  "noyart, paule": "D",
+  "noël, francine": "D",
+  "nunn, malla": "D",
+  "o'green, pattie": "C/D",
+  "o'leary, beth": "A/C",
+  "o'neill, heather": "C/D",
+  "obama, michelle": "D",
+  "oda, eiichiro": "A/C",
+  "oe, kenzaburo": "A/C",
+  "okoko, akena": "A/C",
+  "olde heuvelt, thomas": "C/D",
+  "ollivier, émile": "D",
+  "olmi, véronique": "D",
+  "orwell, george": "A",
+  "ouellet, fernand": "D",
+  "ouellette, francine": "D",
+  "owens, delia": "C/D",
+  "owens, mark": "C/D",
+  "o’neil, gerard": "D",
+  "pamuk, orhan": "A/C",
+  "pancol, katherine": "A/C",
+  "panneton, philippe": "D",
+  "paquin, patricia": "D",
+  "paradis, suzanne": "D",
+  "paretsky, sara": "A/C",
+  "paris, b.a.": "D",
+  "parizeau, alice": "D",
+  "parker, robert b.": "C/D",
+  "pasternak, boris": "C/D",
+  "patterson, james": "C/D",
+  "paventi, eza": "D",
+  "pavese, cesare": "A/C",
+  "payette, lise": "D",
+  "paz, octavio": "A",
+  "pearl, matthew": "D",
+  "pears, iain": "D",
+  "pekkanen, sarah": "D",
+  "pelecanos, george": "D",
+  "pellerin, gilles": "D",
+  "pelletier, albert": "D",
+  "pelletier, jean-jacques": "A/C",
+  "pennac, daniel": "A/C",
+  "penner, sarah": "D",
+  "penny, louise": "A/C",
+  "perfumo, cristian": "A/C",
+  "perreault, pierre": "A/C",
+  "perrin, valérie": "C/D",
+  "perro, bryan": "C/D",
+  "pessoa, fernando": "A/C",
+  "peterson, jordan": "A/C",
+  "pettersen, geneviève": "A/C",
+  "pfeiffer, nell": "C/D",
+  "philips, jayne anne": "D",
+  "pierce, tamora": "D",
+  "pilcher, rosamunde": "D",
+  "pilon, marc-andré": "A/C",
+  "pion, marylène": "C/D",
+  "plamondon, éric": "A/C",
+  "plessis, joseph-octave": "D",
+  "pobi, robert": "D",
+  "poe, edgar allan": "A/C",
+  "poirier, priska": "C/D",
+  "poirier, yves d.": "D",
+  "poitras, anique": "A/C",
+  "pomerleau, gervais": "D",
+  "portal, louise": "D",
+  "portiche, roland": "C/D",
+  "potvin, marie": "C/D",
+  "poulin, jacques": "D",
+  "poyet, clara": "D",
+  "pratchett, terry": "A/C",
+  "preston, douglas": "C/D",
+  "priest, christopher": "C/D",
+  "proulx, candide": "D",
+  "proust, marcel": "A",
+  "pulixi, piergiorgio": "A/C",
+  "pullman, philip": "C/D",
+  "puértolas, romain": "C/D",
+  "pyper, andrew": "D",
+  "péan, stanley": "C/D",
+  "péloquin, claude": "D",
+  "pérez-reverte, arturo": "C/D",
+  "quesnel, joseph": "D",
+  "quinn, julia": "A/C",
+  "quiviger, matthieu": "A/C",
+  "rabagliati, michel": "A",
+  "racine, rober": "D",
+  "rafy, serge": "D",
+  "rankin, ian": "C/D",
+  "reeves, hubert": "A/C",
+  "reichs, kathy": "D",
+  "reilly, cora": "D",
+  "remarque, erich maria": "A",
+  "renaud, marie-claude": "D",
+  "reynolds, alastair": "D",
+  "rice, anne": "C/D",
+  "richard, line": "A/C",
+  "richler, mordecai": "D",
+  "ridzen, lisa": "A/C",
+  "riel, louis": "D",
+  "rigbey, liz": "D",
+  "riggs, ransom": "A/C",
+  "rimbaud, arthur": "A/C",
+  "riordan, rick": "A/C",
+  "rioux, hélène": "D",
+  "rivard, yvon": "D",
+  "robbins, david": "D",
+  "roberts, nora": "D",
+  "robillard, anne": "C/D",
+  "robinson, peter": "D",
+  "robotham, michael": "D",
+  "roches, roger des": "D",
+  "rochon, esther": "D",
+  "rodet, jean-claude": "D",
+  "rodriguez-lefebvre, renato": "D",
+  "rondeau, sophie": "C/D",
+  "roquebrune, robert de": "D",
+  "rose, karen": "D",
+  "roslund & hellström": "D",
+  "rossignol, mario": "D",
+  "roth, philip": "C/D",
+  "rothfuss, patrick": "A/C",
+  "rousseau, jean-jacques": "A/C",
+  "roussin, claude": "D",
+  "routhier, adolphe-basile": "D",
+  "routier, simone": "D",
+  "rowell, rainbow": "C/D",
+  "rowling, j.k.": "A/C",
+  "roy, gabrielle": "A/C",
+  "royer, jean": "D",
+  "rubenfeld, jed": "D",
+  "ruel, francine": "C/D",
+  "rufin, jean-christophe": "C/D",
+  "ruiz, don miguel": "A/C",
+  "rushdie, salman": "C/D",
+  "sack, john": "D",
+  "sager, riley": "C/D",
+  "saint-denis, janou": "D",
+  "saint-exupéry, antoine de": "A",
+  "salinger, j.d.": "A/C",
+  "sand, george": "A/C",
+  "sanderson, brandon": "C/D",
+  "sandford, john": "C/D",
+  "sapkowski, andrzej": "A/C",
+  "sarfati, sonia": "A/C",
+  "sartre, jean-paul": "A/C",
+  "sattouf, riad": "A/C",
+  "saucier, jocelyne": "C/D",
+  "savard, félix-antoine": "D",
+  "scheer, k.h.": "D",
+  "schmitt, éric-emmanuel": "A/C",
+  "schwab, v.e.": "C/D",
+  "score, lucy": "A/C",
+  "semionov, julian": "D",
+  "senécal, patrick": "A",
+  "sernine, daniel": "D",
+  "shafak, elif": "A/C",
+  "shannon, samantha": "D",
+  "sharma, robin": "C/D",
+  "sheldon, sidney": "C/D",
+  "shelley, mary": "C/D",
+  "shimazaki, aki": "D",
+  "sicard, l.p.": "A",
+  "sigurdardottir, yrsa": "C/D",
+  "silva, daniel": "D",
+  "silver, josie": "A/C",
+  "silverberg, robert": "C/D",
+  "simard, louise": "D",
+  "simmons, dan": "C/D",
+  "simoneau, jean": "D",
+  "singer, christiane": "A/C",
+  "sjowall, maj et wahloo, per": "C/D",
+  "slaughter, karin": "A/C",
+  "slimani, leïla": "A/C",
+  "smith, martin cruz": "C/D",
+  "soljenitsyne, alexandre": "A/C",
+  "soucy, gaétan": "C/D",
+  "soulières, robert": "D",
+  "sparks, nicholas": "D",
+  "stanké, alain": "D",
+  "ste-marie, jean-pierre": "D",
+  "steel, danielle": "D",
+  "steinbeck, john": "A/C",
+  "sten, viveca": "D",
+  "stendhal": "C/D",
+  "stevenson, robert louis": "A",
+  "stiefvater, maggie": "C/D",
+  "stockett, kathryn": "A/C",
+  "stoker, bram": "C/D",
+  "straram, patrick": "D",
+  "straub, peter": "C/D",
+  "strindberg, august": "C/D",
+  "stréliski, léa": "A/C",
+  "sulte, benjamin": "D",
+  "swan, thomas": "D",
+  "szucsany, désirée": "D",
+  "taché, joseph-charles": "C/D",
+  "tahir, sabaa": "C/D",
+  "takahashi, rumiko": "A/C",
+  "takeuchi, naoko": "A/C",
+  "tanizaki, junichiro": "A",
+  "tard, louis-martin": "D",
+  "tardivel, jules-paul": "D",
+  "tartt, donna": "C/D",
+  "tchekhov, anton": "A",
+  "teboul, victor": "D",
+  "tesson, sylvain": "C/D",
+  "tezuka, osamu": "A/C",
+  "thilliez, franck": "A/C",
+  "thomas, angie": "C/D",
+  "thomas, craig": "D",
+  "thomas, gordon": "D",
+  "thoreau, henry david": "A",
+  "thorne, sally": "A/C",
+  "thériault, yves": "D",
+  "thúy, kim": "A/C",
+  "tibo, gilles": "D",
+  "tolkien, j.r.r.": "A/C",
+  "tolle, eckhart": "A/C",
+  "tolstoï, léon": "A",
+  "tomas, adrien": "C/D",
+  "tondreau-levert, louise": "D",
+  "toriyama, akira": "A/C",
+  "tougas, gérald": "D",
+  "tourgueniev, ivan": "A",
+  "toussaint, jean-philippe": "D",
+  "towles, amor": "C/D",
+  "tremblay, larry": "A/C",
+  "tremblay, michel": "A/C",
+  "tremblay-d'essiambre, louise": "D",
+  "tremblay-d’essiambre, louise": "D",
+  "troyat, henri": "C/D",
+  "tuil, karine": "D",
+  "turcotte, élise": "C/D",
+  "twain, mark": "A",
+  "tétreault, isabelle": "C/D",
+  "tétreault, laurie": "C/D",
+  "uderzo, albert": "A",
+  "uguay, marie": "D",
+  "unamuno, miguel de": "C/D",
+  "unger, lisa": "D",
+  "uris, leon": "D",
+  "vadeboncœur, pierre": "D",
+  "vaillancourt, jean": "D",
+  "vailly, corinne de": "A/C",
+  "vallières, camille": "A/C",
+  "valognes, aurélie": "A/C",
+  "vance, jack": "D",
+  "vareil, marie": "A/C",
+  "vargas, fred": "C/D",
+  "vastel, michel": "D",
+  "vekeman, lise": "D",
+  "verdier, vic": "A/C",
+  "verhœven, camille": "C/D",
+  "verne, jules": "A",
+  "vian, boris": "A/C",
+  "viens, alex": "A/C",
+  "vigneault, gilles": "C/D",
+  "villeneuve, pierre-yves": "A/C",
+  "voltaire": "C/D",
+  "vonarburg, élisabeth": "D",
+  "vásquez, juan gabriel": "C/D",
+  "ward, catriona": "C/D",
+  "ware, ruth": "A/C",
+  "warren, louise": "D",
+  "weeks, brent": "D",
+  "weir, andy": "A/C",
+  "wells, h.g.": "A",
+  "werber, bernard": "A/C",
+  "wharton, edith": "C/D",
+  "whatson, sue": "A/C",
+  "whitman, walt": "A",
+  "wilde, oscar": "A/C",
+  "wilhelmy, pascale": "D",
+  "williams, tennessee": "C/D",
+  "willocks, tim": "D",
+  "winslow, don": "A/C",
+  "withman, walt": "A",
+  "wolf, virginia": "A",
+  "wolfe, gene": "A/C",
+  "woolf, virginia": "A",
+  "yance, claude-emmanuelle": "D",
+  "yergeau, pierre": "D",
+  "yourcenar, marguerite": "C/D",
+  "zapata, mariana": "A/C",
+  "zelazny, roger": "C/D",
+  "zevin, gabrielle": "D",
+  "zimmer bradley, marion": "C/D",
+  "zola, émile": "A/C",
+  "zusak, markus": "C/D",
+  "zweig, stefan": "C/D",
+  "émond, louis": "A/C",
+  "évanturel, eudore": "D"
+};
+
+const AUTHOR_SECTIONS = {
+  "a., alex": "Jeunesse",
+  "abercrombie, joe": "Science-fiction",
+  "adam, olivier": "Roman international",
+  "addison, marilou": "Roman québécois",
+  "adichie, chimamanda ngozi": "Roman international",
+  "angers, françois-réal": "Roman québécois",
+  "ankaoua, maud": "Roman international",
+  "arcan, nelly": "Roman québécois",
+  "archambault, gilles": "Roman québécois",
+  "asimov, isaac": "Science-fiction",
+  "asselin, olivar": "Roman québécois",
+  "atalla, nora": "Roman québécois",
+  "aubert de gaspé": "Roman québécois",
+  "aubry, suzanne": "Roman québécois",
+  "austen, jane": "Classique",
+  "backman, fredrik": "Roman international",
+  "bailey, tessa": "New romance",
+  "banks, iain m.": "Science-fiction",
+  "bannalec, jean-luc": "Policier",
+  "barbe, jean": "Roman québécois",
+  "barbeau, victor": "Roman québécois",
+  "barbeau-lavalette, anaïs": "Roman québécois",
+  "barcelo, françois": "Roman québécois",
+  "barclay, linwood": "Policier",
+  "bardugo, leigh": "Science-fiction",
+  "baricco, alessandro": "Roman international",
+  "barjavel, rené": "Science-fiction",
+  "barker, clive": "Horreur",
+  "barry, robertine": "Roman québécois",
+  "barthe, joseph-guillaume": "Roman québécois",
+  "baudelaire, charles": "Classique",
+  "baxter, stephen": "Science-fiction",
+  "beauchemin, yves": "Roman québécois",
+  "beaugrand, honoré": "Roman québécois",
+  "beaulieu-beaudoin, laurence": "Roman québécois",
+  "beauregard, alphonse": "Roman québécois",
+  "belleau, janick": "Roman québécois",
+  "ben jelloun, tahar": "Roman international",
+  "berest, anne": "Roman international",
+  "bernard, évelyne": "Roman québécois",
+  "berry, steve": "Policier",
+  "bersianik, louky": "Roman québécois",
+  "bertrand, dominique": "Roman québécois",
+  "bertrand, jannette": "Roman québécois",
+  "bessette, arsène": "Roman québécois",
+  "beuglet, nicolas": "Policier",
+  "bibaud, michel": "Roman québécois",
+  "billingham, mark": "Policier",
+  "binet, laurent": "Roman international",
+  "birkegaard, mikkel": "Roman international",
+  "bisson, lucille": "Roman québécois",
+  "bissoondath, neil": "Roman québécois",
+  "black, holly": "Science-fiction",
+  "blais, françois": "Roman québécois",
+  "blais, marie-claire": "Roman québécois",
+  "blatty, william peter": "Horreur",
+  "blouin, lise": "Roman québécois",
+  "bobin, christian": "Roman international",
+  "boissard, janine": "Roman international",
+  "bombardier, denise": "Roman québécois",
+  "bordage, pierre": "Science-fiction",
+  "borduas, paul-émile": "Art",
+  "boucher de boucherville": "Roman québécois",
+  "boucher, denise": "Roman québécois",
+  "boulerice, simon": "Roman québécois",
+  "boulianne, danielle": "Jeunesse",
+  "boulle, pierre": "Science-fiction",
+  "bourbeau, françois-alexandre": "Roman québécois",
+  "bourdin, françoise": "Roman international",
+  "bourgault, catherine": "Roman québécois",
+  "bourgault, pierre": "Essai",
+  "bourget, édith": "Roman québécois",
+  "bourgoin, stéphane": "Policier",
+  "bowden, oliver": "Fantasy",
+  "bradbury, ray": "Science-fiction",
+  "brault, jacques": "Roman québécois",
+  "brecht, bertolt": "Roman international",
+  "brett, peter v.": "Science-fiction",
+  "brochu, andré": "Roman québécois",
+  "brooks, terry": "Science-fiction",
+  "bross, l.e.": "New romance",
+  "brossard, nicole": "Roman québécois",
+  "brouillette, daniel": "Jeunesse",
+  "brunet, andrée-anne": "Roman québécois",
+  "brunet, francine": "Roman québécois",
+  "brussolo, serge": "Science-fiction",
+  "buies, arthur": "Roman québécois",
+  "bukowski, charles": "Roman international",
+  "burke, alafair": "Policier",
+  "burke, james lee": "Policier",
+  "bussi, michel": "Policier",
+  "bussières, arthur de": "Roman québécois",
+  "butcher, jim": "Science-fiction",
+  "butler, octavia": "Science-fiction",
+  "byrne, rhonda": "Développement personnel",
+  "byrnes, michael": "Roman international",
+  "bégin, joel": "Roman québécois",
+  "bérard, judith": "Roman québécois",
+  "cadieux, pauline": "Roman québécois",
+  "cailloux, andré": "Roman québécois",
+  "caine, rachel": "Policier",
+  "calvino, italo": "Roman international",
+  "cambau, laure": "Poésie",
+  "card, orson scott": "Science-fiction",
+  "carnegie, dale": "Développement personnel",
+  "carrier, roch": "Roman québécois",
+  "carrisi, donato": "Policier",
+  "carré, john le": "Roman international",
+  "carter, chris": "Policier",
+  "cartier, george-étienne": "Roman québécois",
+  "casgrain, henri-raymond": "Roman québécois",
+  "cauque, romaine": "Roman québécois",
+  "chabon, michael": "Roman international",
+  "chabot, denys": "Roman québécois",
+  "chalandon, sorj": "Roman international",
+  "chalmet, véronique": "Policier",
+  "chambers, becky": "Science-fiction",
+  "champetier, joël": "Roman québécois",
+  "chapman, william": "Roman québécois",
+  "charland, jean-pierre": "Roman québécois",
+  "chattam, maxime": "Policier",
+  "chauveau, pierre-joseph-olivier": "Roman québécois",
+  "chen, ying": "Roman québécois",
+  "chevarier, corinne": "Poésie",
+  "chevrier, louise": "Roman québécois",
+  "chiang, ted": "Science-fiction",
+  "child, lee": "Policier",
+  "chopra, deepak": "Développement personnel",
+  "choquette, ernest": "Roman québécois",
+  "circé-côté, éva": "Roman québécois",
+  "cisneros, sandra": "Roman international",
+  "cixin, liu": "Science-fiction",
+  "clare, cassandra": "Science-fiction",
+  "clark, carol higgins": "Policier",
+  "clark, mary higgins": "Policier",
+  "clark, mary jane": "Policier",
+  "clarke, arthur c.": "Science-fiction",
+  "claudel, philippe": "Roman international",
+  "clear, james": "Développement personnel",
+  "cline, ernest": "Science-fiction",
+  "cloutier, raymond": "Roman québécois",
+  "clézio, j.m.g. le": "Roman international",
+  "coates, darcy": "Horreur",
+  "coben, harlan": "Policier",
+  "coderre, émile": "Roman québécois",
+  "coelho, paulo": "Roman international",
+  "cohen, leonard": "Poésie",
+  "collette, jean-yves": "Roman québécois",
+  "collins, larry": "Roman international",
+  "conan, laure": "Roman québécois",
+  "condo, marie": "Développement personnel",
+  "connelly, michael": "Policier",
+  "conrad, joseph": "Classique",
+  "corey, james s.a.": "Science-fiction",
+  "corriveau, hugues": "Roman québécois",
+  "cotnoir, louise": "Roman québécois",
+  "courtemanche, gil": "Roman québécois",
+  "cousture, arlette": "Roman québécois",
+  "covey, stephen": "Développement personnel",
+  "croft, esther": "Roman québécois",
+  "crouch, blake": "Science-fiction",
+  "cuthbert, ross": "Roman québécois",
+  "cutter, nick": "Horreur",
+  "cyr, gilles": "Roman québécois",
+  "côté, jacques": "Roman québécois",
+  "côté, laurence": "Roman québécois",
+  "d'ormesson, jean": "Roman international",
+  "d, fanny": "Roman québécois",
+  "da costa, mélissa": "Roman international",
+  "dalpé, jean marc": "Roman québécois",
+  "damasio, alain": "Science-fiction",
+  "dantin, louis": "Roman québécois",
+  "daoud, kamel": "Roman international",
+  "darlton, clark": "Science-fiction",
+  "daveluy, marie-claire": "Roman québécois",
+  "david, jessyca": "Roman québécois",
+  "david, michel": "Roman québécois",
+  "de balzac, honoré": "Classique",
+  "de cervantes, miguel": "Classique",
+  "de maupassant, guy": "Classique",
+  "de rosnay, tatiana": "Roman international",
+  "de saint-denys garneau": "Roman québécois",
+  "de sales laterrière": "Roman québécois",
+  "de vigan, delphine": "Roman international",
+  "decobert, nadine": "Roman québécois",
+  "delacourt, grégoire": "Roman international",
+  "delany, samuel": "Science-fiction",
+  "demille, nelson": "Policier",
+  "dentinger, yannick": "Roman québécois",
+  "desautels, denise": "Roman québécois",
+  "desbiens, patrick": "Roman québécois",
+  "descheneaux, nadine": "Jeunesse",
+  "desjardins, india": "Jeunesse",
+  "despatie, stéphane": "Roman québécois",
+  "desrochers, jean-simon": "Roman québécois",
+  "desrosiers, léo-paul": "Roman québécois",
+  "dessaulles, louis-antoine": "Roman québécois",
+  "diaz, sébastien": "Roman québécois",
+  "dickens, charles": "Classique",
+  "dicker, joël": "Policier",
+  "dickinson, emily": "Classique",
+  "dionne, charles": "Roman québécois",
+  "djian, philippe": "Roman international",
+  "doerr, anthony": "Roman international",
+  "dor, georges": "Roman québécois",
+  "dos santos, j.r.": "Roman international",
+  "douglas, penelope": "New romance",
+  "drouin, dominique": "Roman québécois",
+  "drummond, emma": "Roman international",
+  "du calvet": "Roman québécois",
+  "du maurier, daphné": "Roman international",
+  "dubois, jean-paul": "Roman international",
+  "dubuc, maryse": "Bande dessinée",
+  "dubé, marcel": "Roman québécois",
+  "ducharme, réjean": "Roman québécois",
+  "duchesne, christiane": "Roman québécois",
+  "dugas, marcel": "Roman québécois",
+  "duhamel, roger": "Roman québécois",
+  "dumas, alexandre": "Classique",
+  "dumont, fernand": "Roman québécois",
+  "dupont, éric": "Roman québécois",
+  "dupras, anne-marie": "Roman québécois",
+  "dupré, louise": "Roman québécois",
+  "dupuy, marie-bernadette": "Roman québécois",
+  "dyer, wayne": "Développement personnel",
+  "eddings, david": "Science-fiction",
+  "elliot, kendra": "Policier",
+  "erikson, steven": "Science-fiction",
+  "ethier, catherine": "Roman québécois",
+  "eugenides, jeffrey": "Roman international",
+  "everell, geneviève": "Cuisine",
+  "exupery, antoine de saint": "Roman international",
+  "farhoud, abla": "Roman québécois",
+  "faucher de saint-maurice": "Roman québécois",
+  "favreau-chalifour, marie-pier": "Roman québécois",
+  "faye, gaël": "Roman international",
+  "feist, raymond e.": "Science-fiction",
+  "ferguson, trevor": "Roman québécois",
+  "ferney, alice": "Roman international",
+  "ferrante, elena": "Roman international",
+  "fezzani, nadia": "Policier",
+  "filippini, anouk": "Roman international",
+  "filteau-chiba, gabrielle": "Roman québécois",
+  "finn, a.j.": "Policier",
+  "foenkinos, david": "Roman international",
+  "folch-ribas, jacques": "Roman québécois",
+  "follett, ken": "Roman international",
+  "forbes, éric": "Roman québécois",
+  "forster, e.m.": "Classique",
+  "fortier, dominique": "Roman québécois",
+  "fortier, jean-michel": "Roman québécois",
+  "fortune, carley": "Roman international",
+  "fournier, jules": "Roman québécois",
+  "frenette, christiane": "Roman québécois",
+  "frost, robert": "Classique",
+  "fréchette, louis-honoré": "Roman québécois",
+  "gabaldon, diana": "Roman international",
+  "gagnon, akim": "Roman québécois",
+  "gaignon, gary": "Roman québécois",
+  "gamache, marcel": "Roman québécois",
+  "gardner, lisa": "Policier",
+  "garmus, bonnie": "Roman international",
+  "garneau, alfred": "Roman québécois",
+  "garnier, alicia": "New romance",
+  "gaudet-smet, françoise": "Roman québécois",
+  "gauthier, bertrand": "Roman québécois",
+  "gauvreau, claude": "Roman québécois",
+  "gavalda, anna": "Roman international",
+  "gendreau, vickie": "Roman québécois",
+  "germain, rafaele": "Roman québécois",
+  "gevrey, chantal": "Roman québécois",
+  "giacometti ravenne": "Policier",
+  "gibson, william": "Science-fiction",
+  "gilbert-dumas, mylène": "Roman québécois",
+  "gill, charles": "Roman québécois",
+  "giordano, raphaëlle": "Roman international",
+  "girard, katherine": "Roman québécois",
+  "girard-audet, catherine": "Jeunesse",
+  "giroux, andré": "Roman québécois",
+  "gladwell, malcolm": "Développement personnel",
+  "glorieux, karine": "Roman québécois",
+  "glukhovsky, dimitri": "Science-fiction",
+  "godbout, jacques": "Roman québécois",
+  "godin, patrice": "Roman québécois",
+  "gogol, nikolaï": "Classique",
+  "golden, christie": "Jeunesse",
+  "gorgun, kenan": "Roman international",
+  "goscinny, rené": "Bande dessinée",
+  "goudreault, david": "Roman québécois",
+  "gounelle, laurent": "Roman international",
+  "grace, hannah": "New romance",
+  "grafton, sue": "Policier",
+  "grandbois, alain": "Roman québécois",
+  "grandpré, pierre de": "Roman québécois",
+  "gratton, andrée-anne": "Roman québécois",
+  "gray, martin": "Roman international",
+  "greaney, mark": "Policier",
+  "greif, hans-jürgen": "Roman québécois",
+  "grelet, nadine": "Roman québécois",
+  "grenier, daniel": "Roman québécois",
+  "grignon, claude-henri": "Roman québécois",
+  "grimaldi, virginie": "Roman international",
+  "grisham, john": "Policier",
+  "groovie, annie": "Jeunesse",
+  "groulx, lionel": "Histoire",
+  "guay-poliquin, christian": "Roman québécois",
+  "guillory, jasmine": "New romance",
+  "guèvremont, germaine": "Roman québécois",
+  "gélinas, ariane": "Policier",
+  "gélinas, gratien": "Roman québécois",
+  "haig, matt": "Roman international",
+  "hamilton, peter": "Science-fiction",
+  "hamsun, knut": "Classique",
+  "hannah, kristin": "Roman international",
+  "harari, yuval noah": "Histoire",
+  "harbach, chad": "Roman international",
+  "hardy, thomas": "Classique",
+  "harris, thomas": "Policier",
+  "harton, catherine": "Roman québécois",
+  "hawthorne, nathaniel": "Classique",
+  "hay, louise": "Développement personnel",
+  "hayder, mo": "Policier",
+  "hayle, olivia": "New romance",
+  "hazelwood, ali": "New romance",
+  "heitz, markus": "Science-fiction",
+  "hejazipour, mitra": "Biographie",
+  "hemingway, ernest": "Roman international",
+  "hendrix, grady": "Horreur",
+  "henry, emily": "New romance",
+  "herbert, james": "Horreur",
+  "hergé": "Bande dessinée",
+  "hibbert, talia": "New romance",
+  "hoag, tami": "Policier",
+  "hoang, helen": "New romance",
+  "hobb, robin": "Science-fiction",
+  "hoover, colleen": "New romance",
+  "hosseini, khaled": "Roman international",
+  "hotte, sylvain": "Jeunesse",
+  "houde, nicole": "Roman québécois",
+  "houle, patricia": "Roman québécois",
+  "howey, hugh": "Science-fiction",
+  "huang, ana": "New romance",
+  "hummel, maria": "Policier",
+  "hurwitz, gregg": "Policier",
+  "huxley, aldous": "Roman international",
+  "hébert, anne": "Roman québécois",
+  "hébert, sara": "Roman québécois",
+  "hénault, gilles": "Roman québécois",
+  "ibsen, henrik": "Classique",
+  "iles, greg": "Policier",
+  "indridason, arnaldur": "Policier",
+  "isayama, hajime": "Bande dessinée",
+  "jacob, suzanne": "Roman québécois",
+  "jardin, alexandre": "Roman international",
+  "jasmin, claude": "Roman québécois",
+  "jautard, valentin": "Roman québécois",
+  "jean, michel": "Roman québécois",
+  "jemisin, n.k.": "Science-fiction",
+  "jenkins reid, taylor": "Roman international",
+  "jewell, lisa": "Roman international",
+  "jimenez, abby": "New romance",
+  "jobidon, gilles": "Roman québécois",
+  "jonasson, ragnar": "Policier",
+  "jordan, robert": "Science-fiction",
+  "joyce, james": "Roman international",
+  "kanapé fontaine, natasha": "Autochtone",
+  "kapesh, an antane": "Autochtone",
+  "kawaguchi, toshikazu": "Roman international",
+  "kennedy, douglas": "Roman québécois",
+  "kennedy, elle": "New romance",
+  "khadra, yasmina": "Roman international",
+  "king, stephen": "Horreur",
+  "kishimoto, masashi": "Bande dessinée",
+  "kiyosaki, robert": "Développement personnel",
+  "kleypas, lisa": "New romance",
+  "koontz, dean": "Horreur",
+  "kristoff, jay": "Science-fiction",
+  "kubica, mary": "Policier",
+  "kvensler, ulf": "Policier",
+  "labrie, pierre": "Jeunesse",
+  "labrèche, marie-sissi": "Roman québécois",
+  "lackey, mercedes": "Science-fiction",
+  "lacombe, diane": "Roman québécois",
+  "lacoursière, louise": "Roman québécois",
+  "laferrière, dany": "Roman québécois",
+  "laflamme, steve": "Horreur",
+  "lafon, marie-hélène": "Roman international",
+  "lafond, jérôme": "Jeunesse",
+  "lafontaine, georges": "Roman québécois",
+  "laframboise, yves": "Art",
+  "lagercrantz, david": "Policier",
+  "lalonde-roux, sophie": "Roman québécois",
+  "lamontagne-beauregard, blanche": "Roman québécois",
+  "lamothe, serge": "Roman québécois",
+  "langlois, valérie": "Roman québécois",
+  "languirand, jacques": "Roman québécois",
+  "lapena, shari": "Policier",
+  "lapierre-dallaire, michelle": "Roman québécois",
+  "lapointe, paul-marie": "Roman québécois",
+  "larue, monique": "Roman québécois",
+  "lasnier, rina": "Roman québécois",
+  "latulippe, martine": "Jeunesse",
+  "laure, carole": "Roman québécois",
+  "lauren, christina": "New romance",
+  "laverdière, marthe": "Roman québécois",
+  "laverdure, bertrand": "Roman québécois",
+  "lavigne, guy": "Roman québécois",
+  "lavoie, marie-renée": "Roman québécois",
+  "lawrence, d.h.": "Classique",
+  "lawrence, mark": "Science-fiction",
+  "le fanu, joseph sheridan": "Classique",
+  "le guin, ursula k.": "Science-fiction",
+  "le tellier, hervé": "Roman international",
+  "lebas, mélanie": "Roman international",
+  "leblanc, perrine": "Roman québécois",
+  "ledig, agnès": "Roman international",
+  "legardinier, gilles": "Roman international",
+  "legault, émile": "Roman québécois",
+  "lehr, dick": "Policier",
+  "lem, stanislaw": "Science-fiction",
+  "lemaitre, pierre": "Policier",
+  "lemelin, roger": "Roman québécois",
+  "lemieux, jean": "Roman québécois",
+  "lemoine, wilfrid": "Roman québécois",
+  "lenoir, frédéric": "Développement personnel",
+  "leon, donna": "Policier",
+  "lepage, robert": "Roman québécois",
+  "leroux, catherine": "Roman québécois",
+  "lessard, jacqueline": "Roman québécois",
+  "lester, normand": "Essai",
+  "lewis, clive staples": "Jeunesse",
+  "loranger, jean-aubert": "Roman québécois",
+  "lovecraft, h.p.": "Horreur",
+  "lozeau, albert": "Roman québécois",
+  "lu, marie": "Jeunesse",
+  "ludlum, robert": "Policier",
+  "lussier, laurent": "Roman québécois",
+  "lynch, scott": "Science-fiction",
+  "lévesque, raymond": "Roman québécois",
+  "maas, sarah j.": "Science-fiction",
+  "mackintosh, clare": "Policier",
+  "maclennan, hugh": "Roman québécois",
+  "mailhot, robert j": "Roman québécois",
+  "malerman, josh": "Horreur",
+  "mancook, ian": "Policier",
+  "manson, mark": "Développement personnel",
+  "marcel, jean": "Roman québécois",
+  "marchamps, guy": "Roman québécois",
+  "marchand, clément": "Roman québécois",
+  "marineau, michèle": "Policier",
+  "marmette, joseph": "Roman québécois",
+  "marsons, angela": "Policier",
+  "martigny, paul de": "Roman québécois",
+  "martin, george r.r.": "Fantasy",
+  "martin-lugand, agnès": "Roman international",
+  "martineau, maureen": "Policier",
+  "masterton, graham": "Horreur",
+  "matheson, richard": "Science-fiction",
+  "mathieu, nicolas": "Roman international",
+  "maude-beauchesne, sarah": "Roman québécois",
+  "maugham, w. somerset": "Classique",
+  "maupin, armistead": "Roman international",
+  "mavrikakis, catherine": "Roman québécois",
+  "may, peter": "Policier",
+  "mazza, marianna": "Roman québécois",
+  "mcbain, ed": "Policier",
+  "mccammon, robert": "Horreur",
+  "mccarthy, cormac": "Roman international",
+  "mcclellan, brian": "Science-fiction",
+  "mcconaughey, matthew": "Développement personnel",
+  "mcculloch, amy": "Policier",
+  "mcculloch, colleen": "Policier",
+  "mcdermid, val": "Policier",
+  "mcfarlane, mhairi": "New romance",
+  "mckenzie, catherine": "Policier",
+  "mckenzie, sophie": "Policier",
+  "mckinley, tamara": "Policier",
+  "mclachlin, beverly": "Policier",
+  "meltzer, brad": "Policier",
+  "melville, herman": "Classique",
+  "mesplet, fleury": "Roman québécois",
+  "meunier, hugo": "Roman québécois",
+  "meyer, deon": "Policier",
+  "michaelides, alex": "Policier",
+  "michaud, andrée a.": "Roman québécois",
+  "michaud, martin": "Roman québécois",
+  "micone, marco": "Roman québécois",
+  "miller, madeline": "Fantasy",
+  "mina, denise": "Policier",
+  "minier, bernard": "Policier",
+  "miranda, megan": "Policier",
+  "mistral, christian": "Roman québécois",
+  "mofina, rick": "Policier",
+  "moncomble, morgane": "New romance",
+  "monticone, ugo": "Roman québécois",
+  "moorcock, michael": "Science-fiction",
+  "morahan de lauzon": "Poésie",
+  "moriarty, liane": "Policier",
+  "morin, stéfanie": "Roman québécois",
+  "morissette, guillaume": "Roman québécois",
+  "morley, michael": "Policier",
+  "morrison, boyd": "Science-fiction",
+  "morrissette, guillaume": "Policier",
+  "moyes, jojo": "Roman international",
+  "mull, brandon": "Jeunesse",
+  "musso, guillaume": "Roman international",
+  "myre, suzanne": "Roman québécois",
+  "nebot, didier": "Roman international",
+  "nelligan, émile": "Poésie",
+  "nepveu, pierre": "Roman québécois",
+  "neruda, pablo": "Roman international",
+  "nesbo, jo": "Policier",
+  "neuhaus, nele": "Policier",
+  "neuvel, sylvain": "Roman québécois",
+  "nevers, edmond de": "Roman québécois",
+  "nevill, adam": "Horreur",
+  "newman, ruth": "Policier",
+  "newport, cal": "Développement personnel",
+  "ng, celeste": "Roman international",
+  "nicol, patrick": "Roman québécois",
+  "nicolae, laura": "Roman québécois",
+  "nicole, amber v.": "New romance",
+  "niel, colin": "Policier",
+  "niven, jennifer": "Jeunesse",
+  "novik, naomi": "Science-fiction",
+  "noyart, paule": "Roman québécois",
+  "noël, francine": "Roman québécois",
+  "nunn, malla": "Policier",
+  "o'green, pattie": "Roman québécois",
+  "o'leary, beth": "New romance",
+  "o'neill, heather": "Roman québécois",
+  "obama, michelle": "Développement personnel",
+  "oda, eiichiro": "Bande dessinée",
+  "okoko, akena": "Poésie",
+  "olde heuvelt, thomas": "Horreur",
+  "ollivier, émile": "Roman québécois",
+  "olmi, véronique": "Roman international",
+  "orwell, george": "Roman international",
+  "ouellet, fernand": "Roman québécois",
+  "ouellette, francine": "Roman québécois",
+  "owens, delia": "Roman international",
+  "owens, mark": "Roman international",
+  "o’neil, gerard": "Policier",
+  "pancol, katherine": "Roman international",
+  "panneton, philippe": "Roman québécois",
+  "paquin, patricia": "Biographie",
+  "paradis, suzanne": "Roman québécois",
+  "paris, b.a.": "Policier",
+  "parizeau, alice": "Roman québécois",
+  "pasternak, boris": "Roman international",
+  "paventi, eza": "Roman québécois",
+  "payette, lise": "Essai",
+  "pearl, matthew": "Policier",
+  "pears, iain": "Policier",
+  "pelecanos, george": "Policier",
+  "pellerin, gilles": "Roman québécois",
+  "pelletier, albert": "Roman québécois",
+  "pelletier, jean-jacques": "Policier",
+  "penner, sarah": "Policier",
+  "penny, louise": "Policier",
+  "perfumo, cristian": "Policier",
+  "perrin, valérie": "Roman international",
+  "perro, bryan": "Roman québécois",
+  "peterson, jordan": "Développement personnel",
+  "pettersen, geneviève": "Roman québécois",
+  "pfeiffer, nell": "Fantasy",
+  "philips, jayne anne": "Policier",
+  "pierce, tamora": "Science-fiction",
+  "pilcher, rosamunde": "Roman international",
+  "pilon, marc-andré": "Jeunesse",
+  "pion, marylène": "Roman québécois",
+  "plamondon, éric": "Roman québécois",
+  "plessis, joseph-octave": "Roman québécois",
+  "pobi, robert": "Policier",
+  "poirier, priska": "Jeunesse",
+  "poirier, yves d.": "Policier",
+  "poitras, anique": "Roman québécois",
+  "pomerleau, gervais": "Roman québécois",
+  "portal, louise": "Roman québécois",
+  "portiche, roland": "Policier",
+  "potvin, marie": "Roman québécois",
+  "poulin, jacques": "Roman québécois",
+  "poyet, clara": "Policier",
+  "preston, douglas": "Policier",
+  "priest, christopher": "Science-fiction",
+  "proulx, candide": "Roman québécois",
+  "pulixi, piergiorgio": "Policier",
+  "pullman, philip": "Science-fiction",
+  "puértolas, romain": "Roman international",
+  "pyper, andrew": "Policier",
+  "péloquin, claude": "Poésie",
+  "quesnel, joseph": "Roman québécois",
+  "quinn, julia": "Roman international",
+  "quiviger, matthieu": "Jeunesse",
+  "rabagliati, michel": "Roman québécois",
+  "racine, rober": "Roman québécois",
+  "rafy, serge": "Policier",
+  "reeves, hubert": "Sciences pures",
+  "reichs, kathy": "Policier",
+  "reilly, cora": "Policier",
+  "renaud, marie-claude": "Roman québécois",
+  "reynolds, alastair": "Science-fiction",
+  "richard, line": "Roman québécois",
+  "richler, mordecai": "Roman québécois",
+  "ridzen, lisa": "Roman international",
+  "riel, louis": "Biographie",
+  "rigbey, liz": "Horreur",
+  "riggs, ransom": "Jeunesse",
+  "riordan, rick": "Jeunesse",
+  "rioux, hélène": "Roman québécois",
+  "rivard, yvon": "Roman québécois",
+  "robbins, david": "Policier",
+  "roberts, nora": "Roman international",
+  "robillard, anne": "Roman québécois",
+  "robinson, peter": "Policier",
+  "robotham, michael": "Policier",
+  "roches, roger des": "Roman québécois",
+  "rochon, esther": "Roman québécois",
+  "rodet, jean-claude": "Roman québécois",
+  "rodriguez-lefebvre, renato": "Roman québécois",
+  "rondeau, sophie": "Jeunesse",
+  "roquebrune, robert de": "Roman québécois",
+  "rose, karen": "Policier",
+  "rossignol, mario": "Policier",
+  "rothfuss, patrick": "Science-fiction",
+  "roussin, claude": "Roman québécois",
+  "routhier, adolphe-basile": "Roman québécois",
+  "routier, simone": "Roman québécois",
+  "rowell, rainbow": "Jeunesse",
+  "roy, gabrielle": "Roman international",
+  "royer, jean": "Roman québécois",
+  "rubenfeld, jed": "Policier",
+  "ruel, francine": "Roman québécois",
+  "rufin, jean-christophe": "Roman international",
+  "ruiz, don miguel": "Développement personnel",
+  "sack, john": "Roman international",
+  "sager, riley": "Policier",
+  "saint-denis, janou": "Roman québécois",
+  "sand, george": "Classique",
+  "sanderson, brandon": "Science-fiction",
+  "sapkowski, andrzej": "Science-fiction",
+  "sarfati, sonia": "Jeunesse",
+  "sattouf, riad": "Roman international",
+  "saucier, jocelyne": "Roman québécois",
+  "savard, félix-antoine": "Roman québécois",
+  "scheer, k.h.": "Science-fiction",
+  "schmitt, éric-emmanuel": "Roman international",
+  "schwab, v.e.": "Science-fiction",
+  "score, lucy": "New romance",
+  "semionov, julian": "Roman international",
+  "senécal, patrick": "Roman québécois",
+  "sernine, daniel": "Roman québécois",
+  "shafak, elif": "Roman international",
+  "shannon, samantha": "Science-fiction",
+  "sharma, robin": "Développement personnel",
+  "sheldon, sidney": "Roman international",
+  "shelley, mary": "Classique",
+  "shimazaki, aki": "Roman québécois",
+  "sicard, l.p.": "Policier",
+  "silva, daniel": "Policier",
+  "silver, josie": "New romance",
+  "silverberg, robert": "Fantasy",
+  "simard, louise": "Roman québécois",
+  "simmons, dan": "Science-fiction",
+  "simoneau, jean": "Roman québécois",
+  "singer, christiane": "Roman international",
+  "slimani, leïla": "Roman international",
+  "soucy, gaétan": "Roman québécois",
+  "soulières, robert": "Roman québécois",
+  "sparks, nicholas": "Roman international",
+  "stanké, alain": "Essai",
+  "ste-marie, jean-pierre": "Policier",
+  "steel, danielle": "Roman international",
+  "steinbeck, john": "Roman international",
+  "sten, viveca": "Policier",
+  "stevenson, robert louis": "Classique",
+  "stiefvater, maggie": "Jeunesse",
+  "stockett, kathryn": "Roman international",
+  "stoker, bram": "Classique",
+  "straram, patrick": "Roman québécois",
+  "strindberg, august": "Classique",
+  "stréliski, léa": "Roman québécois",
+  "sulte, benjamin": "Roman québécois",
+  "swan, thomas": "Policier",
+  "szucsany, désirée": "Roman québécois",
+  "taché, joseph-charles": "Roman québécois",
+  "tahir, sabaa": "Science-fiction",
+  "takahashi, rumiko": "Bande dessinée",
+  "takeuchi, naoko": "Bande dessinée",
+  "tard, louis-martin": "Roman québécois",
+  "tardivel, jules-paul": "Roman québécois",
+  "tartt, donna": "Roman international",
+  "tchekhov, anton": "Classique",
+  "teboul, victor": "Essai",
+  "tesson, sylvain": "Roman international",
+  "tezuka, osamu": "Bande dessinée",
+  "thilliez, franck": "Policier",
+  "thomas, angie": "Jeunesse",
+  "thomas, craig": "Roman international",
+  "thomas, gordon": "Roman international",
+  "thorne, sally": "New romance",
+  "thériault, yves": "Roman québécois",
+  "thúy, kim": "Roman québécois",
+  "tibo, gilles": "Roman québécois",
+  "tolle, eckhart": "Développement personnel",
+  "tolstoï, léon": "Classique",
+  "tomas, adrien": "Jeunesse",
+  "tondreau-levert, louise": "Roman québécois",
+  "toriyama, akira": "Bande dessinée",
+  "tougas, gérald": "Roman québécois",
+  "toussaint, jean-philippe": "Roman québécois",
+  "towles, amor": "Roman international",
+  "tremblay, michel": "Roman québécois",
+  "tremblay-d'essiambre, louise": "Roman québécois",
+  "tremblay-d’essiambre, louise": "Roman québécois",
+  "tuil, karine": "Roman international",
+  "turcotte, élise": "Roman québécois",
+  "tétreault, laurie": "Roman québécois",
+  "uderzo, albert": "Bande dessinée",
+  "uguay, marie": "Roman québécois",
+  "unger, lisa": "Policier",
+  "uris, leon": "Roman international",
+  "vadeboncœur, pierre": "Roman québécois",
+  "vaillancourt, jean": "Roman québécois",
+  "vailly, corinne de": "Jeunesse",
+  "vallières, camille": "Roman québécois",
+  "valognes, aurélie": "Roman international",
+  "vance, jack": "Science-fiction",
+  "vareil, marie": "Roman international",
+  "vargas, fred": "Policier",
+  "vastel, michel": "Biographie",
+  "vekeman, lise": "Roman québécois",
+  "verdier, vic": "Roman québécois",
+  "verne, jules": "Classique",
+  "viens, alex": "Roman québécois",
+  "villeneuve, pierre-yves": "Jeunesse",
+  "vonarburg, élisabeth": "Roman québécois",
+  "ward, catriona": "Horreur",
+  "ware, ruth": "Policier",
+  "warren, louise": "Roman québécois",
+  "weeks, brent": "Science-fiction",
+  "weir, andy": "Science-fiction",
+  "werber, bernard": "Roman international",
+  "wharton, edith": "Classique",
+  "whatson, sue": "Roman international",
+  "whitman, walt": "Classique",
+  "wilde, oscar": "Classique",
+  "wilhelmy, pascale": "Roman québécois",
+  "willocks, tim": "Policier",
+  "withman, walt": "Roman international",
+  "wolf, virginia": "Roman international",
+  "wolfe, gene": "Science-fiction",
+  "yance, claude-emmanuelle": "Roman québécois",
+  "yergeau, pierre": "Roman québécois",
+  "zapata, mariana": "New romance",
+  "zevin, gabrielle": "Roman international",
+  "zusak, markus": "Roman international",
+  "émond, louis": "Roman québécois",
+  "évanturel, eudore": "Roman québécois"
+};
+
+// ═══════════════════════════════════════════════════════
+// EXCEPTIONS PAR ISBN — prix de vente spécial Librissime
+// (le code de l'auteur continue de déterminer la décision)
+// ═══════════════════════════════════════════════════════
+const ISBN_EXCEPTIONS = {
+  "9782352949107": { titre: "Lovecraft — Les Contrées du rêve (Bragelonne)", prix: 14.95 }
+};
+
+
+
+function loadAuthors() {
+  // Liste intégrée directement — pas de chargement nécessaire
+  console.log("Liste d'auteurs : 219 auteurs chargés");
+}
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let bookData = null;
+let authorCode = null;
+let isNouveaute = false;
+// ═══════════════════════════════════════════════════════
+// SUPABASE — sauvegarde des lots clients
+// ═══════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://fojnwtdxoeztglvzyrub.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvam53dGR4b2V6dGdsdnp5cnViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0ODUyNjEsImV4cCI6MjA5NzA2MTI2MX0.DP97WTlRnrNIZwRRpTK6j8e0fjIUFKN1qM1xyCyjbMw';
+
+async function supabaseInsert(table, data) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('Supabase ' + res.status + ': ' + await res.text());
+  return await res.json();
+}
+
+async function supabaseSelect(table, query) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + query, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
+  });
+  if (!res.ok) throw new Error('Supabase ' + res.status + ': ' + await res.text());
+  return await res.json();
+}
+
+async function supabaseUpdate(table, id, data) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('Supabase ' + res.status + ': ' + await res.text());
+  return await res.json();
+}
+
+async function supabaseDelete(table, id) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
+  });
+  if (!res.ok) throw new Error('Supabase ' + res.status + ': ' + await res.text());
+}
+
+let selectedFormat = '';
+let recentNouveaute = false;
+let currentMode = 'unique'; // 'unique' or 'batch'
+let batchItems = [];
+let lastResult = null; // stores the last calculation result for batch mode
+let scanDejaAjouteAuLot = false; // évite le double-ajout au lot lors du recalcul (prix en arrière-plan)
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-mode-' + mode).classList.add('active');
+  if (mode === 'batch') {
+    document.getElementById('batchCard').classList.remove('hidden');
+  } else {
+    document.getElementById('batchCard').classList.add('hidden');
+    document.getElementById('batchSummary').classList.add('hidden');
+  }
+}
+
+function addToBatch(result) {
+  // Garde-fou anti-doublon : empêche d'ajouter deux fois le même livre
+  // en succession immédiate (ex. double déclenchement de calculate/showResult).
+  const sig = (result.title || '') + '|' + (result.author || '') + '|' + (result.sellPrice || '');
+  const maintenant = Date.now();
+  if (window._dernierAjout && window._dernierAjout.sig === sig
+      && (maintenant - window._dernierAjout.t) < 1200) {
+    return; // doublon détecté dans les 3 secondes → ignoré
+  }
+  window._dernierAjout = { sig: sig, t: maintenant };
+  batchItems.push(result);
+  renderBatchList();
+}
+
+function removeBatchItem(index) {
+  batchItems.splice(index, 1);
+  renderBatchList();
+}
+
+function renderBatchList() {
+  const list = document.getElementById('batchList');
+  if (batchItems.length === 0) {
+    list.innerHTML = '<div style="text-align:center; color:#999; font-size:13px; padding:10px;">Aucun livre dans le lot</div>';
+    document.getElementById('batchTotals').classList.add('hidden');
+    return;
+  }
+
+  const decisionClass = {
+    accept: 'batch-item-accept',
+    ac: 'batch-item-ac',
+    credit: 'batch-item-credit',
+    cd: 'batch-item-credit',
+    don: 'batch-item-don',
+    d: 'batch-item-don',
+    reject: 'batch-item-reject',
+    consult: 'batch-item-consult',
+    unknown: 'batch-item-consult'
+  };
+
+  let html = '';
+  batchItems.forEach((item, i) => {
+    let offerText = '';
+    if (item.decision === 'accept') offerText = item.offerCash.toFixed(2) + ' $ argent';
+    else if (item.decision === 'ac') offerText = item.offerCash.toFixed(2) + ' $ / ' + item.offerCredit.toFixed(2) + ' $ cr.';
+    else if (item.decision === 'credit' || item.decision === 'cd') offerText = item.offerCredit ? item.offerCredit.toFixed(2) + ' $ credit' : 'Credit';
+    else if (item.decision === 'don' || item.decision === 'd') offerText = 'Don';
+    else if (item.decision === 'reject') offerText = 'Refus';
+    else offerText = 'Consulter';
+
+    const cls = decisionClass[item.decision] || 'batch-item-consult';
+    html += '<div class="batch-item ' + cls + '">';
+    html += '<div class="batch-item-info">';
+    html += '<div class="batch-item-title">' + (item.title || 'Inconnu') + '</div>';
+    html += '<div class="batch-item-detail">' + (item.author || '') + '</div>';
+    html += '</div>';
+    html += '<div class="batch-item-amount">' + offerText + '</div>';
+    html += '<button class="batch-remove" onclick="removeBatchItem(' + i + ')">✕</button>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+
+  // Update totals
+  let totalCash = 0, totalCredit = 0, totalDons = 0, totalRefus = 0;
+  batchItems.forEach(item => {
+    if (item.decision === 'accept') totalCash += item.offerCash || 0;
+    else if (item.decision === 'ac') totalCash += item.offerCash || 0; // default to cash for A/C
+    else if (item.decision === 'credit' || item.decision === 'cd') totalCredit += item.offerCredit || 0;
+    else if (item.decision === 'don' || item.decision === 'd') totalDons++;
+    else if (item.decision === 'reject') totalRefus++;
+  });
+
+  document.getElementById('batchTotalCash').textContent = totalCash.toFixed(2) + ' $';
+  document.getElementById('batchTotalCredit').textContent = totalCredit.toFixed(2) + ' $';
+  document.getElementById('batchTotalDons').textContent = totalDons;
+  document.getElementById('batchTotalRefus').textContent = totalRefus;
+  document.getElementById('batchTotals').classList.remove('hidden');
+}
+
+function finDuLot() {
+  // Add current result if not yet added
+  if (lastResult) {
+    addToBatch(lastResult);
+    lastResult = null;
+  }
+  if (batchItems.length === 0) { alert('Le lot est vide.'); return; }
+
+  let totalCash = 0, totalCredit = 0, totalDons = 0, totalRefus = 0;
+  let linesHtml = '';
+
+  batchItems.forEach((item, i) => {
+    let offerText = '';
+    let offerColor = '#333';
+    if (item.decision === 'accept') {
+      offerText = item.offerCash.toFixed(2) + ' $ argent';
+      totalCash += item.offerCash || 0;
+      offerColor = '#1B5E20';
+    } else if (item.decision === 'ac') {
+      offerText = item.offerCash.toFixed(2) + ' $ argent';
+      totalCash += item.offerCash || 0;
+      offerColor = '#9A7B00';
+    } else if (item.decision === 'credit' || item.decision === 'cd') {
+      offerText = (item.offerCredit ? item.offerCredit.toFixed(2) : '0.00') + ' $ credit';
+      totalCredit += item.offerCredit || 0;
+      offerColor = '#1F4E79';
+    } else if (item.decision === 'don' || item.decision === 'd') {
+      offerText = 'Don';
+      totalDons++;
+      offerColor = '#6A1B9A';
+    } else if (item.decision === 'reject') {
+      offerText = 'Refus';
+      totalRefus++;
+      offerColor = '#C62828';
+    } else {
+      offerText = 'Consulter';
+      offerColor = '#F0A500';
+    }
+
+    linesHtml += '<div class="summary-line">';
+    linesHtml += '<span class="summary-line-title">' + (i+1) + '. ' + (item.title || 'Inconnu') + ' (' + (item.author || '') + ')</span>';
+    linesHtml += '<span class="summary-line-offer" style="color:' + offerColor + '">' + offerText + '</span>';
+    linesHtml += '</div>';
+  });
+
+  let totalsHtml = '<div class="summary-totals">';
+  if (totalCash > 0) totalsHtml += '<div class="summary-total-line"><span>Total argent</span><span>' + totalCash.toFixed(2) + ' $</span></div>';
+  if (totalCredit > 0) totalsHtml += '<div class="summary-total-line"><span>Total credit</span><span>' + totalCredit.toFixed(2) + ' $</span></div>';
+  if (totalDons > 0) totalsHtml += '<div class="summary-total-line"><span>Dons</span><span>' + totalDons + ' livre(s)</span></div>';
+  if (totalRefus > 0) totalsHtml += '<div class="summary-total-line"><span>Refus</span><span>' + totalRefus + ' livre(s)</span></div>';
+  const grandTotal = totalCash + totalCredit;
+  if (grandTotal > 0) totalsHtml += '<div class="summary-total-line summary-grand-total"><span>TOTAL</span><span>' + grandTotal.toFixed(2) + ' $</span></div>';
+  totalsHtml += '</div>';
+
+  // Stocker les totaux du lot courant pour la sauvegarde
+  window.lotCourant = { totalCash, totalCredit, totalDons, totalRefus, items: batchItems.slice() };
+
+  const summary = document.getElementById('batchSummary');
+  summary.innerHTML = '<div class="summary-title">RESUME DU LOT — ' + batchItems.length + ' livre(s)</div>' + linesHtml + totalsHtml;
+  summary.innerHTML += '<div id="saveZone" style="margin-top:14px;">'
+    + '<button class="btn-batch btn-fin" style="width:100%; margin-bottom:8px;" onclick="ouvrirFormulaireClient()">💾 Enregistrer au nom d\'un client</button>'
+    + '<button class="btn-batch btn-nouveau" style="width:100%;" onclick="nouveauLot()">Nouveau lot</button>'
+    + '</div>';
+  summary.classList.remove('hidden');
+
+  // Hide scan area and result, show summary
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('batchCard').classList.add('hidden');
+  document.getElementById('modeCard').classList.add('hidden');
+  document.querySelector('.col-left').classList.add('hidden');
+  summary.scrollIntoView({ behavior: 'smooth' });
+}
+
+function nouveauLot() {
+  batchItems = [];
+  renderBatchList();
+  document.getElementById('batchSummary').classList.add('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('modeCard').classList.remove('hidden');
+  document.getElementById('batchCard').classList.remove('hidden');
+  var colLeft = document.querySelector('.col-left');
+  if (colLeft) colLeft.classList.remove('hidden');
+  reset();
+}
+
+async function evaluerDepot(lotId) {
+  // Charger les infos du dépôt et basculer en mode lot pour l'évaluer
+  try {
+    const lots = await supabaseSelect('lots', 'id=eq.' + lotId);
+    const lot = lots[0];
+    window.depotEnCours = {
+      id: lotId,
+      succursale: lot.succursale,
+      nom: lot.client_nom,
+      prenom: lot.client_prenom,
+      telephone: lot.client_telephone,
+      note: lot.note,
+      statut: lot.statut
+    };
+    fermerRechercheLots();
+    // Basculer en mode lot
+    setMode('batch');
+    batchItems = [];
+    renderBatchList();
+    document.getElementById('batchSummary').classList.add('hidden');
+    // Bandeau indiquant qu'on évalue un dépôt
+    montrerToast('📦 Évaluation du dépôt de ' + ((lot.client_prenom||'') + ' ' + (lot.client_nom||'')).trim(), true);
+    afficherBandeauDepot();
+    document.getElementById('isbnInput').focus();
+  } catch(e) {
+    console.error(e);
+    montrerToast('Erreur de chargement du dépôt', false);
+  }
+}
+
+function afficherBandeauDepot() {
+  if (!window.depotEnCours) return;
+  let bandeau = document.getElementById('bandeauDepot');
+  if (!bandeau) {
+    bandeau = document.createElement('div');
+    bandeau.id = 'bandeauDepot';
+    bandeau.className = 'bandeau-depot';
+    const modeCard = document.getElementById('modeCard');
+    modeCard.parentNode.insertBefore(bandeau, modeCard.nextSibling);
+  }
+  const d = window.depotEnCours;
+  const nom = ((d.prenom||'') + ' ' + (d.nom||'')).trim() || 'client';
+  bandeau.innerHTML = '📦 Vous évaluez le dépôt de <strong>' + nom + '</strong>'
+    + (d.note ? '<br><span style="font-size:12px; opacity:0.85;">' + d.note + '</span>' : '')
+    + '<button onclick="annulerEvaluationDepot()" class="bandeau-x">✕</button>';
+}
+
+function annulerEvaluationDepot() {
+  window.depotEnCours = null;
+  const b = document.getElementById('bandeauDepot');
+  if (b) b.remove();
+  montrerToast('Évaluation du dépôt annulée', true);
+}
+
+function ouvrirFormulaireClient() {
+  const summary = document.getElementById('batchSummary');
+  const formHtml = `
+    <div id="clientForm" class="client-form">
+      <div class="card-title" style="font-size:15px;">💾 Enregistrer au nom d'un client</div>
+      <div class="form-group">
+        <label class="form-label">Succursale</label>
+        <select id="cf-succursale" class="form-input">
+          <option value="">— Choisir —</option>
+          <option value="Trois-Rivières">Trois-Rivières</option>
+          <option value="Shawinigan">Shawinigan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nom du client</label>
+        <input type="text" id="cf-nom" class="form-input" placeholder="Nom de famille">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prénom du client</label>
+        <input type="text" id="cf-prenom" class="form-input" placeholder="Prénom">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input type="text" id="cf-tel" class="form-input" placeholder="819-555-1234">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note au dossier (optionnel)</label>
+        <textarea id="cf-note" class="form-input" rows="2" placeholder="Ex : rappeler après 17h"></textarea>
+      </div>
+      <div id="cf-message" style="margin:8px 0; font-size:13px;"></div>
+      <button class="btn-batch btn-fin" style="width:100%; margin-bottom:8px;" onclick="enregistrerLot()">✅ Confirmer l'enregistrement</button>
+      <button class="btn-batch btn-nouveau" style="width:100%;" onclick="annulerFormulaireClient()">Annuler</button>
+    </div>`;
+  document.getElementById('saveZone').style.display = 'none';
+  const existing = document.getElementById('clientForm');
+  if (existing) existing.remove();
+  summary.insertAdjacentHTML('beforeend', formHtml);
+  // Pré-remplir si on évalue un dépôt existant
+  if (window.depotEnCours) {
+    const d = window.depotEnCours;
+    if (d.succursale) document.getElementById('cf-succursale').value = d.succursale;
+    if (d.nom) document.getElementById('cf-nom').value = d.nom;
+    if (d.prenom) document.getElementById('cf-prenom').value = d.prenom;
+    if (d.telephone) document.getElementById('cf-tel').value = d.telephone;
+    if (d.note) document.getElementById('cf-note').value = d.note;
+  }
+  document.getElementById('clientForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function annulerFormulaireClient() {
+  const f = document.getElementById('clientForm');
+  if (f) f.remove();
+  document.getElementById('saveZone').style.display = 'block';
+}
+
+async function enregistrerLot() {
+  const succursale = document.getElementById('cf-succursale').value;
+  const nom = document.getElementById('cf-nom').value.trim();
+  const prenom = document.getElementById('cf-prenom').value.trim();
+  const tel = document.getElementById('cf-tel').value.trim();
+  const note = document.getElementById('cf-note').value.trim();
+  const msg = document.getElementById('cf-message');
+
+  if (!succursale) { msg.innerHTML = '<span style="color:#C62828;">Veuillez choisir la succursale.</span>'; return; }
+  if (!nom && !prenom) { msg.innerHTML = '<span style="color:#C62828;">Entrez au moins un nom ou un prénom.</span>'; return; }
+  if (!window.lotCourant) { msg.innerHTML = '<span style="color:#C62828;">Aucun lot à enregistrer.</span>'; return; }
+
+  msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement en cours…</span>';
+
+  try {
+    const lot = window.lotCourant;
+    const enEvaluationDepot = !!window.depotEnCours;
+    // Si dépôt évalué : statut « Évalué — à contacter ». Sinon lot direct : « En attente ».
+    const nouveauStatut = enEvaluationDepot ? 'Évalué — à contacter' : 'En attente';
+    const lotData = {
+      succursale: succursale,
+      client_nom: nom || null,
+      client_prenom: prenom || null,
+      client_telephone: tel || null,
+      note: note || null,
+      total_argent: lot.totalCash,
+      total_credit: lot.totalCredit,
+      total_dons: lot.totalDons,
+      total_refus: lot.totalRefus,
+      statut: nouveauStatut
+    };
+
+    let lotId;
+    if (enEvaluationDepot) {
+      // Mettre à jour le dépôt existant
+      lotId = window.depotEnCours.id;
+      await supabaseUpdate('lots', lotId, lotData);
+    } else {
+      // Créer un nouveau lot
+      const lotResult = await supabaseInsert('lots', lotData);
+      lotId = lotResult[0].id;
+    }
+
+    // Ajouter les livres
+    const livres = lot.items.map(item => ({
+      lot_id: lotId,
+      titre: item.title || 'Inconnu',
+      auteur: item.author || '',
+      decision: item.decision,
+      offre_argent: item.offerCash || null,
+      offre_credit: item.offerCredit || null,
+      prix_vente: item.sellPrice || null
+    }));
+    if (livres.length > 0) await supabaseInsert('lot_livres', livres);
+
+    msg.innerHTML = '<span style="color:#1B5E20; font-weight:600;">✅ Lot enregistré pour ' + (prenom + ' ' + nom).trim() + ' !</span>';
+    // Nettoyer l'état du dépôt en cours
+    window.depotEnCours = null;
+    const bd = document.getElementById('bandeauDepot');
+    if (bd) bd.remove();
+    // Remplacer le formulaire par un message de succès + bouton nouveau lot
+    setTimeout(() => {
+      const f = document.getElementById('clientForm');
+      if (f) f.innerHTML = '<div style="text-align:center; padding:10px;">'
+        + '<div style="font-size:15px; color:#1B5E20; font-weight:600; margin-bottom:12px;">✅ Lot enregistré pour ' + (prenom + ' ' + nom).trim() + '</div>'
+        + '<button class="btn-batch btn-nouveau" style="width:100%;" onclick="nouveauLot()">Nouveau lot</button></div>';
+    }, 800);
+
+  } catch(e) {
+    console.error(e);
+    msg.innerHTML = '<span style="color:#C62828;">Erreur d\'enregistrement. Vérifiez la connexion internet et réessayez.<br>(' + e.message + ')</span>';
+  }
+}
+
+const STATUTS = ['À évaluer', 'Évalué — à contacter', 'En attente', 'Complété — tout gardé', 'Complété — reste à récupérer', 'Pas d\'entente'];
+
+const STATUTS_DEMANDE = ['En recherche', 'Trouvé — à contacter', 'Livré', 'Annulé'];
+
+function statutDemandeCouleur(statut) {
+  if (statut === 'Trouvé — à contacter') return '#00897B';
+  if (statut === 'Livré') return '#1B5E20';
+  if (statut === 'Annulé') return '#C62828';
+  return '#F0A500'; // En recherche
+}
+
+// ═══════════════════════════════════════════════════════
+// ÉCRAN D'ACCUEIL ET NAVIGATION ENTRE SERVICES
+// ═══════════════════════════════════════════════════════
+const MOTS_DE_PASSE_ADMIN = ['48891371', '4793378']; // TR et Shawinigan (option A : les deux ouvrent l'Administration)
+
+function retourAccueil() {
+  // Masquer tous les écrans de service
+  document.getElementById('evaluationScreen').classList.add('hidden');
+  document.getElementById('lotsScreen').classList.add('hidden');
+  document.getElementById('demandesScreen').classList.add('hidden');
+  const adminS = document.getElementById('adminScreen');
+  if (adminS) adminS.classList.add('hidden');
+  // Afficher l'accueil
+  document.getElementById('accueilScreen').classList.remove('hidden');
+  // Cacher le bouton Accueil (on y est déjà)
+  document.getElementById('btnAccueil').classList.add('hidden');
+}
+
+function allerAuService(service) {
+  // Masquer l'accueil
+  document.getElementById('accueilScreen').classList.add('hidden');
+  // Montrer le bouton Accueil pour pouvoir revenir
+  document.getElementById('btnAccueil').classList.remove('hidden');
+
+  if (service === 'evaluation') {
+    document.getElementById('evaluationScreen').classList.remove('hidden');
+  } else if (service === 'lots') {
+    document.getElementById('evaluationScreen').classList.remove('hidden');
+    ouvrirRechercheLots();
+  } else if (service === 'depots') {
+    document.getElementById('evaluationScreen').classList.remove('hidden');
+    ouvrirRechercheLots();
+    // Ouvrir directement le formulaire de dépôt après un court délai
+    setTimeout(() => { if (typeof ouvrirFormulaireDepot === 'function') ouvrirFormulaireDepot(); }, 300);
+  } else if (service === 'demandes') {
+    document.getElementById('evaluationScreen').classList.remove('hidden');
+    ouvrirDemandes();
+  } else if (service === 'admin') {
+    ouvrirAdministration();
+  } else if (service === 'inventaire') {
+    // Place réservée — ne rien faire
+    retourAccueil();
+  }
+}
+
+function ouvrirAdministration() {
+  const motDePasse = prompt('🔐 Administration\n\nEntrez le mot de passe de votre succursale :');
+  if (motDePasse === null) {
+    // Annulé → revenir à l'accueil
+    retourAccueil();
+    return;
+  }
+  if (MOTS_DE_PASSE_ADMIN.includes(motDePasse.trim())) {
+    afficherAdministration();
+  } else {
+    alert('❌ Mot de passe incorrect.');
+    retourAccueil();
+  }
+}
+
+function afficherAdministration() {
+  let adminS = document.getElementById('adminScreen');
+  if (!adminS) {
+    adminS = document.createElement('div');
+    adminS.id = 'adminScreen';
+    adminS.className = 'lots-screen';
+    adminS.innerHTML = `
+      <div class="lots-header">
+        <span class="lots-title">🔐 Administration</span>
+        <button class="lots-close" onclick="retourAccueil()">✕ Fermer</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Espace administration</div>
+        <p style="color:#555; font-size:14px; line-height:1.5;">
+          Bienvenue dans l'espace d'administration. Les services sensibles seront accessibles ici.
+        </p>
+      </div>
+      <div class="accueil-grille" style="margin-top:8px;">
+        <button class="service-btn service-paie" disabled>
+          <span class="service-icone">💰</span>
+          <span class="service-nom">Paie</span>
+          <span class="service-desc">Bientôt disponible</span>
+        </button>
+      </div>`;
+    document.querySelector('.container').appendChild(adminS);
+  }
+  adminS.classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════════════════
+// ALERTE : un livre scanné correspond-il à une demande client ?
+// ═══════════════════════════════════════════════════════
+function normaliserTexte(s) {
+  if (!s) return '';
+  return s.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retirer accents
+    .replace(/\s+/g, ' ').trim();
+}
+
+// Compare deux noms d'auteurs de façon souple (gère les orthographes translittérées)
+function auteursCorrespondent(demTitreNorm, demandeAuteur, scanAuteurNorm) {
+  const demAuteurNorm = normaliserTexte(demandeAuteur);
+  if (!demAuteurNorm || !scanAuteurNorm) return false;
+  // Correspondance directe (un contient l'autre)
+  if (scanAuteurNorm.includes(demAuteurNorm) || demAuteurNorm.includes(scanAuteurNorm)) return true;
+  // Comparaison par DÉBUT de nom de famille : on prend chaque mot significatif de la
+  // demande et on vérifie si un mot du scan commence pareil sur au moins 5 lettres.
+  // Ex. « glukhovski » et « glukhovsky » partagent « glukhovsk » → correspondance.
+  const motsDemande = demAuteurNorm.split(' ').filter(m => m.length >= 5);
+  const motsScan = scanAuteurNorm.split(/[\s,]+/).filter(m => m.length >= 5);
+  for (const md of motsDemande) {
+    for (const ms of motsScan) {
+      const prefixe = Math.min(md.length, ms.length, 6); // comparer jusqu'à 6 lettres
+      if (prefixe >= 5 && md.substring(0, prefixe) === ms.substring(0, prefixe)) return true;
+    }
+  }
+  return false;
+}
+
+async function verifierDemandeClient(isbn, titre, auteur) {
+  // Retirer toute alerte précédente
+  const ancienne = document.getElementById('alerteDemande');
+  if (ancienne) ancienne.remove();
+
+  try {
+    // Récupérer toutes les demandes actives (En recherche ou Trouvé — à contacter)
+    const demandes = await supabaseSelect('demandes',
+      "statut=in.(\"En recherche\",\"Trouvé — à contacter\")&order=cree_le.desc");
+    if (!demandes || !demandes.length) return;
+
+    const isbnClean = (isbn || '').replace(/[-\s]/g, '');
+    const titreNorm = normaliserTexte(titre);
+    const auteurNorm = normaliserTexte(auteur);
+
+    const correspondances = demandes.filter(d => {
+      // 1. Correspondance par ISBN (précise)
+      if (d.isbn && isbnClean && d.isbn.replace(/[-\s]/g, '') === isbnClean) return true;
+      // 2. Correspondance par collection (nom de collection contenu dans le titre)
+      if (d.collection && titreNorm) {
+        const colNorm = normaliserTexte(d.collection);
+        if (colNorm && titreNorm.includes(colNorm)) return true;
+      }
+      // 3. Correspondance par titre + auteur (logique intelligente)
+      if (d.titre && titreNorm) {
+        const demTitreNorm = normaliserTexte(d.titre);
+        const titreMatch = demTitreNorm && (titreNorm.includes(demTitreNorm) || demTitreNorm.includes(titreNorm));
+        if (titreMatch) {
+          // Un titre est « spécifique » s'il contient un chiffre OU au moins 3 mots
+          // significatifs OU 12+ caractères. Sinon il est « commun » (ex. « Le secret »).
+          const motsSignif = demTitreNorm.split(' ').filter(m => m.length > 2);
+          const contientChiffre = /\d/.test(demTitreNorm);
+          const titreSpecifique = contientChiffre || motsSignif.length >= 3 || demTitreNorm.length >= 12;
+
+          if (titreSpecifique) {
+            // Titre spécifique → le titre seul suffit
+            return true;
+          }
+          // Titre commun → exiger aussi une correspondance d'auteur (assouplie)
+          if (d.auteur && auteurNorm) {
+            if (auteursCorrespondent(demTitreNorm, d.auteur, auteurNorm)) return true;
+          } else {
+            // demande sans auteur ET titre commun : on déclenche quand même (prudence : rare)
+            return true;
+          }
+        }
+      }
+      return false;
+    });
+
+    if (correspondances.length > 0) {
+      afficherAlerteDemande(correspondances);
+    }
+  } catch(e) {
+    console.warn('Vérification demande échouée', e);
+  }
+}
+
+function afficherAlerteDemande(demandes) {
+  const ancienne = document.getElementById('alerteDemande');
+  if (ancienne) ancienne.remove();
+
+  const d = demandes[0];
+  const client = ((d.client_prenom||'') + ' ' + (d.client_nom||'')).trim() || 'un client';
+  const plusieurs = demandes.length > 1 ? ' (+' + (demandes.length - 1) + ' autre' + (demandes.length > 2 ? 's' : '') + ')' : '';
+
+  const alerte = document.createElement('div');
+  alerte.id = 'alerteDemande';
+  alerte.className = 'alerte-demande';
+  alerte.innerHTML = '<span class="alerte-demande-icone">🔔</span>'
+    + '<div class="alerte-demande-texte">'
+    + '<strong>LIVRE RECHERCHÉ</strong>' + plusieurs + '<br>'
+    + 'par ' + client + ' — ' + d.succursale + '<br>'
+    + '<span class="alerte-demande-clic">Cliquez pour voir la fiche</span>'
+    + '</div>';
+  alerte.onclick = function() {
+    document.getElementById('demandesScreen').classList.remove('hidden');
+    voirDemande(d.id);
+  };
+
+  // Insérer tout en haut de la zone de résultat (step3), avant la fiche resultCard
+  const step3 = document.getElementById('step3');
+  const resultCard = document.getElementById('resultCard');
+  if (step3 && resultCard && resultCard.parentNode === step3) {
+    step3.insertBefore(alerte, resultCard);
+  } else if (step3) {
+    step3.insertBefore(alerte, step3.firstChild);
+    step3.classList.remove('hidden');
+  }
+  // Son léger / vibration si supporté (optionnel, non bloquant)
+  try { if (navigator.vibrate) navigator.vibrate(200); } catch(e) {}
+}
+
+function ouvrirDemandes() {
+  document.getElementById('demandesScreen').classList.remove('hidden');
+  document.getElementById('demandeDetail').classList.add('hidden');
+  document.getElementById('dem-rech-texte').value = '';
+  rechercherDemandes();
+}
+
+function fermerDemandes() {
+  document.getElementById('demandesScreen').classList.add('hidden');
+  retourAccueil();
+}
+
+function ouvrirFormulaireDemande() {
+  const zone = document.getElementById('demandeFormZone');
+  if (document.getElementById('demandeForm')) { document.getElementById('demandeForm').remove(); return; }
+  const succ = document.getElementById('dem-rech-succursale').value;
+  const succVal = (succ === '__toutes__') ? 'Trois-Rivières' : succ;
+  zone.innerHTML = `
+    <div id="demandeForm" class="card client-form">
+      <div class="card-title" style="font-size:15px;">➕ Nouvelle demande de livre</div>
+      <div class="form-group">
+        <label class="form-label">Succursale où la demande est faite</label>
+        <select id="dm-succursale" class="form-input">
+          <option value="Trois-Rivières"${succVal==='Trois-Rivières'?' selected':''}>Trois-Rivières</option>
+          <option value="Shawinigan"${succVal==='Shawinigan'?' selected':''}>Shawinigan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Titre recherché</label>
+        <input type="text" id="dm-titre" class="form-input" placeholder="Titre du livre">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Auteur</label>
+        <input type="text" id="dm-auteur" class="form-input" placeholder="Auteur">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ISBN (optionnel — surtout pour les nouveautés)</label>
+        <input type="text" id="dm-isbn" class="form-input" placeholder="978…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Collection (optionnel — ex : Les contes interdits)</label>
+        <input type="text" id="dm-collection" class="form-input" placeholder="Nom de la collection">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nom du client</label>
+        <input type="text" id="dm-nom" class="form-input" placeholder="Nom de famille">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prénom du client</label>
+        <input type="text" id="dm-prenom" class="form-input" placeholder="Prénom">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input type="text" id="dm-tel" class="form-input" placeholder="819-555-1234">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note (optionnel)</label>
+        <textarea id="dm-note" class="form-input" rows="2" placeholder="Précisions sur la demande"></textarea>
+      </div>
+      <div id="dm-message" style="margin:8px 0; font-size:13px;"></div>
+      <button class="btn-batch btn-fin" style="width:100%; margin-bottom:8px;" onclick="enregistrerDemande()">✅ Enregistrer la demande</button>
+      <button class="btn-batch btn-nouveau" style="width:100%;" onclick="document.getElementById('demandeForm').remove()">Annuler</button>
+    </div>`;
+  document.getElementById('demandeForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function enregistrerDemande() {
+  const succursale = document.getElementById('dm-succursale').value;
+  const titre = document.getElementById('dm-titre').value.trim();
+  const auteur = document.getElementById('dm-auteur').value.trim();
+  const isbn = document.getElementById('dm-isbn').value.replace(/[-\s]/g, '').trim();
+  const collection = document.getElementById('dm-collection').value.trim();
+  const nom = document.getElementById('dm-nom').value.trim();
+  const prenom = document.getElementById('dm-prenom').value.trim();
+  const tel = document.getElementById('dm-tel').value.trim();
+  const note = document.getElementById('dm-note').value.trim();
+  const msg = document.getElementById('dm-message');
+
+  if (!titre && !isbn && !collection) {
+    msg.innerHTML = '<span style="color:#C62828;">Entrez au moins un titre, un ISBN ou une collection.</span>'; return;
+  }
+  if (!nom && !prenom) {
+    msg.innerHTML = '<span style="color:#C62828;">Entrez au moins un nom ou prénom de client.</span>'; return;
+  }
+  msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement…</span>';
+
+  try {
+    await supabaseInsert('demandes', {
+      succursale: succursale,
+      titre: titre || null,
+      auteur: auteur || null,
+      isbn: isbn || null,
+      collection: collection || null,
+      client_nom: nom || null,
+      client_prenom: prenom || null,
+      client_telephone: tel || null,
+      note: note || null,
+      statut: 'En recherche'
+    });
+    montrerToast('✅ Demande enregistrée', true);
+    document.getElementById('demandeForm').remove();
+    rechercherDemandes();
+  } catch(e) {
+    console.error(e);
+    msg.innerHTML = '<span style="color:#C62828;">Erreur. Vérifiez la connexion et réessayez.</span>';
+  }
+}
+
+async function rechercherDemandes() {
+  const succ = document.getElementById('dem-rech-succursale').value;
+  const texte = document.getElementById('dem-rech-texte').value.trim().toLowerCase();
+  const zone = document.getElementById('demandesResultats');
+  document.getElementById('demandeDetail').classList.add('hidden');
+  zone.innerHTML = '<div style="text-align:center; color:#999; padding:12px;">Recherche…</div>';
+
+  try {
+    let query = 'order=cree_le.desc';
+    if (succ !== '__toutes__') {
+      query = 'succursale=eq.' + encodeURIComponent(succ) + '&' + query;
+    }
+    if (texte) {
+      query += '&or=(titre.ilike.*' + encodeURIComponent(texte) + '*,auteur.ilike.*' + encodeURIComponent(texte) + '*,client_nom.ilike.*' + encodeURIComponent(texte) + '*,client_prenom.ilike.*' + encodeURIComponent(texte) + '*)';
+    }
+    const demandes = await supabaseSelect('demandes', query);
+    if (!demandes.length) {
+      zone.innerHTML = '<div style="text-align:center; color:#999; padding:12px;">Aucune demande trouvée.</div>';
+      return;
+    }
+    let html = '';
+    demandes.forEach(d => {
+      const client = ((d.client_prenom||'') + ' ' + (d.client_nom||'')).trim() || 'Sans nom';
+      const livre = d.titre || d.collection || d.isbn || 'Livre';
+      const col = statutDemandeCouleur(d.statut);
+      html += '<div class="lot-card" onclick="voirDemande(\'' + d.id + '\')">';
+      html += '<div class="lot-card-top"><span class="lot-card-nom">' + livre + '</span>';
+      html += '<span class="lot-card-statut" style="background:' + col + '">' + (d.statut||'En recherche') + '</span></div>';
+      html += '<div class="lot-card-info">' + (d.auteur ? d.auteur + ' • ' : '') + client + ' • ' + d.succursale + '</div>';
+      html += '</div>';
+    });
+    zone.innerHTML = html;
+  } catch(e) {
+    console.error(e);
+    zone.innerHTML = '<div style="color:#C62828; padding:12px;">Erreur de connexion. Réessayez.</div>';
+  }
+}
+
+async function voirDemande(demandeId) {
+  const detail = document.getElementById('demandeDetail');
+  document.getElementById('demandesResultats').innerHTML = '';
+  detail.classList.remove('hidden');
+  detail.innerHTML = '<div style="text-align:center; color:#999; padding:12px;">Chargement…</div>';
+  try {
+    const demandes = await supabaseSelect('demandes', 'id=eq.' + demandeId);
+    const d = demandes[0];
+    const client = ((d.client_prenom||'') + ' ' + (d.client_nom||'')).trim() || 'Sans nom';
+    let statutOptions = STATUTS_DEMANDE.map(s =>
+      '<option value="' + s + '"' + (d.statut === s ? ' selected' : '') + '>' + s + '</option>'
+    ).join('');
+
+    let infos = '';
+    if (d.titre) infos += '<div class="summary-line"><span class="summary-line-title">Titre</span><span>' + d.titre + '</span></div>';
+    if (d.auteur) infos += '<div class="summary-line"><span class="summary-line-title">Auteur</span><span>' + d.auteur + '</span></div>';
+    if (d.isbn) infos += '<div class="summary-line"><span class="summary-line-title">ISBN</span><span>' + d.isbn + '</span></div>';
+    if (d.collection) infos += '<div class="summary-line"><span class="summary-line-title">Collection</span><span>' + d.collection + '</span></div>';
+
+    detail.innerHTML =
+      '<div class="card">'
+      + '<button class="btn-batch btn-nouveau" style="margin-bottom:12px;" onclick="retourDemandes()">← Retour à la liste</button>'
+      + '<div class="summary-title">' + client + '</div>'
+      + '<div style="text-align:center; font-size:13px; color:#666; margin-bottom:12px;">'
+      + (d.client_telephone || 'sans téléphone') + ' • ' + (d.date_demande || '') + ' • ' + d.succursale + '</div>'
+      + infos
+      + '<div class="detail-section"><div class="detail-label">Statut</div>'
+      + '<select id="dem-det-statut" class="form-input" onchange="changerStatutDemande(\'' + demandeId + '\')">' + statutOptions + '</select></div>'
+      + '<div class="detail-section"><div class="detail-label">Note</div>'
+      + '<textarea id="dem-det-note" class="form-input" rows="3">' + (d.note || '') + '</textarea>'
+      + '<button class="btn-batch btn-fin" style="width:100%; margin-top:6px;" onclick="sauverNoteDemande(\'' + demandeId + '\')">Enregistrer la note</button></div>'
+      + '<div id="dem-det-message" style="margin-top:8px; font-size:13px;"></div>'
+      + '<div class="detail-section"><button class="btn-supprimer" onclick="supprimerDemande(\'' + demandeId + '\', \'' + client.replace(/'/g, "") + '\')">🗑️ Supprimer cette demande</button></div>'
+      + '</div>';
+    detail.scrollIntoView({ behavior: 'smooth' });
+  } catch(e) {
+    console.error(e);
+    detail.innerHTML = '<div style="color:#C62828; padding:12px;">Erreur de chargement.</div>';
+  }
+}
+
+function retourDemandes() {
+  document.getElementById('demandeDetail').classList.add('hidden');
+  rechercherDemandes();
+}
+
+async function changerStatutDemande(demandeId) {
+  const statut = document.getElementById('dem-det-statut').value;
+  try {
+    await supabaseUpdate('demandes', demandeId, { statut: statut });
+    montrerToast('✅ Statut mis à jour', true);
+  } catch(e) {
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+async function sauverNoteDemande(demandeId) {
+  const note = document.getElementById('dem-det-note').value.trim();
+  const btn = event.target;
+  const original = btn.textContent;
+  try {
+    await supabaseUpdate('demandes', demandeId, { note: note });
+    btn.textContent = '✅ Note enregistrée !';
+    btn.style.background = '#1B5E20';
+    montrerToast('✅ Note enregistrée', true);
+    setTimeout(() => { btn.textContent = original; btn.style.background = ''; }, 2500);
+  } catch(e) {
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+async function supprimerDemande(demandeId, client) {
+  if (!confirm('Supprimer définitivement la demande de ' + client + ' ?\n\nCette action est irréversible.')) return;
+  try {
+    await supabaseDelete('demandes', demandeId);
+    montrerToast('🗑️ Demande supprimée', true);
+    document.getElementById('demandeDetail').classList.add('hidden');
+    rechercherDemandes();
+  } catch(e) {
+    console.error(e);
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+function ouvrirRechercheLots() {
+  document.getElementById('lotsScreen').classList.remove('hidden');
+  document.getElementById('lotDetail').classList.add('hidden');
+  document.getElementById('rech-texte').value = '';
+  rechercherLots();
+}
+
+function ouvrirFormulaireDepot() {
+  const zone = document.getElementById('depotFormZone');
+  if (document.getElementById('depotForm')) { document.getElementById('depotForm').remove(); return; }
+  const succ = document.getElementById('rech-succursale').value;
+  zone.innerHTML = `
+    <div id="depotForm" class="card client-form">
+      <div class="card-title" style="font-size:15px;">➕ Nouveau dépôt à évaluer</div>
+      <div class="form-group">
+        <label class="form-label">Succursale</label>
+        <select id="dep-succursale" class="form-input">
+          <option value="Trois-Rivières"${succ==='Trois-Rivières'?' selected':''}>Trois-Rivières</option>
+          <option value="Shawinigan"${succ==='Shawinigan'?' selected':''}>Shawinigan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nom du client</label>
+        <input type="text" id="dep-nom" class="form-input" placeholder="Nom de famille">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prénom du client</label>
+        <input type="text" id="dep-prenom" class="form-input" placeholder="Prénom">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input type="text" id="dep-tel" class="form-input" placeholder="819-555-1234">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nombre de boîtes / sacs</label>
+        <input type="text" id="dep-quantite" class="form-input" placeholder="Ex : 2 boîtes">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Préférence du client (seulement si exprimée)</label>
+        <select id="dep-preference" class="form-input">
+          <option value="">— Non précisée —</option>
+          <option value="Argent seulement">Argent seulement</option>
+          <option value="Crédit seulement">Crédit seulement</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note (optionnel)</label>
+        <textarea id="dep-note" class="form-input" rows="2" placeholder="Ex : rangé dans l'arrière-boutique, tablette B"></textarea>
+      </div>
+      <div id="dep-message" style="margin:8px 0; font-size:13px;"></div>
+      <button class="btn-batch btn-fin" style="width:100%; margin-bottom:8px;" onclick="enregistrerDepot()">✅ Enregistrer le dépôt</button>
+      <button class="btn-batch btn-nouveau" style="width:100%;" onclick="document.getElementById('depotForm').remove()">Annuler</button>
+    </div>`;
+  document.getElementById('depotForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function enregistrerDepot() {
+  const succursale = document.getElementById('dep-succursale').value;
+  const nom = document.getElementById('dep-nom').value.trim();
+  const prenom = document.getElementById('dep-prenom').value.trim();
+  const tel = document.getElementById('dep-tel').value.trim();
+  const quantite = document.getElementById('dep-quantite').value.trim();
+  const preference = document.getElementById('dep-preference').value;
+  const noteLibre = document.getElementById('dep-note').value.trim();
+  const msg = document.getElementById('dep-message');
+
+  if (!succursale) { msg.innerHTML = '<span style="color:#C62828;">Choisissez la succursale.</span>'; return; }
+  if (!nom && !prenom) { msg.innerHTML = '<span style="color:#C62828;">Entrez au moins un nom ou prénom.</span>'; return; }
+
+  msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement…</span>';
+
+  // Construire la note : quantité + préférence + note libre
+  let noteParts = [];
+  if (quantite) noteParts.push('Dépôt : ' + quantite);
+  if (preference) noteParts.push('Préférence client : ' + preference);
+  if (noteLibre) noteParts.push(noteLibre);
+  const noteComplete = noteParts.join(' • ');
+
+  try {
+    await supabaseInsert('lots', {
+      succursale: succursale,
+      client_nom: nom || null,
+      client_prenom: prenom || null,
+      client_telephone: tel || null,
+      note: noteComplete || null,
+      statut: 'À évaluer',
+      total_argent: 0, total_credit: 0, total_dons: 0, total_refus: 0
+    });
+    montrerToast('✅ Dépôt enregistré', true);
+    document.getElementById('depotForm').remove();
+    rechercherLots();
+  } catch(e) {
+    console.error(e);
+    msg.innerHTML = '<span style="color:#C62828;">Erreur. Vérifiez la connexion et réessayez.</span>';
+  }
+}
+
+function fermerRechercheLots() {
+  document.getElementById('lotsScreen').classList.add('hidden');
+  retourAccueil();
+}
+
+async function rechercherLots() {
+  const succ = document.getElementById('rech-succursale').value;
+  const texte = document.getElementById('rech-texte').value.trim().toLowerCase();
+  const zone = document.getElementById('lotsResultats');
+  document.getElementById('lotDetail').classList.add('hidden');
+  zone.innerHTML = '<div style="text-align:center; color:#999; padding:12px;">Recherche…</div>';
+
+  try {
+    let query = 'succursale=eq.' + encodeURIComponent(succ) + '&order=cree_le.desc';
+    if (texte) {
+      // Recherche sur nom OU prénom (insensible à la casse)
+      query += '&or=(client_nom.ilike.*' + encodeURIComponent(texte) + '*,client_prenom.ilike.*' + encodeURIComponent(texte) + '*)';
+    }
+    const lots = await supabaseSelect('lots', query);
+
+    if (!lots.length) {
+      zone.innerHTML = '<div style="text-align:center; color:#999; padding:12px;">Aucun lot trouvé.</div>';
+      return;
+    }
+
+    let html = '';
+    const maintenant = new Date();
+    lots.forEach(lot => {
+      const nomComplet = ((lot.client_prenom || '') + ' ' + (lot.client_nom || '')).trim() || 'Sans nom';
+      const total = (lot.total_argent || 0) + (lot.total_credit || 0);
+      const statutColor = statutCouleur(lot.statut);
+
+      // Alerte : lot « En attente » depuis plus de 14 jours
+      let alerte = '';
+      if ((lot.statut || 'En attente') === 'En attente' && lot.date_evaluation) {
+        const jours = Math.floor((maintenant - new Date(lot.date_evaluation)) / (1000*60*60*24));
+        if (jours >= 14) {
+          alerte = '<span class="lot-alerte">⚠️ En attente ' + jours + ' j</span>';
+        }
+      }
+
+      html += '<div class="lot-card' + (alerte ? ' lot-card-alerte' : '') + '" onclick="voirLot(\'' + lot.id + '\')">';
+      html += '<div class="lot-card-top"><span class="lot-card-nom">' + nomComplet + '</span>';
+      html += '<span class="lot-card-statut" style="background:' + statutColor + '">' + (lot.statut || 'En attente') + '</span></div>';
+      html += '<div class="lot-card-info">' + (lot.date_evaluation || '') + ' • ' + (lot.client_telephone || 'sans tél.') + ' • Total ' + total.toFixed(2) + ' $ ' + alerte + '</div>';
+      html += '</div>';
+    });
+    zone.innerHTML = html;
+  } catch(e) {
+    console.error(e);
+    zone.innerHTML = '<div style="color:#C62828; padding:12px;">Erreur de connexion. Vérifiez internet et réessayez.</div>';
+  }
+}
+
+function statutCouleur(statut) {
+  if (statut === 'À évaluer') return '#8E24AA';        // mauve
+  if (statut === 'Évalué — à contacter') return '#00897B'; // sarcelle
+  if (statut === 'Complété — tout gardé') return '#1B5E20'; // vert
+  if (statut === 'Complété — reste à récupérer') return '#2E75B6'; // bleu
+  if (statut === 'Pas d\'entente') return '#C62828';   // rouge
+  return '#F0A500'; // En attente (orange)
+}
+
+async function voirLot(lotId) {
+  const detail = document.getElementById('lotDetail');
+  document.getElementById('lotsResultats').innerHTML = '';
+  detail.classList.remove('hidden');
+  detail.innerHTML = '<div style="text-align:center; color:#999; padding:12px;">Chargement…</div>';
+
+  try {
+    const lots = await supabaseSelect('lots', 'id=eq.' + lotId);
+    const lot = lots[0];
+    const livres = await supabaseSelect('lot_livres', 'lot_id=eq.' + lotId);
+    const contacts = await supabaseSelect('lot_contacts', 'lot_id=eq.' + lotId + '&order=date_tentative.desc');
+
+    const nomComplet = ((lot.client_prenom || '') + ' ' + (lot.client_nom || '')).trim() || 'Sans nom';
+
+    // Livres
+    let livresHtml = '';
+    livres.forEach((l, i) => {
+      let offre = '';
+      let col = '#333';
+      if (l.decision === 'accept' || l.decision === 'ac') { offre = (l.offre_argent||0).toFixed(2) + ' $ argent'; col = '#1B5E20'; }
+      else if (l.decision === 'credit' || l.decision === 'cd') { offre = (l.offre_credit||0).toFixed(2) + ' $ crédit'; col = '#1F4E79'; }
+      else if (l.decision === 'don' || l.decision === 'd') { offre = 'Don'; col = '#6A1B9A'; }
+      else if (l.decision === 'reject') { offre = 'Refus'; col = '#C62828'; }
+      else { offre = 'Consulter'; col = '#F0A500'; }
+      livresHtml += '<div class="summary-line lot-livre-ligne"><span class="summary-line-title">' + (i+1) + '. ' + (l.titre||'') + ' (' + (l.auteur||'') + ')</span>';
+      livresHtml += '<span class="summary-line-offer" style="color:' + col + '">' + offre + '</span>';
+      livresHtml += '<button class="btn-retirer-livre" title="Retirer ce livre (client le reprend)" onclick="retirerLivreDuLot(\'' + l.id + '\', \'' + lotId + '\')">✕</button></div>';
+    });
+
+    // Totaux
+    let totHtml = '<div class="summary-totals">';
+    if (lot.total_argent > 0) totHtml += '<div class="summary-total-line"><span>Total argent</span><span>' + lot.total_argent.toFixed(2) + ' $</span></div>';
+    if (lot.total_credit > 0) totHtml += '<div class="summary-total-line"><span>Total crédit</span><span>' + lot.total_credit.toFixed(2) + ' $</span></div>';
+    if (lot.total_dons > 0) totHtml += '<div class="summary-total-line"><span>Dons</span><span>' + lot.total_dons + '</span></div>';
+    if (lot.total_refus > 0) totHtml += '<div class="summary-total-line"><span>Refus</span><span>' + lot.total_refus + '</span></div>';
+    totHtml += '</div>';
+
+    // Contacts
+    let contactsHtml = '';
+    contacts.forEach(c => {
+      const d = new Date(c.date_tentative);
+      const dateStr = d.toLocaleDateString('fr-CA') + ' ' + d.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'});
+      contactsHtml += '<div class="contact-line">📞 ' + dateStr + ' — ' + (c.resultat || '') + '</div>';
+    });
+    if (!contactsHtml) contactsHtml = '<div style="color:#999; font-size:13px;">Aucune tentative enregistrée.</div>';
+
+    // Statut options
+    let statutOptions = STATUTS.map(s =>
+      '<option value="' + s + '"' + (lot.statut === s ? ' selected' : '') + '>' + s + '</option>'
+    ).join('');
+
+    // Bouton « Évaluer maintenant » seulement pour les lots « À évaluer »
+    let evaluerBtn = '';
+    if ((lot.statut || '') === 'À évaluer') {
+      evaluerBtn = '<button class="btn-batch btn-fin" style="width:100%; margin-bottom:12px;" onclick="evaluerDepot(\'' + lotId + '\')">📦 Évaluer ce dépôt maintenant</button>';
+    }
+
+    detail.innerHTML =
+      '<div class="card">'
+      + '<button class="btn-batch btn-nouveau" style="margin-bottom:12px;" onclick="retourRecherche()">← Retour à la liste</button>'
+      + evaluerBtn
+      + '<div class="summary-title">' + nomComplet + '</div>'
+      + '<div style="text-align:center; font-size:13px; color:#666; margin-bottom:12px;">'
+      + (lot.client_telephone || 'sans téléphone') + ' • ' + (lot.date_evaluation || '') + ' • ' + lot.succursale + '</div>'
+      + livresHtml + totHtml
+      + '<div class="detail-section"><div class="detail-label">Statut</div>'
+      + '<select id="det-statut" class="form-input" onchange="changerStatut(\'' + lotId + '\')">' + statutOptions + '</select></div>'
+      + '<div class="detail-section"><div class="detail-label">Note au dossier</div>'
+      + '<textarea id="det-note" class="form-input" rows="3">' + (lot.note || '') + '</textarea>'
+      + '<button class="btn-batch btn-fin" style="width:100%; margin-top:6px;" onclick="sauverNote(\'' + lotId + '\')">Enregistrer la note</button></div>'
+      + '<div class="detail-section"><div class="detail-label">Tentatives de contact</div>'
+      + '<div id="contactsList">' + contactsHtml + '</div>'
+      + '<div style="display:flex; gap:6px; margin-top:8px;">'
+      + '<input type="text" id="det-contact" class="form-input" placeholder="Ex : Pas de réponse, message laissé…">'
+      + '<button class="btn-batch btn-fin" style="white-space:nowrap;" onclick="ajouterContact(\'' + lotId + '\')">+ Ajouter</button></div></div>'
+      + '<div id="det-message" style="margin-top:8px; font-size:13px;"></div>'
+      + '<div class="detail-section"><button class="btn-supprimer" onclick="supprimerLot(\'' + lotId + '\', \'' + nomComplet.replace(/'/g, "") + '\')">🗑️ Supprimer ce lot</button></div>'
+      + '</div>';
+    detail.scrollIntoView({ behavior: 'smooth' });
+  } catch(e) {
+    console.error(e);
+    detail.innerHTML = '<div style="color:#C62828; padding:12px;">Erreur de chargement. ' + e.message + '</div>';
+  }
+}
+
+function retourRecherche() {
+  document.getElementById('lotDetail').classList.add('hidden');
+  rechercherLots();
+}
+
+async function changerStatut(lotId) {
+  const statut = document.getElementById('det-statut').value;
+  const msg = document.getElementById('det-message');
+  try {
+    await supabaseUpdate('lots', lotId, { statut: statut });
+    montrerToast('✅ Statut mis à jour', true);
+  } catch(e) {
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+function montrerToast(texte, succes) {
+  let toast = document.getElementById('pegaseToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'pegaseToast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = texte;
+  toast.style.background = succes ? '#1B5E20' : '#C62828';
+  toast.className = 'toast-show';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { toast.className = ''; }, 2500);
+}
+
+async function sauverNote(lotId) {
+  const note = document.getElementById('det-note').value.trim();
+  const btn = event.target;
+  const original = btn.textContent;
+  try {
+    await supabaseUpdate('lots', lotId, { note: note });
+    btn.textContent = '✅ Note enregistrée !';
+    btn.style.background = '#1B5E20';
+    montrerToast('✅ Note enregistrée', true);
+    setTimeout(() => { btn.textContent = original; btn.style.background = ''; }, 2500);
+  } catch(e) {
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+async function ajouterContact(lotId) {
+  const champ = document.getElementById('det-contact');
+  const resultat = champ.value.trim();
+  const msg = document.getElementById('det-message');
+  if (!resultat) { msg.innerHTML = '<span style="color:#C62828;">Entrez un résultat.</span>'; return; }
+  try {
+    await supabaseInsert('lot_contacts', { lot_id: lotId, resultat: resultat });
+    champ.value = '';
+    montrerToast('✅ Tentative ajoutée', true);
+    // Recharger la liste des contacts
+    const contacts = await supabaseSelect('lot_contacts', 'lot_id=eq.' + lotId + '&order=date_tentative.desc');
+    let html = '';
+    contacts.forEach(c => {
+      const d = new Date(c.date_tentative);
+      const dateStr = d.toLocaleDateString('fr-CA') + ' ' + d.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'});
+      html += '<div class="contact-line">📞 ' + dateStr + ' — ' + (c.resultat || '') + '</div>';
+    });
+    document.getElementById('contactsList').innerHTML = html;
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#C62828;">Erreur. Réessayez.</span>';
+  }
+}
+
+async function supprimerLot(lotId, nomClient) {
+  const ok = confirm('Supprimer définitivement le lot de ' + nomClient + ' ?\n\nCette action est irréversible. Tous les livres et tentatives de contact de ce lot seront aussi supprimés.');
+  if (!ok) return;
+  try {
+    await supabaseDelete('lots', lotId);
+    montrerToast('🗑️ Lot supprimé', true);
+    document.getElementById('lotDetail').classList.add('hidden');
+    rechercherLots();
+  } catch(e) {
+    console.error(e);
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+async function retirerLivreDuLot(livreId, lotId) {
+  if (!confirm('Retirer ce livre du lot ? (le client le reprend)\n\nLes totaux seront recalculés.')) return;
+  try {
+    // 1. Supprimer le livre
+    await supabaseDelete('lot_livres', livreId);
+    // 2. Recharger les livres restants et recalculer les totaux
+    const livres = await supabaseSelect('lot_livres', 'lot_id=eq.' + lotId);
+    let totalArgent = 0, totalCredit = 0, totalDons = 0, totalRefus = 0;
+    livres.forEach(l => {
+      if (l.decision === 'accept' || l.decision === 'ac') totalArgent += (l.offre_argent || 0);
+      else if (l.decision === 'credit' || l.decision === 'cd') totalCredit += (l.offre_credit || 0);
+      else if (l.decision === 'don' || l.decision === 'd') totalDons += 1;
+      else if (l.decision === 'reject') totalRefus += 1;
+    });
+    // 3. Mettre à jour les totaux du lot
+    await supabaseUpdate('lots', lotId, {
+      total_argent: totalArgent,
+      total_credit: totalCredit,
+      total_dons: totalDons,
+      total_refus: totalRefus
+    });
+    montrerToast('✅ Livre retiré, totaux recalculés', true);
+    // 4. Rafraîchir l'affichage du détail
+    voirLot(lotId);
+  } catch(e) {
+    console.error(e);
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+
+
+function selectFormat(format) {
+  selectedFormat = format;
+  document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + format).classList.add('active');
+  document.getElementById('isbnInput').focus();
+}
+
+// ═══════════════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════════════
+// Récupère le prix en arrière-plan et met à jour l'affichage quand il arrive
+let prixEnCoursISBN = null;
+async function chargerPrixEnArrierePlan(isbn) {
+  prixEnCoursISBN = isbn;
+  // Indicateur visuel « prix en cours » s'il y a un champ de prix affiché
+  const prixIndic = document.getElementById('prixChargement');
+  if (prixIndic) prixIndic.style.display = 'inline';
+  try {
+    const res = await fetch(`https://librissime-lookup.vercel.app/api/lookup?isbn=${isbn}&prixonly=1`);
+    if (!res.ok) return;
+    const data = await res.json();
+    // Si l'utilisateur a déjà scanné un autre livre entre-temps, on ignore ce prix tardif
+    if (prixEnCoursISBN !== isbn) return;
+    if (data.price && bookData && bookData.isbn === isbn) {
+      bookData.price = data.price;
+      bookData.priceSource = data.priceSource || null;
+      // Recalculer pour refléter le prix (utile surtout pour les nouveautés)
+      calculate();
+    }
+  } catch(e) {
+    console.warn('Prix en arrière-plan échoué', e);
+  } finally {
+    const pi = document.getElementById('prixChargement');
+    if (pi) pi.style.display = 'none';
+  }
+}
+
+async function searchBook() {
+  // In batch mode: add previous result to batch before starting new scan
+  scanDejaAjouteAuLot = false; // nouveau scan : réinitialiser le garde-fou
+  if (!selectedFormat) {
+    showError('Veuillez choisir un format avant de scanner.');
+    return;
+  }
+  const isbn = document.getElementById('isbnInput').value.replace(/[-\s]/g, '');
+  if (isbn.length < 10) {
+    showError('Veuillez entrer un ISBN valide (10 ou 13 chiffres).');
+    return;
+  }
+
+  hideError();
+  showLoading(true);
+  document.getElementById('searchBtn').disabled = true;
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+
+  try {
+    let title = null, authors = null, year = null, publisher = '';
+    let tempSubjects = [], tempLanguage = null, tempBinding = null;
+    let foundPrice = null;
+
+    // Source unique : le service Vercel (ISBNdb + leslibraires.ca + Google Books CA + Open Library)
+    // Toutes les sources externes sont interrogées côté serveur, jamais depuis le navigateur.
+    try {
+      const res = await fetch(`https://librissime-lookup.vercel.app/api/lookup?isbn=${isbn}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.title || data.author) {
+          title = data.title || null;
+          authors = data.author || null;
+          year = data.year || null;
+          publisher = data.publisher || data.source || '';
+          foundPrice = data.price || null;
+          tempSubjects = data.subjects || [];
+          tempLanguage = data.language || null;
+          tempBinding = data.binding || null;
+        }
+      }
+    } catch(e2) { console.warn('Vercel lookup failed', e2); }
+
+    // Saisie manuelle si le livre est introuvable
+    if (!title) {
+      showManualEntry(isbn);
+      showLoading(false);
+      document.getElementById('searchBtn').disabled = false;
+      return;
+    }
+
+    bookData = { title, authors: authors || 'Auteur inconnu', year, publisher, isbn, price: foundPrice, subjects: tempSubjects, language: tempLanguage, binding: tempBinding };
+
+    // Check author in list
+    authorCode = findAuthorCode(authors);
+
+    // Check if nouveauté par année
+    isNouveaute = false;
+    let ageMonths = null;
+    if (year) {
+      const currentYear = new Date().getFullYear();
+      const pubYear = parseInt(year);
+      isNouveaute = pubYear >= (currentYear - 2); // année en cours, -1 ou -2
+      ageMonths = (new Date() - new Date(pubYear, 0, 1)) / (1000 * 60 * 60 * 24 * 30.44);
+    }
+
+    displayBookInfo(title, authors, year, publisher, ageMonths);
+    showLoading(false);
+    document.getElementById('step2').classList.remove('hidden');
+    document.getElementById('searchBtn').disabled = false;
+
+    // ── Vérifier si ce livre correspond à une demande client ──
+    verifierDemandeClient(isbn, title, authors);
+    
+    // Auto-calculate after short delay to ensure DOM is ready
+    setTimeout(() => {
+      try {
+        document.getElementById('etatSelect').value = 'tres_bon';
+        document.getElementById('chkFolio').checked = false;
+        document.getElementById('chkClassique').checked = false;
+        calculate();
+      } catch(calcErr) {
+        console.warn('Auto-calculate failed:', calcErr);
+      }
+      // Vider et refocus le champ ISBN pour le prochain scan en rafale
+      const isbnField = document.getElementById('isbnInput');
+      isbnField.value = '';
+      isbnField.focus();
+
+      // ── Récupérer le prix SÉPARÉMENT, APRÈS le premier calcul ──
+      // Lancé ici (et non avant) pour garantir que le livre est déjà ajouté au
+      // lot avant qu'un éventuel recalcul lié au prix ne se produise. Évite le
+      // double-ajout quand le prix revient très vite.
+      chargerPrixEnArrierePlan(isbn);
+    }, 200);
+
+  } catch(e) {
+    console.error('Search error:', e);
+    showError('Erreur de connexion. Vérifiez votre connexion internet et réessayez.');
+    showLoading(false);
+    document.getElementById('searchBtn').disabled = false;
+  }
+}
+
+function normalizeCode(code) {
+  if (!code) return code;
+  const c = code.toUpperCase().trim();
+  if (c === 'C') return 'C/D';  // ancien code C devient C/D
+  return c;
+}
+
+// ═══════════════════════════════════════════════════════
+// DÉTECTION DE SECTION
+// ═══════════════════════════════════════════════════════
+
+// Éditeurs québécois connus (liste de départ, à enrichir)
+const EDITEURS_QC = [
+  'boréal', 'quebec amerique', 'québec amérique', 'leméac', 'lemeac', 'hurtubise',
+  'la courte échelle', 'courte echelle', 'druide', 'alto', 'vlb', 'stanké', 'stanke',
+  '400 coups', 'alire', 'libre expression', 'guy saint-jean', 'editions de l\'homme',
+  'éditions de l\'homme', 'de l\'homme', 'goélette', 'goelette', 'michel lafon québec',
+  'les malins', 'recto-verso', 'recto verso', 'fides', 'septentrion', 'mémoire d\'encrier',
+  'memoire d\'encrier', 'la peuplade', 'marchand de feuilles', 'héliotrope', 'heliotrope',
+  'allusifs', 'triptyque', 'pierre tisseyre', 'soulières', 'soulieres', 'dominique et compagnie',
+  'bayard canada', 'édito', 'edito', 'ko éditions', 'ko editions', 'cardinal', 'parfum d\'encre',
+  'xyz', 'septentrion', 'écosociété', 'ecosociete', 'somme toute', 'remue-ménage',
+  'del busso', 'fonfon', 'isatis', 'd\'eux', 'les 400 coups', 'cheval d\'août',
+  'la pastèque', 'pasteque', 'moelle graphik', 'front froid', 'pow pow'
+];
+
+// Mots-clés de sous-genres (priorité haute)
+const GENRE_KEYWORDS = {
+  'Policier': ['thriller', 'mystery', 'detective', 'crime', 'policier', 'polar', 'suspense', 'enquête', 'enquete'],
+  'Science-fiction': ['science fiction', 'science-fiction', 'sci-fi', 'dystopia', 'dystopie', 'space opera'],
+  'Fantasy': ['fantasy', 'fantastique', 'fantasy fiction', 'magic', 'dragons', 'épée', 'sword'],
+  'Horreur': ['horror', 'horreur', 'épouvante', 'epouvante', 'ghost stories', 'histoires de fantômes'],
+  'New romance': ['romance', 'new adult', 'romantic', 'amour', 'érotique', 'erotique', 'romantasy'],
+};
+
+// Mots-clés non-fiction
+const NONFICTION_KEYWORDS = {
+  'Biographie': ['biography', 'biographie', 'autobiography', 'autobiographie', 'memoir', 'mémoires', 'récit de vie'],
+  'Cuisine': ['cooking', 'cookbook', 'cuisine', 'recipes', 'recettes', 'gastronomie', 'culinary'],
+  'Histoire': ['history', 'histoire', 'historical', 'historique', 'guerre', 'war'],
+  'Développement personnel': ['self-help', 'self help', 'personal development', 'développement personnel', 'bien-être', 'psychology', 'psychologie'],
+  'Ésotérisme': ['esoteric', 'ésotérisme', 'occult', 'astrology', 'astrologie', 'spirituality', 'spiritualité', 'tarot', 'wicca'],
+  'Jeunesse': ['juvenile', 'jeunesse', 'children', 'enfant', 'young adult', 'picture book'],
+  'Bande dessinée': ['comic', 'comics', 'bande dessinée', 'bande dessinee', 'graphic novel', 'manga', 'bd'],
+  'Poésie': ['poetry', 'poésie', 'poesie', 'poems', 'poèmes'],
+  'Nature': ['nature', 'gardening', 'jardinage', 'botany', 'botanique', 'wildlife'],
+  'Voyage': ['travel', 'voyage', 'guide touristique', 'tourism'],
+};
+
+function detectSection(bookData) {
+  if (!bookData) return null;
+
+  // 1. PRIORITÉ : section définie par auteur dans AUTHOR_SECTIONS
+  if (bookData.authors) {
+    const authorResult = findAuthorSection(bookData.authors);
+    if (authorResult) return { section: authorResult, confidence: 'haute' };
+  }
+
+  // 2. Analyse des catégories ISBNdb (fallback)
+  const subjects = (bookData.subjects || []).join(' ').toLowerCase();
+  const title = (bookData.title || '').toLowerCase();
+  const publisher = (bookData.publisher || '').toLowerCase();
+  const language = (bookData.language || '').toLowerCase();
+  const haystack = subjects + ' ' + title;
+
+  const isEnglish = language === 'en' || language === 'eng' || language === 'english';
+
+  // Sous-genres
+  for (const [section, keywords] of Object.entries(GENRE_KEYWORDS)) {
+    if (keywords.some(k => haystack.includes(k))) {
+      return { section, confidence: 'haute' };
+    }
+  }
+
+  // Non-fiction
+  for (const [section, keywords] of Object.entries(NONFICTION_KEYWORDS)) {
+    if (keywords.some(k => haystack.includes(k))) {
+      return { section, confidence: 'haute' };
+    }
+  }
+
+  // Roman général via éditeur
+  const isFiction = subjects.includes('fiction') || subjects.includes('roman') || subjects.includes('novel');
+  if (isFiction) {
+    if (isEnglish) return { section: 'Roman en anglais', confidence: 'moyenne' };
+    const isQC = EDITEURS_QC.some(e => publisher.includes(e));
+    if (isQC) return { section: 'Roman québécois', confidence: 'moyenne' };
+    if (publisher) return { section: 'Roman international', confidence: 'moyenne' };
+    return { section: 'Roman (nationalité à déterminer)', confidence: 'faible' };
+  }
+
+  // Rien de clair
+  return null;
+}
+
+function findAuthorSection(authorsStr) {
+  if (!authorsStr) return null;
+  const authorLower = authorsStr.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // Exact match "last, first"
+  const parts = authorsStr.toLowerCase().split(',').map(a => a.trim());
+  for (const part of parts) {
+    if (AUTHOR_SECTIONS[part]) return AUTHOR_SECTIONS[part];
+    const words = part.split(' ');
+    if (words.length >= 2) {
+      const reversed = words[words.length - 1] + ', ' + words.slice(0, -1).join(' ');
+      if (AUTHOR_SECTIONS[reversed]) return AUTHOR_SECTIONS[reversed];
+    }
+  }
+
+  // Match by last name
+  const cleanAuthor = authorsStr.toLowerCase().replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+  const authorWords = cleanAuthor.split(' ');
+  const probableLastName = authorWords[authorWords.length - 1];
+
+  for (const [key, val] of Object.entries(AUTHOR_SECTIONS)) {
+    const keyLastName = key.split(',')[0].trim();
+    const keyNoAccent = keyLastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const probNoAccent = probableLastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (keyNoAccent === probNoAccent && keyLastName.length > 2) return val;
+  }
+
+  return null;
+}
+
+function findAuthorCode(authorsStr) {
+  if (!authorsStr) return null;
+  const authorLower = authorsStr.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // remove accents for matching
+
+  // 1. Exact match "last, first"
+  const parts = authorsStr.toLowerCase().split(',').map(a => a.trim());
+  for (const part of parts) {
+    if (AUTHORS[part]) return normalizeCode(AUTHORS[part]);
+    const words = part.split(' ');
+    if (words.length >= 2) {
+      const reversed = words[words.length - 1] + ', ' + words.slice(0, -1).join(' ');
+      if (AUTHORS[reversed]) return normalizeCode(AUTHORS[reversed]);
+    }
+  }
+
+  // 2. Match by LAST NAME (most reliable)
+  // Extract the last word of the author string as probable last name
+  const cleanAuthor = authorsStr.toLowerCase().replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+  const authorWords = cleanAuthor.split(' ');
+  const probableLastName = authorWords[authorWords.length - 1];
+
+  for (const [key, val] of Object.entries(AUTHORS)) {
+    const keyLastName = key.split(',')[0].trim();
+    const keyLastNameNoAccent = keyLastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const probableNoAccent = probableLastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // Match if last names are equal
+    if (keyLastNameNoAccent === probableNoAccent && keyLastName.length > 2) {
+      return normalizeCode(val);
+    }
+  }
+
+  // 3. Partial match — author string contains a known last name
+  for (const [key, val] of Object.entries(AUTHORS)) {
+    const keyLastName = key.split(',')[0].trim();
+    const keyLastNameNoAccent = keyLastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (keyLastNameNoAccent.length > 3 && authorLower.includes(keyLastNameNoAccent)) {
+      return normalizeCode(val);
+    }
+  }
+
+  return null;
+}
+
+function displayBookInfo(title, authors, year, publisher, ageMonths) {
+  // Show manual price entry whenever it's a nouveauté (less than 2 years)
+  if (isNouveaute) {
+    document.getElementById('nouveauteSection').classList.remove('hidden');
+  } else {
+    document.getElementById('nouveauteSection').classList.add('hidden');
+  }
+}
+
+function onFormatChange() {
+  // Could add format-specific logic here
+}
+
+// ═══════════════════════════════════════════════════════
+// MANUAL ENTRY (when ISBN not found in any database)
+// ═══════════════════════════════════════════════════════
+function showManualEntry(isbn) {
+  document.getElementById('manualEntryCard').classList.remove('hidden');
+  document.getElementById('manualEntryCard').scrollIntoView({ behavior: 'smooth' });
+}
+
+function confirmManualEntry() {
+  const title = document.getElementById('manualTitle').value.trim();
+  const author = document.getElementById('manualAuthor').value.trim();
+  const year = document.getElementById('manualYear').value.trim();
+
+  if (!title || !author) {
+    alert('Veuillez entrer au minimum le titre et l\'auteur.');
+    return;
+  }
+
+  document.getElementById('manualEntryCard').classList.add('hidden');
+  bookData = { title, authors: author, year: year || null, publisher: '', isbn: '', price: null };
+  authorCode = findAuthorCode(author);
+
+  let ageMonths = null;
+  if (year) {
+    const currentYear = new Date().getFullYear();
+    const pubYear = parseInt(year);
+    isNouveaute = pubYear >= (currentYear - 2);
+    ageMonths = (new Date() - new Date(pubYear, 0, 1)) / (1000 * 60 * 60 * 24 * 30.44);
+  }
+
+  displayBookInfo(title, author, year, '', ageMonths);
+  // Auto-calculate after short delay
+  setTimeout(() => {
+    document.getElementById('etatSelect').value = 'tres_bon';
+    document.getElementById('chkFolio').checked = false;
+    document.getElementById('chkClassique').checked = false;
+    calculate();
+  }, 100);
+}
+
+// ═══════════════════════════════════════════════════════
+// CALCULATE
+// ═══════════════════════════════════════════════════════
+function decisionFromCode(code) {
+  if (code === 'A') return 'accept';
+  if (code === 'A/C') return 'ac';
+  if (code === 'C/D') return 'cd';
+  if (code === 'D') return 'd';
+  if (code === 'REFUS') return 'reject';
+  return 'unknown';
+}
+
+function calculate() {
+  const format = selectedFormat;
+  const etat = document.getElementById('etatSelect').value;
+  const isFolio = document.getElementById('chkFolio').checked;
+  const isClassique = document.getElementById('chkClassique').checked;
+  const prixInput = document.getElementById('prixNeufInput');
+  const prixNeufStr = (bookData && bookData.price) ? bookData.price.toString() : (prixInput ? prixInput.value : '');
+
+  if (!format) { return; }
+  if (!etat) { return; }
+
+  const prixNeuf = parseFloat(prixNeufStr) || 0;
+  const isPoche = format === 'poche';
+  const isRelie = format === 'relie';
+  const basePrice = isPoche ? 4.95 : (isRelie ? 9.95 : 7.95);
+
+  // ── Déterminer la bande de nouveauté par année ──
+  const currentYear = new Date().getFullYear();
+  const pubYear = (bookData && bookData.year) ? parseInt(bookData.year) : 0;
+  const isRecent = pubYear >= (currentYear - 1);              // année en cours ou précédente (40%)
+  const isNouv2ans = pubYear >= (currentYear - 2);            // jusqu'à 2 ans avant (30%)
+  recentNouveaute = isRecent; // global pour l'affichage
+
+  // ── Montée de code si moins d'un an ──
+  let effectiveCode = authorCode;
+  let codeBumped = false;
+  if (isRecent && authorCode) {
+    if (authorCode === 'D') { effectiveCode = 'C/D'; codeBumped = true; }
+    else if (authorCode === 'C/D') { effectiveCode = 'A/C'; codeBumped = true; }
+    else if (authorCode === 'A/C') { effectiveCode = 'A'; codeBumped = true; }
+    // A reste A, REFUS reste REFUS
+  }
+
+  // ── Déterminer le prix de vente ──
+  let sellPrice = basePrice;
+  let sellReason = 'Prix de base';
+  let decision = 'credit';
+
+  if (isFolio) {
+    sellPrice = 3.95;
+    sellReason = 'Collection Folio 2€/3€';
+    decision = decisionFromCode(effectiveCode);
+  } else if (etat === 'abime') {
+    if (effectiveCode === 'A') {
+      sellPrice = isPoche ? 3.95 : 6.95;
+      sellReason = 'Livre abîmé — auteur code A';
+      decision = 'accept';
+    } else {
+      showResult('reject', null, null, null,
+        'Livre abîmé — refus recommandé',
+        "Un livre abîmé ne vaut la peine d'être accepté que si l'auteur est en code A sur la liste de référence.");
+      return;
+    }
+  } else if (effectiveCode === 'REFUS') {
+    showResult('reject', null, null, null,
+      'Refus',
+      'Cet auteur est marqué « Refus » dans la liste de référence. Ne pas accepter ce livre.');
+    return;
+  } else if (isNouv2ans && prixNeuf > 0) {
+    // Nouveauté avec prix neuf — 40% si moins d'un an, 30% si 1-2 ans
+    const pct = isRecent ? 0.40 : 0.30;
+    sellPrice = Math.round(prixNeuf * pct * 2) / 2;
+    if (sellPrice < basePrice) sellPrice = basePrice;
+    sellReason = `${isRecent ? '40' : '30'}% du prix neuf (${prixNeuf.toFixed(2)}$)`;
+    if (sellPrice >= 50) {
+      showResult('consult', null, null, sellPrice,
+        'Consultation obligatoire',
+        `La valeur estimée (${sellPrice.toFixed(2)}$) dépasse 50$. Envoyer un message Slack au responsable avant de procéder.`);
+      return;
+    }
+    decision = decisionFromCode(effectiveCode);
+    // Auteur non répertorié reste « Non répertorié » même en nouveauté
+  } else if (isClassique) {
+    sellPrice = isPoche ? 5.95 : 8.95;
+    sellReason = 'Auteur classique';
+    decision = 'accept';
+  } else if (effectiveCode === 'A') {
+    sellPrice = isPoche ? 5.95 : 8.95;
+    sellReason = 'Auteur code A — forte demande';
+    decision = 'accept';
+  } else if (effectiveCode === 'A/C') {
+    sellPrice = basePrice;
+    sellReason = 'Auteur code A/C';
+    decision = 'ac';
+  } else if (effectiveCode === 'C/D') {
+    sellPrice = basePrice;
+    sellReason = 'Auteur code C/D';
+    decision = 'cd';
+  } else if (effectiveCode === 'D') {
+    sellPrice = basePrice;
+    sellReason = 'Auteur code D';
+    decision = 'd';
+  } else {
+    sellPrice = basePrice;
+    sellReason = 'Auteur non répertorié — prix de base appliqué';
+    decision = 'unknown';
+  }
+
+  // Exception par ISBN — prix spécial Librissime (remplace le prix de grille)
+  const isbnKey = (bookData && bookData.isbn) ? bookData.isbn.replace(/[-\s]/g, '') : '';
+  if (isbnKey && ISBN_EXCEPTIONS[isbnKey]) {
+    sellPrice = ISBN_EXCEPTIONS[isbnKey].prix;
+    sellReason = '💎 Prix spécial Librissime — ' + sellPrice.toFixed(2) + ' $';
+  }
+
+  // Ajustement état acceptable
+  if (etat === 'acceptable' && !isFolio) {
+    sellPrice = Math.max(2.95, sellPrice - 1.00);
+    sellReason += ' (−1$ état acceptable)';
+  }
+
+  // Rappel nouveauté sans prix entré
+  if (isNouv2ans && prixNeuf <= 0) {
+    sellReason += " — ⏳ Récupération du prix neuf en cours…";
+  }
+
+  // Note si le code a monté
+  if (codeBumped) {
+    sellReason += ` — 🔥 Nouveauté récente : code ${authorCode} relevé à ${effectiveCode}`;
+  }
+
+  // ── Calcul de l'offre ──
+  const offerCash = Math.round(sellPrice * 0.30 * 2) / 2;
+  const offerCredit = Math.round(offerCash * 1.25 * 2) / 2;
+
+  // ── Afficher le résultat ──
+  if (decision === 'reject') {
+    showResult('reject', null, null, sellPrice, 'Refus', sellReason);
+  } else if (decision === 'ac') {
+    showResult('ac', offerCash, offerCredit, sellPrice,
+      'Code A/C — Vérifier le stock',
+      `${sellReason}\n\n• Moins de 2 exemplaires → offrir de l'ARGENT (${offerCash.toFixed(2)} $)\n• 2 exemplaires et plus → offrir du CRÉDIT (${offerCredit.toFixed(2)} $)`);
+  } else if (decision === 'cd') {
+    showResult('credit', null, offerCredit, sellPrice,
+      'Code C/D — Vérifier le stock',
+      `${sellReason}\n\n• Moins de 2 exemplaires → offrir du CRÉDIT (${offerCredit.toFixed(2)} $)\n• 2 exemplaires et plus → accepter en DON seulement`);
+  } else if (decision === 'd') {
+    showResult('don', null, null, sellPrice,
+      'Code D — Don seulement',
+      `${sellReason}\n\n• Moins de 2 exemplaires → accepter en DON\n• 2 exemplaires et plus → REFUS\n\nExpliquer au client : « On ne peut pas investir dans ce livre, mais on peut le prendre comme don pour la foire du livre de Shawinigan (vendu à 1 $). »`);
+  } else if (decision === 'unknown') {
+    // Auteur non répertorié : on affiche quand même le prix neuf et le prix de vente
+    // calculé si c'est une nouveauté, pour aider le responsable à décider.
+    let detailNonRep = `Cet auteur n'est pas encore dans la liste de référence. Consultez le responsable via Slack pour déterminer le bon code.`;
+    if (isNouv2ans && prixNeuf > 0) {
+      const pct = isRecent ? 40 : 30;
+      detailNonRep = `🔥 Nouveauté — prix neuf : ${prixNeuf.toFixed(2)}$ • Prix de vente suggéré (${pct}%) : ${sellPrice.toFixed(2)}$.<br>Auteur non répertorié : consultez le responsable via Slack pour déterminer le bon code avant de faire une offre.`;
+    }
+    showResult('consult', null, null, sellPrice,
+      'Auteur non répertorié', detailNonRep);
+  } else {
+    showResult('accept', offerCash, offerCredit, sellPrice,
+      'Accepter en argent', sellReason);
+  }
+}
+
+
+function showResult(type, cash, credit, sellPrice, title, detail) {
+  // Store result for batch mode
+  if (bookData) {
+    lastResult = {
+      title: bookData.title || 'Inconnu',
+      author: bookData.authors || '',
+      decision: type,
+      offerCash: cash,
+      offerCredit: credit,
+      sellPrice: sellPrice,
+      resultTitle: title,
+      resultDetail: detail
+    };
+    // Ajout immédiat à la liste du lot (option 1)
+    // On n'ajoute QU'UNE fois par scan : le recalcul déclenché par l'arrivée
+    // du prix en arrière-plan ne doit pas ajouter le livre une deuxième fois.
+    if (currentMode === 'batch' && !scanDejaAjouteAuLot) {
+      addToBatch(lastResult);
+      scanDejaAjouteAuLot = true;
+      lastResult = null;
+    }
+  }
+  const classes = {
+    accept: 'result-accept',
+    ac: 'result-ac',
+    credit: 'result-credit',
+    don: 'result-don',
+    reject: 'result-reject',
+    consult: 'result-consult'
+  };
+  const icons = {
+    accept: '✅',
+    ac: '🟡',
+    credit: '🔵',
+    don: '🟣',
+    reject: '❌',
+    consult: '⚠️'
+  };
+
+  let amountsHtml = '';
+  if (type !== 'reject') {
+    let boxes = '';
+    if (cash !== null) {
+      boxes += `<div class="amount-box"><div class="amount-label">Offre en argent</div><div class="amount-value">${cash.toFixed(2)} $</div></div>`;
+    }
+    if (credit !== null) {
+      boxes += `<div class="amount-box"><div class="amount-label">Offre en crédit</div><div class="amount-value">${credit.toFixed(2)} $</div></div>`;
+    }
+    const sellBox = sellPrice !== null ? `
+      <div class="sell-price-box">
+        <span class="sell-price-label">Prix de vente suggéré en librairie</span>
+        <span class="sell-price-value">${sellPrice.toFixed(2)} $</span>
+      </div>` : '';
+    if (boxes) {
+      amountsHtml = `<div class="result-amounts">${boxes}</div>${sellBox}`;
+    } else {
+      amountsHtml = sellBox;
+    }
+  }
+
+  const slackHtml = type === 'consult' ? `
+    <div class="slack-note" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.4); color:white;">
+      💬 Envoyer un message Slack au responsable avec une photo du livre. Délai de réponse : 24h.
+    </div>` : '';
+
+  // Build book info header (inside the colored card)
+  let bookHeader = '';
+  if (bookData) {
+    const prixNeufTxt = bookData.price ? ` · Prix neuf : ${bookData.price.toFixed(2)} $` : '';
+    // Section suggérée
+    const sectionInfo = detectSection(bookData);
+    let sectionTxt = '';
+    if (sectionInfo) {
+      const conf = sectionInfo.confidence === 'faible' ? ' (à confirmer)' : '';
+      sectionTxt = `<div class="result-section">📍 Section suggérée : <strong>${sectionInfo.section}</strong>${conf}</div>`;
+    } else {
+      sectionTxt = `<div class="result-section">📍 Section à déterminer par l'employé</div>`;
+    }
+    bookHeader = `
+      <div class="result-book-header">
+        <div class="result-book-title">${bookData.title || ''}</div>
+        <div class="result-book-author">${bookData.authors || ''}</div>
+        <div class="result-book-meta">${bookData.year ? 'Publié en ' + bookData.year : ''}${prixNeufTxt}</div>
+        ${sectionTxt}
+      </div>`;
+  }
+
+  // Bannière nouveauté récente (moins d'un an)
+  const nouveauteBanner = recentNouveaute ? `
+    <div class="nouveaute-banner">🔥 NOUVEAUTÉ</div>` : '';
+
+  document.getElementById('resultCard').className = `result-card ${classes[type]}`;
+  document.getElementById('resultCard').innerHTML = `
+    ${nouveauteBanner}
+    ${bookHeader}
+    <div class="result-icon">${icons[type]}</div>
+    <div class="result-decision">${title}</div>
+    <div class="result-detail">${detail.replace(/\n/g, '<br>')}</div>
+    ${amountsHtml}
+    ${slackHtml}
+  `;
+
+  document.getElementById('step3').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function showLoading(show) {
+  document.getElementById('loadingDiv').classList.toggle('hidden', !show);
+}
+function showError(msg) {
+  const el = document.getElementById('searchError');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+function hideError() {
+  document.getElementById('searchError').classList.add('hidden');
+}
+function reset() {
+  bookData = null; authorCode = null; isNouveaute = false; recentNouveaute = false; lastResult = null;
+  const alerteR = document.getElementById('alerteDemande');
+  if (alerteR) alerteR.remove();
+  document.getElementById('isbnInput').value = '';
+  document.getElementById('etatSelect').value = '';
+  document.getElementById('chkFolio').checked = false;
+  document.getElementById('chkClassique').checked = false;
+  document.getElementById('prixNeufInput').value = '';
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('nouveauteSection').classList.add('hidden');
+  document.getElementById('manualEntryCard').classList.add('hidden');
+  hideError();
+  document.getElementById('isbnInput').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
