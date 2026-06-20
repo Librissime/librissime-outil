@@ -679,6 +679,19 @@
   }
   .btn-accueil:hover { background: rgba(255,255,255,0.28); }
   .header-titre { display: flex; flex-direction: column; }
+    .batch-stock-toggle {
+    background: white;
+    border: 1px solid #1F4E79;
+    color: #1F4E79;
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 10.5px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+  .batch-stock-toggle:hover { background: #E8F0F8; }
   .alerte-demande {
     display: flex;
     align-items: center;
@@ -3246,6 +3259,48 @@ function removeBatchItem(index) {
   renderBatchList();
 }
 
+// Calcule la décision EFFECTIVE d'un livre du lot selon le nombre d'exemplaires.
+// Retourne { type, label, montant, classe } pour l'affichage et les totaux.
+// surplusStock = true signifie « 2 exemplaires et plus » → on applique la 2e option.
+function decisionEffective(item) {
+  const d = item.decision;
+  const surplus = !!item.surplusStock;
+
+  // A/C : 0-1 → argent | 2+ → crédit
+  if (d === 'ac' || d === 'accept') {
+    if (d === 'ac') {
+      if (!surplus) return { type:'argent', label:(item.offerCash||0).toFixed(2)+' $ argent', montant:item.offerCash||0, col:'cash', classe:'batch-item-ac' };
+      return { type:'credit', label:(item.offerCredit||0).toFixed(2)+' $ crédit', montant:item.offerCredit||0, col:'credit', classe:'batch-item-credit' };
+    }
+    // 'accept' = code A pur (toujours argent, pas de bascule)
+    return { type:'argent', label:(item.offerCash||0).toFixed(2)+' $ argent', montant:item.offerCash||0, col:'cash', classe:'batch-item-accept' };
+  }
+  // C/D : 0-1 → crédit | 2+ → don
+  if (d === 'cd' || d === 'credit') {
+    if (!surplus) return { type:'credit', label:(item.offerCredit?item.offerCredit.toFixed(2)+' $ crédit':'Crédit'), montant:item.offerCredit||0, col:'credit', classe:'batch-item-credit' };
+    return { type:'don', label:'Don', montant:0, col:'don', classe:'batch-item-don' };
+  }
+  // D : 0-1 → don | 2+ → refus
+  if (d === 'don' || d === 'd') {
+    if (!surplus) return { type:'don', label:'Don', montant:0, col:'don', classe:'batch-item-don' };
+    return { type:'refus', label:'Refus', montant:0, col:'refus', classe:'batch-item-reject' };
+  }
+  if (d === 'reject') return { type:'refus', label:'Refus', montant:0, col:'refus', classe:'batch-item-reject' };
+  return { type:'consult', label:'Consulter', montant:0, col:'consult', classe:'batch-item-consult' };
+}
+
+// Un livre est-il « basculable » (a-t-il une règle 2+ exemplaires) ?
+function estBasculable(item) {
+  return ['ac','cd','credit','d','don'].includes(item.decision);
+}
+
+// Basculer le nombre d'exemplaires (0-1 ⇄ 2+) pour un livre du lot en cours
+function basculerStock(i) {
+  if (!batchItems[i] || !estBasculable(batchItems[i])) return;
+  batchItems[i].surplusStock = !batchItems[i].surplusStock;
+  renderBatchList();
+}
+
 function renderBatchList() {
   const list = document.getElementById('batchList');
   if (batchItems.length === 0) {
@@ -3268,34 +3323,32 @@ function renderBatchList() {
 
   let html = '';
   batchItems.forEach((item, i) => {
-    let offerText = '';
-    if (item.decision === 'accept') offerText = item.offerCash.toFixed(2) + ' $ argent';
-    else if (item.decision === 'ac') offerText = item.offerCash.toFixed(2) + ' $ / ' + item.offerCredit.toFixed(2) + ' $ cr.';
-    else if (item.decision === 'credit' || item.decision === 'cd') offerText = item.offerCredit ? item.offerCredit.toFixed(2) + ' $ credit' : 'Credit';
-    else if (item.decision === 'don' || item.decision === 'd') offerText = 'Don';
-    else if (item.decision === 'reject') offerText = 'Refus';
-    else offerText = 'Consulter';
-
-    const cls = decisionClass[item.decision] || 'batch-item-consult';
+    const eff = decisionEffective(item);
+    const cls = eff.classe;
     html += '<div class="batch-item ' + cls + '">';
     html += '<div class="batch-item-info">';
     html += '<div class="batch-item-title">' + (item.title || 'Inconnu') + '</div>';
     html += '<div class="batch-item-detail">' + (item.author || '') + '</div>';
+    // Indicateur du nombre d'exemplaires + bouton bascule, si applicable
+    if (estBasculable(item)) {
+      const etiquette = item.surplusStock ? '2 exempl. et +' : '0-1 exempl.';
+      html += '<button class="batch-stock-toggle" onclick="basculerStock(' + i + ')" title="Changer le nombre d\'exemplaires en stock">🔄 ' + etiquette + '</button>';
+    }
     html += '</div>';
-    html += '<div class="batch-item-amount">' + offerText + '</div>';
+    html += '<div class="batch-item-amount">' + eff.label + '</div>';
     html += '<button class="batch-remove" onclick="removeBatchItem(' + i + ')">✕</button>';
     html += '</div>';
   });
   list.innerHTML = html;
 
-  // Update totals
+  // Update totals (selon la décision effective)
   let totalCash = 0, totalCredit = 0, totalDons = 0, totalRefus = 0;
   batchItems.forEach(item => {
-    if (item.decision === 'accept') totalCash += item.offerCash || 0;
-    else if (item.decision === 'ac') totalCash += item.offerCash || 0; // default to cash for A/C
-    else if (item.decision === 'credit' || item.decision === 'cd') totalCredit += item.offerCredit || 0;
-    else if (item.decision === 'don' || item.decision === 'd') totalDons++;
-    else if (item.decision === 'reject') totalRefus++;
+    const eff = decisionEffective(item);
+    if (eff.type === 'argent') totalCash += eff.montant;
+    else if (eff.type === 'credit') totalCredit += eff.montant;
+    else if (eff.type === 'don') totalDons++;
+    else if (eff.type === 'refus') totalRefus++;
   });
 
   document.getElementById('batchTotalCash').textContent = totalCash.toFixed(2) + ' $';
@@ -3316,33 +3369,15 @@ function finDuLot() {
   let totalCash = 0, totalCredit = 0, totalDons = 0, totalRefus = 0;
   let linesHtml = '';
 
+  const COULEURS = { argent:'#1B5E20', credit:'#1F4E79', don:'#6A1B9A', refus:'#C62828', consult:'#F0A500' };
   batchItems.forEach((item, i) => {
-    let offerText = '';
-    let offerColor = '#333';
-    if (item.decision === 'accept') {
-      offerText = item.offerCash.toFixed(2) + ' $ argent';
-      totalCash += item.offerCash || 0;
-      offerColor = '#1B5E20';
-    } else if (item.decision === 'ac') {
-      offerText = item.offerCash.toFixed(2) + ' $ argent';
-      totalCash += item.offerCash || 0;
-      offerColor = '#9A7B00';
-    } else if (item.decision === 'credit' || item.decision === 'cd') {
-      offerText = (item.offerCredit ? item.offerCredit.toFixed(2) : '0.00') + ' $ credit';
-      totalCredit += item.offerCredit || 0;
-      offerColor = '#1F4E79';
-    } else if (item.decision === 'don' || item.decision === 'd') {
-      offerText = 'Don';
-      totalDons++;
-      offerColor = '#6A1B9A';
-    } else if (item.decision === 'reject') {
-      offerText = 'Refus';
-      totalRefus++;
-      offerColor = '#C62828';
-    } else {
-      offerText = 'Consulter';
-      offerColor = '#F0A500';
-    }
+    const eff = decisionEffective(item);
+    let offerText = eff.label;
+    let offerColor = COULEURS[eff.type] || '#333';
+    if (eff.type === 'argent') totalCash += eff.montant;
+    else if (eff.type === 'credit') totalCredit += eff.montant;
+    else if (eff.type === 'don') totalDons++;
+    else if (eff.type === 'refus') totalRefus++;
 
     linesHtml += '<div class="summary-line">';
     linesHtml += '<span class="summary-line-title">' + (i+1) + '. ' + (item.title || 'Inconnu') + ' (' + (item.author || '') + ')</span>';
@@ -3359,8 +3394,19 @@ function finDuLot() {
   if (grandTotal > 0) totalsHtml += '<div class="summary-total-line summary-grand-total"><span>TOTAL</span><span>' + grandTotal.toFixed(2) + ' $</span></div>';
   totalsHtml += '</div>';
 
-  // Stocker les totaux du lot courant pour la sauvegarde
-  window.lotCourant = { totalCash, totalCredit, totalDons, totalRefus, items: batchItems.slice() };
+  // Stocker les totaux du lot courant pour la sauvegarde, avec la décision EFFECTIVE de chaque livre
+  const itemsEffectifs = batchItems.map(item => {
+    const eff = decisionEffective(item);
+    let decision = item.decision;
+    let offre_argent = null, offre_credit = null;
+    if (eff.type === 'argent') { decision = 'accept'; offre_argent = eff.montant; }
+    else if (eff.type === 'credit') { decision = 'credit'; offre_credit = eff.montant; }
+    else if (eff.type === 'don') { decision = 'don'; }
+    else if (eff.type === 'refus') { decision = 'reject'; }
+    else { decision = 'consult'; }
+    return Object.assign({}, item, { decisionEff: decision, montantArgent: offre_argent, montantCredit: offre_credit });
+  });
+  window.lotCourant = { totalCash, totalCredit, totalDons, totalRefus, items: itemsEffectifs };
 
   const summary = document.getElementById('batchSummary');
   summary.innerHTML = '<div class="summary-title">RESUME DU LOT — ' + batchItems.length + ' livre(s)</div>' + linesHtml + totalsHtml;
@@ -3549,9 +3595,9 @@ async function enregistrerLot() {
       lot_id: lotId,
       titre: item.title || 'Inconnu',
       auteur: item.author || '',
-      decision: item.decision,
-      offre_argent: item.offerCash || null,
-      offre_credit: item.offerCredit || null,
+      decision: item.decisionEff || item.decision,
+      offre_argent: (item.montantArgent != null ? item.montantArgent : null),
+      offre_credit: (item.montantCredit != null ? item.montantCredit : null),
       prix_vente: item.sellPrice || null
     }));
     if (livres.length > 0) await supabaseInsert('lot_livres', livres);
@@ -4214,6 +4260,11 @@ async function voirLot(lotId) {
       else { offre = 'Consulter'; col = '#F0A500'; }
       livresHtml += '<div class="summary-line lot-livre-ligne"><span class="summary-line-title">' + (i+1) + '. ' + (l.titre||'') + ' (' + (l.auteur||'') + ')</span>';
       livresHtml += '<span class="summary-line-offer" style="color:' + col + '">' + offre + '</span>';
+      // Bouton bascule (nombre d'exemplaires) si le livre est basculable
+      const basculable = ['accept','ac','credit','cd','don','d','reject'].includes(l.decision);
+      if (basculable) {
+        livresHtml += '<button class="batch-stock-toggle" style="margin-left:6px;" title="Changer le nombre d\'exemplaires" onclick="basculerStockLotSauve(\'' + l.id + '\', \'' + lotId + '\')">🔄</button>';
+      }
       livresHtml += '<button class="btn-retirer-livre" title="Retirer ce livre (client le reprend)" onclick="retirerLivreDuLot(\'' + l.id + '\', \'' + lotId + '\')">✕</button></div>';
     });
 
@@ -4353,6 +4404,87 @@ async function supprimerLot(lotId, nomClient) {
     console.error(e);
     montrerToast('Erreur — réessayez', false);
   }
+}
+
+async function basculerStockLotSauve(livreId, lotId) {
+  try {
+    const livres = await supabaseSelect('lot_livres', 'id=eq.' + livreId);
+    if (!livres.length) return;
+    const livre = livres[0];
+
+    // Re-déterminer le CODE D'ORIGINE de l'auteur (sans ambiguïté) à partir de son nom.
+    const code = findAuthorCode(livre.auteur || '');
+
+    if (code === 'A') {
+      montrerToast('Code A : toujours argent, pas de bascule', false);
+      return;
+    }
+    if (!code) {
+      montrerToast('Auteur non répertorié : bascule impossible', false);
+      return;
+    }
+
+    // Position actuelle : déduite de la décision stockée
+    const d = livre.decision;
+    let surplusActuel; // false = 0-1 exemplaire, true = 2+
+    if (code === 'A/C') surplusActuel = (d === 'credit' || d === 'cd');
+    else if (code === 'C/D') surplusActuel = (d === 'don' || d === 'd');
+    else if (code === 'D') surplusActuel = (d === 'reject');
+    else surplusActuel = false;
+
+    const nouveauSurplus = !surplusActuel;
+
+    // Calculer la nouvelle décision + montants selon le code et la nouvelle position
+    let nouvelleDecision, offreArgent = null, offreCredit = null;
+    const prixVente = livre.prix_vente || 0;
+    const argentBase = livre.offre_argent || (prixVente ? Math.round(prixVente * 0.30 * 2)/2 : null);
+    const creditBase = livre.offre_credit || (argentBase ? Math.round(argentBase * 1.25 * 2)/2 : null);
+
+    if (code === 'A/C') {
+      if (!nouveauSurplus) { nouvelleDecision = 'accept'; offreArgent = argentBase; }   // 0-1 → argent
+      else { nouvelleDecision = 'credit'; offreCredit = creditBase; }                    // 2+ → crédit
+    } else if (code === 'C/D') {
+      if (!nouveauSurplus) { nouvelleDecision = 'credit'; offreCredit = creditBase; }    // 0-1 → crédit
+      else { nouvelleDecision = 'don'; }                                                  // 2+ → don
+    } else if (code === 'D') {
+      if (!nouveauSurplus) { nouvelleDecision = 'don'; }                                 // 0-1 → don
+      else { nouvelleDecision = 'reject'; }                                               // 2+ → refus
+    }
+
+    await supabaseUpdate('lot_livres', livreId, {
+      decision: nouvelleDecision,
+      offre_argent: offreArgent,
+      offre_credit: offreCredit
+    });
+
+    await recalculerTotauxLot(lotId);
+    montrerToast('✅ Exemplaires ajustés', true);
+    voirLot(lotId);
+  } catch(e) {
+    console.error(e);
+    montrerToast('Erreur — réessayez', false);
+  }
+}
+
+function recalculerCredit(montantArgent) {
+  if (!montantArgent) return null;
+  return Math.round(montantArgent * 1.25 * 2) / 2;
+}
+function recalculerArgent(montantCredit) {
+  if (!montantCredit) return null;
+  return Math.round((montantCredit / 1.25) * 2) / 2;
+}
+
+async function recalculerTotauxLot(lotId) {
+  const livres = await supabaseSelect('lot_livres', 'lot_id=eq.' + lotId);
+  let tA=0, tC=0, tD=0, tR=0;
+  livres.forEach(l => {
+    if (l.decision === 'accept' || l.decision === 'ac') tA += (l.offre_argent||0);
+    else if (l.decision === 'credit' || l.decision === 'cd') tC += (l.offre_credit||0);
+    else if (l.decision === 'don' || l.decision === 'd') tD++;
+    else if (l.decision === 'reject') tR++;
+  });
+  await supabaseUpdate('lots', lotId, { total_argent:tA, total_credit:tC, total_dons:tD, total_refus:tR });
 }
 
 async function retirerLivreDuLot(livreId, lotId) {
@@ -4963,7 +5095,8 @@ function showResult(type, cash, credit, sellPrice, title, detail) {
       offerCredit: credit,
       sellPrice: sellPrice,
       resultTitle: title,
-      resultDetail: detail
+      resultDetail: detail,
+      surplusStock: false   // false = 0-1 exemplaire (défaut) ; true = 2+ exemplaires
     };
     // Ajout immédiat à la liste du lot (option 1)
     // On n'ajoute QU'UNE fois par scan : le recalcul déclenché par l'arrivée
