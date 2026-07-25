@@ -5883,6 +5883,20 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW non enregistré:', e));
   });
+  // Pégase déjà ouvert : clic sur notification → ouvrir les Messages
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data && e.data.action === 'ouvrir-messages' && utilisateurActuel) {
+      ouvrirMessages();
+    }
+  });
+}
+
+// Pégase lancé à froid par la notification (#messages dans l'URL)
+function verifierOuvertureMessages() {
+  if (window.location.hash === '#messages' && utilisateurActuel) {
+    ouvrirMessages();
+    history.replaceState(null, '', window.location.pathname);
+  }
 }
 
 function pushSupporte() {
@@ -8487,6 +8501,7 @@ async function seConnecter(mode) {
     // Afficher l'application
     entrerDansApp();
     resynchroniserPush();
+    verifierOuvertureMessages();
   } catch(e) {
     console.error(e);
     msg.innerHTML = '<span style="color:#C62828;">Erreur de connexion. Réessayez.</span>';

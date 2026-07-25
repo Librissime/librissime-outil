@@ -29,15 +29,18 @@ self.addEventListener('push', (event) => {
   event.waitUntil(self.registration.showNotification(titre, options));
 });
 
-// Clic sur la notification → ouvrir ou ramener Pégase au premier plan
+// Clic sur la notification → ouvrir ou ramener Pégase au premier plan, sur les Messages
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((liste) => {
       for (const client of liste) {
-        if ('focus' in client) return client.focus();
+        if ('focus' in client) {
+          client.postMessage({ action: 'ouvrir-messages' });
+          return client.focus();
+        }
       }
-      return self.clients.openWindow(event.notification.data.url || './index.html');
+      return self.clients.openWindow((event.notification.data.url || './index.html') + '#messages');
     })
   );
 });
