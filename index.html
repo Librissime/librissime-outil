@@ -5873,6 +5873,130 @@ async function supabaseDelete(table, id) {
   if (!res.ok) throw new Error('Supabase ' + res.status + ': ' + await res.text());
 }
 
+// ═══════════════════════════════════════════════════
+// NOTIFICATIONS PUSH (gestionnaires)
+// ═══════════════════════════════════════════════════
+const VAPID_CLE_PUBLIQUE = 'BOjTWgQMF5SJnRdQ-_0-GHXcWbC2beKmhJxWdM2pDMFPYz2nRrFilsLs72VQffBZiEEMf_wM-9pVoRi0uWtfjP0';
+
+// Enregistrer le service worker (notifications seulement, aucun cache)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW non enregistré:', e));
+  });
+}
+
+function pushSupporte() {
+  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+}
+
+function urlBase64VersUint8Array(base64) {
+  const padding = '='.repeat((4 - base64.length % 4) % 4);
+  const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const brut = window.atob(b64);
+  const tab = new Uint8Array(brut.length);
+  for (let i = 0; i < brut.length; i++) tab[i] = brut.charCodeAt(i);
+  return tab;
+}
+
+// Activer les notifications sur CET appareil (bouton dans Messages)
+async function activerNotificationsPush() {
+  const zone = document.getElementById('push-statut');
+  if (!pushSupporte()) {
+    if (zone) zone.innerHTML = '<span style="color:#C62828;">Non supporté sur ce navigateur.</span>';
+    return;
+  }
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      if (zone) zone.innerHTML = '<span style="color:#C62828;">Permission refusée. Activez-la dans les réglages du navigateur.</span>';
+      return;
+    }
+    const reg = await navigator.serviceWorker.ready;
+    let abo = await reg.pushManager.getSubscription();
+    if (!abo) {
+      abo = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64VersUint8Array(VAPID_CLE_PUBLIQUE)
+      });
+    }
+    await sauvegarderAbonnementPush(abo);
+    if (zone) zone.innerHTML = '<span style="color:#1B5E20;">✅ Notifications activées sur cet appareil.</span>';
+    majBoutonPush();
+  } catch (e) {
+    console.error(e);
+    if (zone) zone.innerHTML = '<span style="color:#C62828;">Erreur — réessayez.</span>';
+  }
+}
+
+// Sauvegarder/rafraîchir l'abonnement dans Supabase (1 ligne par appareil)
+async function sauvegarderAbonnementPush(abo) {
+  const j = abo.toJSON();
+  const endpointEnc = encodeURIComponent(j.endpoint);
+  const existants = await supabaseSelect('push_subscriptions', 'endpoint=eq.' + endpointEnc);
+  const donnees = {
+    compte_id: utilisateurActuel.id,
+    nom_complet: utilisateurActuel.nom_complet,
+    succursale: utilisateurActuel.succursale,
+    endpoint: j.endpoint,
+    p256dh: j.keys.p256dh,
+    auth: j.keys.auth
+  };
+  if (existants && existants.length) {
+    await supabaseUpdate('push_subscriptions', existants[0].id, donnees);
+  } else {
+    await supabaseInsert('push_subscriptions', donnees);
+  }
+}
+
+// Au retour dans l'app : si déjà abonné, resynchroniser silencieusement
+async function resynchroniserPush() {
+  if (!pushSupporte() || !utilisateurActuel || utilisateurActuel.role !== 'gestionnaire') return;
+  if (Notification.permission !== 'granted') return;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const abo = await reg.pushManager.getSubscription();
+    if (abo) await sauvegarderAbonnementPush(abo);
+  } catch (e) { console.warn('Resync push:', e); }
+}
+
+// État du bouton (déjà activé ou non)
+async function majBoutonPush() {
+  const btn = document.getElementById('push-btn');
+  if (!btn || !pushSupporte()) return;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const abo = await reg.pushManager.getSubscription();
+    if (abo && Notification.permission === 'granted') {
+      btn.textContent = '🔔 Notifications activées';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    }
+  } catch (e) {}
+}
+
+// Demander à l'Edge Function d'avertir les destinataires (silencieux si absente)
+async function envoyerNotificationsPush(messageId, destinataireIds, apercu) {
+  try {
+    await fetch(SUPABASE_URL + '/functions/v1/notifier-push', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        message_id: messageId,
+        destinataire_ids: destinataireIds,
+        expediteur: utilisateurActuel.nom_complet,
+        apercu: (apercu || '').substring(0, 80)
+      })
+    });
+  } catch (e) {
+    // Jamais bloquant : le message est déjà envoyé même si la notification échoue.
+    console.warn('Notification push non envoyée:', e);
+  }
+}
+
 // ── Supabase Storage : téléversement de fichiers ──
 const BUCKET_MESSAGES = 'messages-fichiers';
 const PJ_TAILLE_MAX = 10 * 1024 * 1024; // 10 Mo par fichier (après compression)
@@ -6135,6 +6259,9 @@ function ouvrirMessages() {
       </div>
       <div class="card">
         <button class="btn-depot" onclick="ouvrirFormulaireMessage()">✏️ Nouveau message</button>
+        ${utilisateurActuel.role === 'gestionnaire' && pushSupporte() ? `
+        <button id="push-btn" class="btn-batch" style="width:100%; margin-top:8px;" onclick="activerNotificationsPush()">🔔 Activer les notifications sur cet appareil</button>
+        <div id="push-statut" style="font-size:13px; min-height:16px; margin-top:4px;"></div>` : ''}
         <div class="ponct-onglets" style="margin-top:10px;">
           <button id="msg-tab-recus" class="ponct-tab ponct-tab-actif" onclick="basculerOngletMsg('recus')">📥 Reçus</button>
           <button id="msg-tab-envoyes" class="ponct-tab" onclick="basculerOngletMsg('envoyes')">📤 Envoyés</button>
@@ -6156,6 +6283,7 @@ function ouvrirMessages() {
   document.getElementById('msg-tab-recus').classList.add('ponct-tab-actif');
   document.getElementById('msg-tab-envoyes').classList.remove('ponct-tab-actif');
   chargerMessages();
+  majBoutonPush();
 }
 
 function basculerOngletMsg(onglet) {
@@ -6700,6 +6828,10 @@ async function creerMessageEtDestinataires(opts) {
       statut: 'non_lu'
     });
   }
+
+  // Notifications push aux destinataires abonnés (non bloquant)
+  envoyerNotificationsPush(messageId, destinataires.map(c => c.id), opts.contenu);
+
   return messageId;
 }
 
@@ -8354,6 +8486,7 @@ async function seConnecter(mode) {
 
     // Afficher l'application
     entrerDansApp();
+    resynchroniserPush();
   } catch(e) {
     console.error(e);
     msg.innerHTML = '<span style="color:#C62828;">Erreur de connexion. Réessayez.</span>';
