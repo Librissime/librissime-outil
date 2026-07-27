@@ -1548,6 +1548,109 @@
   }
   .step.active { background: var(--blue); }
   .step.done { background: var(--navy); }
+
+  /* ═══ CALENDRIER (réseaux sociaux & gestion de projet) ═══ */
+  .cal-screen {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg, #EEF2F6);
+    z-index: 1000; overflow-y: auto; padding: 16px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .cal-topbar {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    align-items: center; justify-content: space-between; margin-bottom: 14px;
+  }
+  .cal-cat-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cal-cat-btn {
+    padding: 9px 16px; border-radius: 999px; border: 2px solid #d7dee6;
+    background: white; color: var(--navy); font-weight: 600; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s;
+  }
+  .cal-cat-btn.actif { background: var(--navy); color: white; border-color: var(--navy); }
+  .cal-nav { display: flex; align-items: center; gap: 10px; }
+  .cal-nav-btn {
+    width: 38px; height: 38px; border-radius: 10px; border: 1px solid #ccc;
+    background: white; cursor: pointer; font-size: 20px; color: var(--navy); font-weight: 700; line-height: 1;
+  }
+  .cal-nav-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .cal-mois {
+    font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy);
+    font-weight: 700; min-width: 180px; text-align: center; text-transform: capitalize;
+  }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+    background: white; border-radius: 14px; padding: 10px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+  .cal-dow {
+    text-align: center; font-size: 12px; font-weight: 700; color: var(--gray);
+    padding: 6px 0; text-transform: uppercase; letter-spacing: .5px;
+  }
+  .cal-cell {
+    min-height: 108px; border: 1px solid #eef1f4; border-radius: 10px;
+    padding: 5px; cursor: pointer; transition: background .12s, border-color .12s;
+    display: flex; flex-direction: column; gap: 3px; overflow: hidden;
+  }
+  .cal-cell:hover { border-color: var(--blue); background: #f7fafd; }
+  .cal-cell.autre-mois { background: #f5f7f9; opacity: .5; cursor: default; }
+  .cal-cell.aujourdhui { border-color: var(--yellow-dark); box-shadow: inset 0 0 0 1px var(--yellow-dark); }
+  .cal-daynum { font-size: 13px; font-weight: 700; color: var(--navy); align-self: flex-start; }
+  .cal-cell.aujourdhui .cal-daynum {
+    background: var(--yellow-dark); color: white; border-radius: 50%;
+    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;
+  }
+  .cal-entry {
+    font-size: 11px; line-height: 1.25; padding: 3px 6px; border-radius: 6px;
+    background: #eef3f8; color: #1a2b3c; border-left: 3px solid var(--blue);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cal-pastille { font-size: 9px; margin-right: 3px; padding: 0 2px; }
+  .cal-plus { font-size: 10px; color: var(--gray); font-weight: 600; padding-left: 4px; }
+  .st-idee, .st-afaire       { border-left-color: #9aa5b1 !important; background: #f0f2f5; }
+  .st-planifie, .st-encours  { border-left-color: var(--blue) !important; background: #e9f2fb; }
+  .st-publie, .st-fait       { border-left-color: var(--green) !important; background: #e9f6ea; }
+
+  .cal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center;
+    z-index: 3000; padding: 16px;
+  }
+  .cal-popup {
+    background: white; border-radius: 16px; padding: 20px;
+    max-width: 460px; width: 100%; max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .cal-popup-tete { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .cal-popup-date {
+    font-family: 'Playfair Display', serif; font-size: 19px; color: var(--navy);
+    font-weight: 700; text-transform: capitalize;
+  }
+  .cal-popup-fermer { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; line-height: 1; padding: 0 4px; }
+  .cal-item {
+    border: 1px solid #e6ebf0; border-left: 4px solid var(--blue); border-radius: 10px;
+    padding: 12px; margin-top: 10px;
+  }
+  .cal-item-titre { font-weight: 700; color: var(--navy); font-size: 15px; margin-bottom: 4px; }
+  .cal-item-details { font-size: 13px; color: #444; line-height: 1.45; white-space: pre-wrap; }
+  .cal-item-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .cal-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #eef2f6; color: #4a5560; }
+  .cal-item-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .cal-mini-btn {
+    font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer;
+    border: 1px solid #ccc; background: white; color: #555; font-family: 'DM Sans', sans-serif; font-weight: 600;
+  }
+  .cal-mini-btn.rouge { color: var(--red); border-color: #f0c4c4; }
+  .cal-vide { text-align: center; color: #999; font-size: 13px; padding: 14px 0; }
+
+  @media (max-width: 640px) {
+    .cal-cell { min-height: 72px; padding: 3px; }
+    .cal-daynum { font-size: 11px; }
+    .cal-entry { font-size: 9px; padding: 2px 4px; }
+    .cal-mois { font-size: 18px; min-width: 120px; }
+    .cal-grid { gap: 3px; padding: 6px; }
+    .cal-cat-btn { padding: 8px 12px; font-size: 13px; }
+  }
+
 </style>
 </head>
 <body>
@@ -1638,6 +1741,11 @@
         <span class="service-icone">📗</span>
         <span class="service-nom">Autoéditeurs</span>
         <span class="service-desc">Gestion des autoéditeurs</span>
+      </button>
+      <button class="service-btn" id="btnCalendrierAcces" style="display:none;" onclick="ouvrirCalendrier()">
+        <span class="service-icone">📅</span>
+        <span class="service-nom">Calendrier</span>
+        <span class="service-desc">Réseaux sociaux & projets</span>
       </button>
       <button class="service-btn service-admin service-gestionnaire" id="service-admin" onclick="allerAuService('admin')">
         <span class="service-icone">🔐</span>
@@ -1976,6 +2084,27 @@
     </div>
   </div>
 </div>
+
+  <!-- Écran Calendrier (réseaux sociaux & gestion de projet) -->
+  <div id="calendrierScreen" class="cal-screen hidden">
+    <div class="lots-header">
+      <span class="lots-title">📅 Calendrier</span>
+      <button class="lots-close" onclick="retourAccueil()">✕ Fermer</button>
+    </div>
+    <div class="cal-topbar">
+      <div class="cal-cat-btns">
+        <button id="cal-cat-reseaux" class="cal-cat-btn actif" onclick="calChangerCategorie('reseaux')">📱 Réseaux sociaux</button>
+        <button id="cal-cat-projets" class="cal-cat-btn" onclick="calChangerCategorie('projets')">🗂️ Gestion de projet</button>
+      </div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calMoisPrecedent()">‹</button>
+        <span id="cal-mois-libelle" class="cal-mois"></span>
+        <button class="cal-nav-btn" onclick="calMoisSuivant()">›</button>
+      </div>
+    </div>
+    <div id="cal-grille" class="cal-grid"></div>
+    <div id="cal-overlay-zone"></div>
+  </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -8265,6 +8394,7 @@ async function chargerComptes() {
       html += '</div>';
       html += '<div class="compte-actions">';
       html += '<button class="compte-btn" onclick="reinitialiserMdp(\'' + c.id + '\', \'' + c.nom_complet.replace(/'/g, "") + '\')">🔑 Mot de passe</button>';
+      html += '<button class="compte-btn" onclick="basculerAccesCalendrier(\'' + c.id + '\', ' + (c.acces_calendrier ? 'false' : 'true') + ')">' + (c.acces_calendrier ? '📅 Retirer calendrier' : '📅 Donner calendrier') + '</button>';
       if (c.actif) {
         html += '<button class="compte-btn" onclick="basculerBlocage(\'' + c.id + '\', false)">🚫 Bloquer</button>';
       } else {
@@ -8464,7 +8594,8 @@ async function seConnecter(mode) {
       role: compte.role,
       succursale: compte.succursale,
       voit_tout: compte.voit_tout === true,
-      acces_autoediteurs: compte.acces_autoediteurs === true
+      acces_autoediteurs: compte.acces_autoediteurs === true,
+      acces_calendrier: compte.acces_calendrier === true
     };
 
     // Vérifier s'il existe déjà une session de travail ouverte (sur un autre appareil)
@@ -8571,6 +8702,11 @@ function appliquerPermissions() {
   if (btnAE) {
     const accesPerso = utilisateurActuel && utilisateurActuel.acces_autoediteurs === true && !estGestionnaire;
     btnAE.style.display = accesPerso ? '' : 'none';
+  }
+  // Bouton Calendrier : visible pour toute personne ayant l'attribut, peu importe le role
+  const btnCal = document.getElementById('btnCalendrierAcces');
+  if (btnCal) {
+    btnCal.style.display = (utilisateurActuel && utilisateurActuel.acces_calendrier === true) ? '' : 'none';
   }
 }
 
@@ -9516,6 +9652,10 @@ function retourAccueil() {
   if (msgS) msgS.classList.add('hidden');
   const profsS = document.getElementById('profsScreen');
   if (profsS) profsS.classList.add('hidden');
+  const calS = document.getElementById('calendrierScreen');
+  if (calS) calS.classList.add('hidden');
+  const calOv = document.getElementById('cal-overlay-zone');
+  if (calOv) calOv.innerHTML = '';
   if (typeof majBadgeMessages === 'function') majBadgeMessages();
   // Fermer la caméra si elle est ouverte
   if (typeof html5QrScanner !== 'undefined' && html5QrScanner) { try { fermerScanCamera(); } catch(e) {} }
@@ -14512,6 +14652,285 @@ function reset() {
   document.getElementById('isbnInput').focus();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ═══════════════════════════════════════════════════════
+// CALENDRIER — réseaux sociaux & gestion de projet
+// Accès individuel via l'attribut compte « acces_calendrier ».
+// ═══════════════════════════════════════════════════════
+let calCategorie = 'reseaux';
+let calAnnee = new Date().getFullYear();
+let calMois = new Date().getMonth();   // 0-11
+let calEvenements = [];                 // évènements du mois + catégorie affichés
+
+const CAL_NOMS_MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const CAL_JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const CAL_JOURS_LONGS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const CAL_PLATEFORMES = {
+  facebook:  { nom:'Facebook',  court:'f',  coul:'#1877F2' },
+  instagram: { nom:'Instagram', court:'IG', coul:'#E1306C' },
+  tiktok:    { nom:'TikTok',    court:'TT', coul:'#111111' },
+  youtube:   { nom:'YouTube',   court:'YT', coul:'#FF0000' }
+};
+
+function calEsc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function calDeuxCh(n) { return (n < 10 ? '0' : '') + n; }
+function calISO(annee, mois, jour) { return annee + '-' + calDeuxCh(mois + 1) + '-' + calDeuxCh(jour); }
+
+function calStatutOptions(cat) {
+  return cat === 'projets'
+    ? [['afaire','📋 À faire'], ['encours','🔧 En cours'], ['fait','✅ Fait']]
+    : [['idee','💡 Idée'], ['planifie','📅 Planifié'], ['publie','✅ Publié']];
+}
+function calStatutLabel(statut) {
+  const tous = { idee:'💡 Idée', planifie:'📅 Planifié', publie:'✅ Publié', afaire:'📋 À faire', encours:'🔧 En cours', fait:'✅ Fait' };
+  return tous[statut] || '';
+}
+function calStatutClasse(statut) { return statut ? ('st-' + statut) : ''; }
+
+function calPastilleHTML(plateforme) {
+  const p = CAL_PLATEFORMES[plateforme];
+  if (!p) return '';
+  return '<span class="cal-pastille" style="display:inline-block;min-width:13px;height:13px;line-height:13px;text-align:center;border-radius:3px;color:white;font-weight:700;background:' + p.coul + ';">' + p.court + '</span>';
+}
+
+function ouvrirCalendrier() {
+  if (!utilisateurActuel || utilisateurActuel.acces_calendrier !== true) {
+    alert('🔐 Accès réservé. Fais activer le calendrier sur ton compte par un gestionnaire.');
+    return;
+  }
+  document.getElementById('accueilScreen').classList.add('hidden');
+  document.getElementById('btnAccueil').classList.remove('hidden');
+  document.getElementById('calendrierScreen').classList.remove('hidden');
+  const maintenant = new Date();
+  calAnnee = maintenant.getFullYear();
+  calMois = maintenant.getMonth();
+  calChargerMois();
+}
+
+function calChangerCategorie(cat) {
+  calCategorie = cat;
+  document.getElementById('cal-cat-reseaux').classList.toggle('actif', cat === 'reseaux');
+  document.getElementById('cal-cat-projets').classList.toggle('actif', cat === 'projets');
+  calChargerMois();
+}
+
+function calMoisPrecedent() {
+  calMois--;
+  if (calMois < 0) { calMois = 11; calAnnee--; }
+  calChargerMois();
+}
+function calMoisSuivant() {
+  calMois++;
+  if (calMois > 11) { calMois = 0; calAnnee++; }
+  calChargerMois();
+}
+
+async function calChargerMois() {
+  const libelle = document.getElementById('cal-mois-libelle');
+  if (libelle) libelle.textContent = CAL_NOMS_MOIS[calMois] + ' ' + calAnnee;
+  const grille = document.getElementById('cal-grille');
+  grille.innerHTML = '<div style="grid-column:1/8;text-align:center;color:#999;padding:20px;">Chargement…</div>';
+  const debut = calISO(calAnnee, calMois, 1);
+  const dernierJour = new Date(calAnnee, calMois + 1, 0).getDate();
+  const fin = calISO(calAnnee, calMois, dernierJour);
+  try {
+    calEvenements = await supabaseSelect('calendrier_evenements',
+      'categorie=eq.' + calCategorie + '&date_jour=gte.' + debut + '&date_jour=lte.' + fin + '&order=cree_le.asc');
+  } catch(e) {
+    console.error(e);
+    grille.innerHTML = '<div style="grid-column:1/8;text-align:center;color:#C62828;padding:20px;">Erreur de chargement. Réessayez.</div>';
+    return;
+  }
+  calRendreGrille();
+}
+
+function calRendreGrille() {
+  const grille = document.getElementById('cal-grille');
+  let html = '';
+  CAL_JOURS.forEach(j => { html += '<div class="cal-dow">' + j + '</div>'; });
+
+  const decalage = (new Date(calAnnee, calMois, 1).getDay() + 6) % 7;   // 0 = lundi
+  const dernierJour = new Date(calAnnee, calMois + 1, 0).getDate();
+  const dernierMoisPrec = new Date(calAnnee, calMois, 0).getDate();
+
+  const auj = new Date();
+  const estAuj = (jour) => (auj.getFullYear() === calAnnee && auj.getMonth() === calMois && auj.getDate() === jour);
+
+  const parJour = {};
+  calEvenements.forEach(ev => {
+    const jr = parseInt((ev.date_jour || '').split('-')[2], 10);
+    if (!parJour[jr]) parJour[jr] = [];
+    parJour[jr].push(ev);
+  });
+
+  for (let i = 0; i < decalage; i++) {
+    const num = dernierMoisPrec - decalage + 1 + i;
+    html += '<div class="cal-cell autre-mois"><span class="cal-daynum">' + num + '</span></div>';
+  }
+  for (let jour = 1; jour <= dernierJour; jour++) {
+    const dateStr = calISO(calAnnee, calMois, jour);
+    const evs = parJour[jour] || [];
+    let contenu = '<span class="cal-daynum">' + jour + '</span>';
+    evs.slice(0, 3).forEach(ev => {
+      contenu += '<div class="cal-entry ' + calStatutClasse(ev.statut) + '">' + calPastilleHTML(ev.plateforme) + calEsc(ev.titre) + '</div>';
+    });
+    if (evs.length > 3) {
+      const reste = evs.length - 3;
+      contenu += '<div class="cal-plus">+' + reste + ' autre' + (reste > 1 ? 's' : '') + '</div>';
+    }
+    html += '<div class="cal-cell' + (estAuj(jour) ? ' aujourdhui' : '') + '" onclick="calOuvrirJour(\'' + dateStr + '\')">' + contenu + '</div>';
+  }
+  const totalCases = decalage + dernierJour;
+  const reste = (7 - (totalCases % 7)) % 7;
+  for (let i = 1; i <= reste; i++) {
+    html += '<div class="cal-cell autre-mois"><span class="cal-daynum">' + i + '</span></div>';
+  }
+  grille.innerHTML = html;
+}
+
+function calDateLisible(dateStr) {
+  const p = dateStr.split('-');
+  const d = new Date(parseInt(p[0],10), parseInt(p[1],10) - 1, parseInt(p[2],10));
+  return CAL_JOURS_LONGS[d.getDay()] + ' ' + parseInt(p[2],10) + ' ' + CAL_NOMS_MOIS[parseInt(p[1],10)-1];
+}
+
+function calOuvrirJour(dateStr) {
+  const evs = calEvenements.filter(ev => ev.date_jour === dateStr);
+  let corps = '';
+  if (!evs.length) {
+    corps = '<div class="cal-vide">Aucune entrée pour cette journée.</div>';
+  } else {
+    evs.forEach(ev => {
+      let meta = '';
+      if (ev.statut) meta += '<span class="cal-tag">' + calStatutLabel(ev.statut) + '</span>';
+      if (calCategorie === 'reseaux' && ev.plateforme && CAL_PLATEFORMES[ev.plateforme]) meta += '<span class="cal-tag">' + CAL_PLATEFORMES[ev.plateforme].nom + '</span>';
+      if (ev.responsable) meta += '<span class="cal-tag">👤 ' + calEsc(ev.responsable) + '</span>';
+      corps += '<div class="cal-item ' + calStatutClasse(ev.statut) + '">';
+      corps += '<div class="cal-item-titre">' + calEsc(ev.titre) + '</div>';
+      if (ev.details) corps += '<div class="cal-item-details">' + calEsc(ev.details) + '</div>';
+      if (meta) corps += '<div class="cal-item-meta">' + meta + '</div>';
+      corps += '<div class="cal-item-actions">';
+      corps += '<button class="cal-mini-btn" onclick="calFormulaireEntree(\'' + dateStr + '\', \'' + ev.id + '\')">✏️ Modifier</button>';
+      corps += '<button class="cal-mini-btn rouge" onclick="calSupprimerEntree(\'' + ev.id + '\', \'' + dateStr + '\')">🗑️ Supprimer</button>';
+      corps += '</div></div>';
+    });
+  }
+  const html =
+    '<div class="cal-overlay" onclick="if(event.target===this) calFermerPopup()">' +
+      '<div class="cal-popup">' +
+        '<div class="cal-popup-tete">' +
+          '<span class="cal-popup-date">' + calDateLisible(dateStr) + '</span>' +
+          '<button class="cal-popup-fermer" onclick="calFermerPopup()">×</button>' +
+        '</div>' +
+        '<div id="cal-popup-corps">' + corps + '</div>' +
+        '<button class="btn-batch btn-fin" style="width:100%;margin-top:14px;" onclick="calFormulaireEntree(\'' + dateStr + '\', null)">➕ Ajouter une entrée</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('cal-overlay-zone').innerHTML = html;
+}
+
+function calFermerPopup() {
+  document.getElementById('cal-overlay-zone').innerHTML = '';
+}
+
+function calFormulaireEntree(dateStr, evtId) {
+  const ev = evtId ? calEvenements.find(e => String(e.id) === String(evtId)) : null;
+  const opts = calStatutOptions(calCategorie);
+  let statutSelect = '<select id="cal-f-statut" class="form-input">';
+  opts.forEach(o => { statutSelect += '<option value="' + o[0] + '"' + (ev && ev.statut === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; });
+  statutSelect += '</select>';
+
+  let plateformeBloc = '';
+  if (calCategorie === 'reseaux') {
+    let sel = '<select id="cal-f-plateforme" class="form-input"><option value="">— Aucune —</option>';
+    Object.keys(CAL_PLATEFORMES).forEach(k => {
+      sel += '<option value="' + k + '"' + (ev && ev.plateforme === k ? ' selected' : '') + '>' + CAL_PLATEFORMES[k].nom + '</option>';
+    });
+    sel += '</select>';
+    plateformeBloc = '<div class="form-group"><label class="form-label">Plateforme</label>' + sel + '</div>';
+  }
+
+  const evtArg = evtId ? ("'" + evtId + "'") : 'null';
+  const corps = document.getElementById('cal-popup-corps');
+  corps.innerHTML =
+    '<div class="form-group"><label class="form-label">Titre (visible sur le calendrier)</label>' +
+      '<input type="text" id="cal-f-titre" class="form-input" value="' + calEsc(ev ? ev.titre : '') + '" placeholder="Ex : Vidéo TikTok — on achète vos livres"></div>' +
+    '<div class="form-group"><label class="form-label">Description / détails</label>' +
+      '<textarea id="cal-f-details" class="form-input" rows="4" placeholder="Script, notes, liens…">' + calEsc(ev ? ev.details : '') + '</textarea></div>' +
+    '<div class="form-group"><label class="form-label">Responsable</label>' +
+      '<input type="text" id="cal-f-responsable" class="form-input" value="' + calEsc(ev ? ev.responsable : '') + '" placeholder="Ex : Nick, Seb, Amy…"></div>' +
+    plateformeBloc +
+    '<div class="form-group"><label class="form-label">Statut</label>' + statutSelect + '</div>' +
+    '<div id="cal-f-msg" style="font-size:13px;margin-bottom:8px;"></div>' +
+    '<button class="btn-batch btn-fin" style="width:100%;margin-bottom:8px;" onclick="calEnregistrerEntree(\'' + dateStr + '\', ' + evtArg + ')">✅ Enregistrer</button>' +
+    '<button class="btn-batch btn-nouveau" style="width:100%;" onclick="calOuvrirJour(\'' + dateStr + '\')">Annuler</button>';
+  document.getElementById('cal-f-titre').focus();
+}
+
+async function calEnregistrerEntree(dateStr, evtId) {
+  const titre = document.getElementById('cal-f-titre').value.trim();
+  const msg = document.getElementById('cal-f-msg');
+  if (!titre) { msg.innerHTML = '<span style="color:#C62828;">Le titre est obligatoire.</span>'; return; }
+  const details = document.getElementById('cal-f-details').value.trim();
+  const responsable = document.getElementById('cal-f-responsable').value.trim();
+  const statut = document.getElementById('cal-f-statut').value;
+  const plateformeEl = document.getElementById('cal-f-plateforme');
+  const plateforme = plateformeEl ? plateformeEl.value : null;
+  const donnees = {
+    categorie: calCategorie,
+    date_jour: dateStr,
+    titre: titre,
+    details: details || null,
+    responsable: responsable || null,
+    plateforme: plateforme || null,
+    statut: statut || null
+  };
+  msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement…</span>';
+  try {
+    if (evtId) {
+      await supabaseUpdate('calendrier_evenements', evtId, donnees);
+    } else {
+      donnees.cree_par = utilisateurActuel ? utilisateurActuel.nom_complet : null;
+      await supabaseInsert('calendrier_evenements', donnees);
+    }
+    if (typeof montrerToast === 'function') montrerToast('✅ Entrée enregistrée', true);
+    await calChargerMois();
+    calOuvrirJour(dateStr);
+  } catch(e) {
+    console.error(e);
+    msg.innerHTML = '<span style="color:#C62828;">Erreur. Réessayez.</span>';
+  }
+}
+
+async function calSupprimerEntree(evtId, dateStr) {
+  if (!confirm('Supprimer cette entrée ?')) return;
+  try {
+    await supabaseDelete('calendrier_evenements', evtId);
+    if (typeof montrerToast === 'function') montrerToast('🗑️ Entrée supprimée', true);
+    await calChargerMois();
+    calOuvrirJour(dateStr);
+  } catch(e) {
+    console.error(e);
+    if (typeof montrerToast === 'function') montrerToast('Erreur — réessayez', false);
+  }
+}
+
+// Donner / retirer l'accès au calendrier depuis « Comptes employés »
+async function basculerAccesCalendrier(compteId, nouvelEtat) {
+  try {
+    await supabaseUpdate('comptes', compteId, { acces_calendrier: nouvelEtat });
+    if (typeof montrerToast === 'function') montrerToast(nouvelEtat ? '📅 Accès calendrier donné' : '📅 Accès calendrier retiré', true);
+    if (typeof chargerComptes === 'function') chargerComptes();
+  } catch(e) {
+    console.error(e);
+    if (typeof montrerToast === 'function') montrerToast('Erreur — réessayez', false);
+  }
+}
+
 
 // Au démarrage : tenter de restaurer une session existante (survie au F5)
 window.addEventListener('DOMContentLoaded', function() {
