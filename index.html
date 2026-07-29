@@ -1651,6 +1651,59 @@
     .cal-cat-btn { padding: 8px 12px; font-size: 13px; }
   }
 
+  /* === CALENDRIER v2 : éditeur plein écran + photos/vidéos === */
+  .cal-apercu-desc {
+    min-height: 90px; border: 2px solid #e5e7eb; border-radius: 10px;
+    padding: 11px 14px; cursor: pointer; background: white;
+    position: relative; font-size: 14px; color: var(--text);
+    white-space: pre-wrap; line-height: 1.45;
+  }
+  .cal-apercu-desc:hover { border-color: var(--blue); }
+  .cal-apercu-placeholder { color: #9CA3AF; }
+  .cal-apercu-texte { max-height: 140px; overflow: hidden; }
+  .cal-apercu-agrandir {
+    position: absolute; top: 8px; right: 10px; font-size: 11px;
+    color: var(--blue); font-weight: 600; background: #eef3f8;
+    padding: 2px 7px; border-radius: 6px;
+  }
+  .cal-editeur-plein {
+    position: fixed; inset: 0; z-index: 4000; background: white;
+    display: flex; flex-direction: column; padding: 14px;
+  }
+  .cal-editeur-tete {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .cal-editeur-titre {
+    font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); font-weight: 700;
+  }
+  .cal-editeur-textarea {
+    flex: 1; width: 100%; border: 1px solid #e5e7eb; border-radius: 12px;
+    padding: 16px; font-size: 16px; line-height: 1.6; font-family: 'DM Sans', sans-serif;
+    resize: none; outline: none; color: var(--text);
+  }
+  .cal-editeur-textarea:focus { border-color: var(--blue); }
+  .cal-pj-liste { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .cal-pj-item { position: relative; width: 84px; height: 84px; }
+  .cal-pj-vignette {
+    width: 84px; height: 84px; object-fit: cover; border-radius: 8px;
+    border: 1px solid #ddd; background: #000;
+  }
+  .cal-pj-badge {
+    position: absolute; bottom: 3px; left: 3px; font-size: 9px; font-weight: 700;
+    color: white; background: rgba(0,0,0,0.6); padding: 1px 5px; border-radius: 4px;
+  }
+  .cal-pj-retirer {
+    position: absolute; top: -6px; right: -6px; width: 22px; height: 22px;
+    border-radius: 50%; border: none; background: var(--red); color: white;
+    font-size: 12px; cursor: pointer; line-height: 1;
+  }
+  .cal-detail-medias { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .cal-media {
+    width: 120px; height: 120px; object-fit: cover; border-radius: 8px;
+    border: 1px solid #e6ebf0; background: #000; cursor: pointer;
+  }
+  video.cal-media { object-fit: contain; }
+
 </style>
 </head>
 <body>
@@ -14661,6 +14714,7 @@ let calCategorie = 'reseaux';
 let calAnnee = new Date().getFullYear();
 let calMois = new Date().getMonth();   // 0-11
 let calEvenements = [];                 // évènements du mois + catégorie affichés
+let calFichiers = [];                   // photos/vidéos de l'entrée en cours d'édition
 
 const CAL_NOMS_MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const CAL_JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -14812,6 +14866,7 @@ function calOuvrirJour(dateStr) {
       corps += '<div class="cal-item ' + calStatutClasse(ev.statut) + '">';
       corps += '<div class="cal-item-titre">' + calEsc(ev.titre) + '</div>';
       if (ev.details) corps += '<div class="cal-item-details">' + calEsc(ev.details) + '</div>';
+      if (ev.fichiers && ev.fichiers.length) corps += calRendreMediasDetail(ev.fichiers);
       if (meta) corps += '<div class="cal-item-meta">' + meta + '</div>';
       corps += '<div class="cal-item-actions">';
       corps += '<button class="cal-mini-btn" onclick="calFormulaireEntree(\'' + dateStr + '\', \'' + ev.id + '\')">✏️ Modifier</button>';
@@ -14839,6 +14894,7 @@ function calFermerPopup() {
 
 function calFormulaireEntree(dateStr, evtId) {
   const ev = evtId ? calEvenements.find(e => String(e.id) === String(evtId)) : null;
+  calFichiers = (ev && Array.isArray(ev.fichiers)) ? ev.fichiers.slice() : [];
   const opts = calStatutOptions(calCategorie);
   let statutSelect = '<select id="cal-f-statut" class="form-input">';
   opts.forEach(o => { statutSelect += '<option value="' + o[0] + '"' + (ev && ev.statut === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; });
@@ -14860,14 +14916,20 @@ function calFormulaireEntree(dateStr, evtId) {
     '<div class="form-group"><label class="form-label">Titre (visible sur le calendrier)</label>' +
       '<input type="text" id="cal-f-titre" class="form-input" value="' + calEsc(ev ? ev.titre : '') + '" placeholder="Ex : Vidéo TikTok — on achète vos livres"></div>' +
     '<div class="form-group"><label class="form-label">Description / détails</label>' +
-      '<textarea id="cal-f-details" class="form-input" rows="4" placeholder="Script, notes, liens…">' + calEsc(ev ? ev.details : '') + '</textarea></div>' +
+      '<textarea id="cal-f-details" style="display:none;">' + calEsc(ev ? ev.details : '') + '</textarea>' +
+      '<div id="cal-f-details-apercu" class="cal-apercu-desc" onclick="calOuvrirEditeurDesc()"></div></div>' +
     '<div class="form-group"><label class="form-label">Responsable</label>' +
       '<input type="text" id="cal-f-responsable" class="form-input" value="' + calEsc(ev ? ev.responsable : '') + '" placeholder="Ex : Nick, Seb, Amy…"></div>' +
     plateformeBloc +
     '<div class="form-group"><label class="form-label">Statut</label>' + statutSelect + '</div>' +
+    '<div class="form-group"><label class="form-label">Photos et vidéos</label>' +
+      '<input type="file" id="cal-f-fichiers" class="form-input" multiple accept="image/*,video/*" onchange="calChoisirFichiers(this)">' +
+      '<div id="cal-f-pj-liste" class="cal-pj-liste"></div></div>' +
     '<div id="cal-f-msg" style="font-size:13px;margin-bottom:8px;"></div>' +
     '<button class="btn-batch btn-fin" style="width:100%;margin-bottom:8px;" onclick="calEnregistrerEntree(\'' + dateStr + '\', ' + evtArg + ')">✅ Enregistrer</button>' +
     '<button class="btn-batch btn-nouveau" style="width:100%;" onclick="calOuvrirJour(\'' + dateStr + '\')">Annuler</button>';
+  calRendreApercuDesc();
+  calRendreFichiersForm();
   document.getElementById('cal-f-titre').focus();
 }
 
@@ -14891,6 +14953,15 @@ async function calEnregistrerEntree(dateStr, evtId) {
   };
   msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement…</span>';
   try {
+    // Téléverser les nouvelles photos/vidéos, garder celles déjà en ligne
+    const fichiersFinal = [];
+    for (let i = 0; i < calFichiers.length; i++) {
+      const f = calFichiers[i];
+      if (f.url) { fichiersFinal.push({ nom: f.nom, url: f.url, type: f.type, taille: f.taille }); continue; }
+      msg.innerHTML = '<span style="color:#1F4E79;">Téléversement ' + (i + 1) + '/' + calFichiers.length + '…</span>';
+      fichiersFinal.push(await calTeleverserFichier(f.file));
+    }
+    donnees.fichiers = fichiersFinal;
     if (evtId) {
       await supabaseUpdate('calendrier_evenements', evtId, donnees);
     } else {
@@ -14902,7 +14973,8 @@ async function calEnregistrerEntree(dateStr, evtId) {
     calOuvrirJour(dateStr);
   } catch(e) {
     console.error(e);
-    msg.innerHTML = '<span style="color:#C62828;">Erreur. Réessayez.</span>';
+    const m = (e && e.message && /Mo|volumineux|dépasse|Téléversement/i.test(e.message)) ? e.message : 'Erreur. Réessayez.';
+    msg.innerHTML = '<span style="color:#C62828;">' + m + '</span>';
   }
 }
 
@@ -14917,6 +14989,141 @@ async function calSupprimerEntree(evtId, dateStr) {
     console.error(e);
     if (typeof montrerToast === 'function') montrerToast('Erreur — réessayez', false);
   }
+}
+
+// ── Éditeur plein écran de la description (comme une page Word) ──
+function calOuvrirEditeurDesc() {
+  const val = document.getElementById('cal-f-details').value;
+  const anc = document.getElementById('cal-editeur-plein');
+  if (anc) anc.remove();
+  const ov = document.createElement('div');
+  ov.id = 'cal-editeur-plein';
+  ov.className = 'cal-editeur-plein';
+  ov.innerHTML =
+    '<div class="cal-editeur-tete">' +
+      '<span class="cal-editeur-titre">Description</span>' +
+      '<button class="btn-batch btn-fin" style="width:auto;padding:8px 18px;" onclick="calFermerEditeurDesc(true)">✓ Terminé</button>' +
+    '</div>' +
+    '<textarea id="cal-editeur-textarea" class="cal-editeur-textarea" placeholder="Écrivez ici… script, notes, liens…"></textarea>';
+  document.body.appendChild(ov);
+  const ta = document.getElementById('cal-editeur-textarea');
+  ta.value = val;
+  ta.focus();
+}
+
+function calFermerEditeurDesc(sauver) {
+  const ta = document.getElementById('cal-editeur-textarea');
+  if (sauver && ta) {
+    document.getElementById('cal-f-details').value = ta.value;
+    calRendreApercuDesc();
+  }
+  const ov = document.getElementById('cal-editeur-plein');
+  if (ov) ov.remove();
+}
+
+function calRendreApercuDesc() {
+  const apercu = document.getElementById('cal-f-details-apercu');
+  if (!apercu) return;
+  const val = document.getElementById('cal-f-details').value.trim();
+  if (val) {
+    apercu.innerHTML = '<div class="cal-apercu-texte">' + calEsc(val) + '</div><span class="cal-apercu-agrandir">⤢ Toucher pour agrandir</span>';
+  } else {
+    apercu.innerHTML = '<span class="cal-apercu-placeholder">Toucher pour écrire (script, notes, liens…)</span><span class="cal-apercu-agrandir">⤢</span>';
+  }
+}
+
+// ── Photos et vidéos ──
+const CAL_IMG_MAX = 10 * 1024 * 1024;   // 10 Mo par image (après compression)
+const CAL_VIDEO_MAX = 50 * 1024 * 1024; // 50 Mo par vidéo
+
+function calChoisirFichiers(input) {
+  const nouveaux = [...input.files];
+  for (const f of nouveaux) {
+    const estVideo = (f.type || '').startsWith('video/');
+    const estImage = (f.type || '').startsWith('image/');
+    if (!estVideo && !estImage) { alert('« ' + f.name + ' » n\'est pas une photo ou une vidéo.'); continue; }
+    if (estVideo && f.size > CAL_VIDEO_MAX) { alert('La vidéo « ' + f.name + ' » dépasse 50 Mo. Raccourcis-la ou réduis sa qualité.'); continue; }
+    calFichiers.push({ file: f, nom: f.name, type: f.type, taille: f.size, apercu: URL.createObjectURL(f), estVideo: estVideo });
+  }
+  input.value = '';
+  calRendreFichiersForm();
+}
+
+function calRetirerFichier(index) {
+  const f = calFichiers[index];
+  if (f && f.apercu && f.file) { try { URL.revokeObjectURL(f.apercu); } catch(e) {} }
+  calFichiers.splice(index, 1);
+  calRendreFichiersForm();
+}
+
+function calRendreFichiersForm() {
+  const zone = document.getElementById('cal-f-pj-liste');
+  if (!zone) return;
+  if (!calFichiers.length) { zone.innerHTML = ''; return; }
+  let html = '';
+  calFichiers.forEach((f, i) => {
+    const estVideo = f.estVideo || (f.type || '').startsWith('video/');
+    const src = f.apercu || f.url;
+    html += '<div class="cal-pj-item">';
+    if (estVideo) {
+      html += '<video class="cal-pj-vignette" src="' + src + '" muted preload="metadata"></video><span class="cal-pj-badge">▶ vidéo</span>';
+    } else {
+      html += '<img class="cal-pj-vignette" src="' + src + '" alt="">';
+    }
+    html += '<button class="cal-pj-retirer" onclick="calRetirerFichier(' + i + ')" title="Retirer">✕</button>';
+    html += '</div>';
+  });
+  zone.innerHTML = html;
+}
+
+async function calTeleverserFichier(file) {
+  let blob = file;
+  let type = file.type || 'application/octet-stream';
+  if (type.startsWith('image/') && type !== 'image/gif' && typeof compresserImage === 'function') {
+    blob = await compresserImage(file);
+    if (blob !== file) type = 'image/jpeg';
+  }
+  const estVideo = type.startsWith('video/');
+  const max = estVideo ? CAL_VIDEO_MAX : CAL_IMG_MAX;
+  if (blob.size > max) {
+    throw new Error('« ' + file.name + ' » est trop volumineux (' + Math.round(blob.size / 1024 / 1024) + ' Mo).');
+  }
+  const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
+  const d = new Date();
+  const dossier = 'calendrier/' + d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  const chemin = dossier + '/' + crypto.randomUUID() + '.' + ext;
+  const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + BUCKET_MESSAGES + '/' + chemin, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': type,
+      'x-upsert': 'false'
+    },
+    body: blob
+  });
+  if (!res.ok) throw new Error('Téléversement échoué (' + res.status + ').');
+  return {
+    nom: file.name,
+    url: SUPABASE_URL + '/storage/v1/object/public/' + BUCKET_MESSAGES + '/' + chemin,
+    type: type,
+    taille: blob.size
+  };
+}
+
+function calRendreMediasDetail(fichiers) {
+  if (!fichiers || !fichiers.length) return '';
+  let html = '<div class="cal-detail-medias">';
+  fichiers.forEach(f => {
+    const type = f.type || '';
+    if (type.startsWith('video/')) {
+      html += '<video class="cal-media" src="' + f.url + '" controls preload="metadata"></video>';
+    } else {
+      html += '<a href="' + f.url + '" target="_blank" rel="noopener"><img class="cal-media" src="' + f.url + '" alt="' + calEsc(f.nom || '') + '" loading="lazy"></a>';
+    }
+  });
+  html += '</div>';
+  return html;
 }
 
 // Donner / retirer l'accès au calendrier depuis « Comptes employés »
