@@ -9140,6 +9140,17 @@ function ouvrirFormulaireClient() {
         <input type="text" id="cf-tel" class="form-input" placeholder="819-555-1234">
       </div>
       <div class="form-group">
+        <label class="form-label">💵 Offre en argent ($)</label>
+        <input type="text" id="cf-argent" class="form-input" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🎫 Offre en crédit ($)</label>
+        <input type="text" id="cf-credit" class="form-input" placeholder="0.00">
+      </div>
+      <div style="font-size:12px; color:#6B7280; margin:-4px 0 10px; line-height:1.4;">
+        Pré-rempli avec le total calculé. Vous pouvez ajuster les montants à la main (négociation, dépôt à évaluer, etc.).
+      </div>
+      <div class="form-group">
         <label class="form-label">Note au dossier (optionnel)</label>
         <textarea id="cf-note" class="form-input" rows="2" placeholder="Ex : rappeler après 17h"></textarea>
       </div>
@@ -9153,6 +9164,11 @@ function ouvrirFormulaireClient() {
   summary.insertAdjacentHTML('beforeend', formHtml);
   // Succursale par défaut = celle de l'employé connecté
   appliquerSuccursaleParDefaut('cf-succursale');
+  // Pré-remplir les offres avec les totaux calculés (modifiables ensuite)
+  if (window.lotCourant) {
+    document.getElementById('cf-argent').value = (window.lotCourant.totalCash || 0).toFixed(2);
+    document.getElementById('cf-credit').value = (window.lotCourant.totalCredit || 0).toFixed(2);
+  }
   // Pré-remplir si on évalue un dépôt existant
   if (window.depotEnCours) {
     const d = window.depotEnCours;
@@ -9183,6 +9199,15 @@ async function enregistrerLot() {
   if (!nom && !prenom) { msg.innerHTML = '<span style="color:#C62828;">Entrez au moins un nom ou un prénom.</span>'; return; }
   if (!window.lotCourant) { msg.innerHTML = '<span style="color:#C62828;">Aucun lot à enregistrer.</span>'; return; }
 
+  // Offres saisies (modifiables) — remplacent les totaux calculés
+  const argentTxt = document.getElementById('cf-argent').value.trim().replace(',', '.');
+  const creditTxt = document.getElementById('cf-credit').value.trim().replace(',', '.');
+  const offreArgent = argentTxt ? parseFloat(argentTxt) : 0;
+  const offreCredit = creditTxt ? parseFloat(creditTxt) : 0;
+  if (isNaN(offreArgent) || isNaN(offreCredit) || offreArgent < 0 || offreCredit < 0) {
+    msg.innerHTML = '<span style="color:#C62828;">Entrez des montants d\'offre valides (ou 0).</span>'; return;
+  }
+
   msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement en cours…</span>';
 
   try {
@@ -9196,8 +9221,8 @@ async function enregistrerLot() {
       client_prenom: prenom || null,
       client_telephone: tel || null,
       note: note || null,
-      total_argent: lot.totalCash,
-      total_credit: lot.totalCredit,
+      total_argent: offreArgent,
+      total_credit: offreCredit,
       total_dons: lot.totalDons,
       total_refus: lot.totalRefus,
       statut: nouveauStatut
@@ -10952,6 +10977,14 @@ async function voirLot(lotId) {
       + livresHtml + totHtml
       + '<div class="detail-section"><div class="detail-label">Statut</div>'
       + '<select id="det-statut" class="form-input" onchange="changerStatut(\'' + lotId + '\')">' + statutOptions + '</select></div>'
+      + '<div class="detail-section"><div class="detail-label">💵 Offre (modifiable à la main)</div>'
+      + '<div style="display:flex; gap:8px;">'
+      + '<div style="flex:1;"><label style="font-size:12px; color:#6B7280;">Argent ($)</label>'
+      + '<input type="text" id="det-argent" class="form-input" value="' + (lot.total_argent || 0).toFixed(2) + '"></div>'
+      + '<div style="flex:1;"><label style="font-size:12px; color:#6B7280;">Crédit ($)</label>'
+      + '<input type="text" id="det-credit" class="form-input" value="' + (lot.total_credit || 0).toFixed(2) + '"></div>'
+      + '</div>'
+      + '<button class="btn-batch btn-fin" style="width:100%; margin-top:6px;" onclick="sauverOffreLot(\'' + lotId + '\')">💾 Enregistrer l\'offre</button></div>'
       + '<div class="detail-section"><div class="detail-label">Note au dossier</div>'
       + '<textarea id="det-note" class="form-input" rows="3">' + (lot.note || '') + '</textarea>'
       + '<button class="btn-batch btn-fin" style="width:100%; margin-top:6px;" onclick="sauverNote(\'' + lotId + '\')">Enregistrer la note</button></div>'
@@ -11001,6 +11034,24 @@ function montrerToast(texte, succes) {
   toast.className = 'toast-show';
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => { toast.className = ''; }, 2500);
+}
+
+async function sauverOffreLot(lotId) {
+  const argentTxt = document.getElementById('det-argent').value.trim().replace(',', '.');
+  const creditTxt = document.getElementById('det-credit').value.trim().replace(',', '.');
+  const offreArgent = argentTxt ? parseFloat(argentTxt) : 0;
+  const offreCredit = creditTxt ? parseFloat(creditTxt) : 0;
+  if (isNaN(offreArgent) || isNaN(offreCredit) || offreArgent < 0 || offreCredit < 0) {
+    montrerToast('Montants invalides', false); return;
+  }
+  try {
+    await supabaseUpdate('lots', lotId, { total_argent: offreArgent, total_credit: offreCredit });
+    montrerToast('✅ Offre enregistrée', true);
+    voirLot(lotId);  // recharger pour rafraîchir les totaux et le « si tout en crédit »
+  } catch(e) {
+    console.error(e);
+    montrerToast('Erreur — réessayez', false);
+  }
 }
 
 async function sauverNote(lotId) {
