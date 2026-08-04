@@ -5,10 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pégase — Librissime</title>
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1F4E79">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1548,175 +1544,6 @@
   }
   .step.active { background: var(--blue); }
   .step.done { background: var(--navy); }
-
-  /* ═══ CALENDRIER (réseaux sociaux & gestion de projet) ═══ */
-  .cal-screen {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: var(--bg, #EEF2F6);
-    z-index: 1000; overflow-y: auto; padding: 16px;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .cal-topbar {
-    display: flex; flex-wrap: wrap; gap: 12px;
-    align-items: center; justify-content: space-between; margin-bottom: 14px;
-  }
-  .cal-cat-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-  .cal-cat-btn {
-    padding: 9px 16px; border-radius: 999px; border: 2px solid #d7dee6;
-    background: white; color: var(--navy); font-weight: 600; font-size: 14px;
-    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s;
-  }
-  .cal-cat-btn.actif { background: var(--navy); color: white; border-color: var(--navy); }
-  .cal-nav { display: flex; align-items: center; gap: 10px; }
-  .cal-nav-btn {
-    width: 38px; height: 38px; border-radius: 10px; border: 1px solid #ccc;
-    background: white; cursor: pointer; font-size: 20px; color: var(--navy); font-weight: 700; line-height: 1;
-  }
-  .cal-nav-btn:hover { border-color: var(--blue); color: var(--blue); }
-  .cal-mois {
-    font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy);
-    font-weight: 700; min-width: 180px; text-align: center; text-transform: capitalize;
-  }
-  .cal-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
-    background: white; border-radius: 14px; padding: 10px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-  }
-  .cal-dow {
-    text-align: center; font-size: 12px; font-weight: 700; color: var(--gray);
-    padding: 6px 0; text-transform: uppercase; letter-spacing: .5px;
-  }
-  .cal-cell {
-    min-height: 108px; border: 1px solid #eef1f4; border-radius: 10px;
-    padding: 5px; cursor: pointer; transition: background .12s, border-color .12s;
-    display: flex; flex-direction: column; gap: 3px; overflow: hidden;
-  }
-  .cal-cell:hover { border-color: var(--blue); background: #f7fafd; }
-  .cal-cell.autre-mois { background: #f5f7f9; opacity: .5; cursor: default; }
-  .cal-cell.aujourdhui { border-color: var(--yellow-dark); box-shadow: inset 0 0 0 1px var(--yellow-dark); }
-  .cal-daynum { font-size: 13px; font-weight: 700; color: var(--navy); align-self: flex-start; }
-  .cal-cell.aujourdhui .cal-daynum {
-    background: var(--yellow-dark); color: white; border-radius: 50%;
-    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;
-  }
-  .cal-entry {
-    font-size: 11px; line-height: 1.25; padding: 3px 6px; border-radius: 6px;
-    background: #eef3f8; color: #1a2b3c; border-left: 3px solid var(--blue);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .cal-pastille { font-size: 9px; margin-right: 3px; padding: 0 2px; }
-  .cal-plus { font-size: 10px; color: var(--gray); font-weight: 600; padding-left: 4px; }
-  .st-idee, .st-afaire       { border-left-color: #9aa5b1 !important; background: #f0f2f5; }
-  .st-planifie, .st-encours  { border-left-color: var(--blue) !important; background: #e9f2fb; }
-  .st-publie, .st-fait       { border-left-color: var(--green) !important; background: #e9f6ea; }
-
-  .cal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center;
-    z-index: 3000; padding: 16px;
-  }
-  .cal-popup {
-    background: white; border-radius: 16px; padding: 20px;
-    max-width: 460px; width: 100%; max-height: 88vh; overflow-y: auto;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
-  }
-  .cal-popup-tete { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .cal-popup-date {
-    font-family: 'Playfair Display', serif; font-size: 19px; color: var(--navy);
-    font-weight: 700; text-transform: capitalize;
-  }
-  .cal-popup-fermer { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; line-height: 1; padding: 0 4px; }
-  .cal-item {
-    border: 1px solid #e6ebf0; border-left: 4px solid var(--blue); border-radius: 10px;
-    padding: 12px; margin-top: 10px;
-  }
-  .cal-item-titre { font-weight: 700; color: var(--navy); font-size: 15px; margin-bottom: 4px; }
-  .cal-item-details { font-size: 13px; color: #444; line-height: 1.45; white-space: pre-wrap; }
-  .cal-item-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .cal-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #eef2f6; color: #4a5560; }
-  .cal-item-actions { display: flex; gap: 8px; margin-top: 10px; }
-  .cal-mini-btn {
-    font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer;
-    border: 1px solid #ccc; background: white; color: #555; font-family: 'DM Sans', sans-serif; font-weight: 600;
-  }
-  .cal-mini-btn.rouge { color: var(--red); border-color: #f0c4c4; }
-  .cal-vide { text-align: center; color: #999; font-size: 13px; padding: 14px 0; }
-
-  @media (max-width: 640px) {
-    .cal-cell { min-height: 72px; padding: 3px; }
-    .cal-daynum { font-size: 11px; }
-    .cal-entry { font-size: 9px; padding: 2px 4px; }
-    .cal-mois { font-size: 18px; min-width: 120px; }
-    .cal-grid { gap: 3px; padding: 6px; }
-    .cal-cat-btn { padding: 8px 12px; font-size: 13px; }
-  }
-
-  /* === CALENDRIER v2 : éditeur plein écran + photos/vidéos === */
-  .cal-apercu-desc {
-    min-height: 90px; border: 2px solid #e5e7eb; border-radius: 10px;
-    padding: 11px 14px; cursor: pointer; background: white;
-    position: relative; font-size: 14px; color: var(--text);
-    white-space: pre-wrap; line-height: 1.45;
-  }
-  .cal-apercu-desc:hover { border-color: var(--blue); }
-  .cal-apercu-placeholder { color: #9CA3AF; }
-  .cal-apercu-texte { max-height: 140px; overflow: hidden; }
-  .cal-apercu-agrandir {
-    position: absolute; top: 8px; right: 10px; font-size: 11px;
-    color: var(--blue); font-weight: 600; background: #eef3f8;
-    padding: 2px 7px; border-radius: 6px;
-  }
-  .cal-editeur-plein {
-    position: fixed; inset: 0; z-index: 4000; background: white;
-    display: flex; flex-direction: column; padding: 14px;
-  }
-  .cal-editeur-tete {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-  }
-  .cal-editeur-titre {
-    font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); font-weight: 700;
-  }
-  .cal-editeur-textarea {
-    flex: 1; width: 100%; border: 1px solid #e5e7eb; border-radius: 12px;
-    padding: 16px; font-size: 16px; line-height: 1.6; font-family: 'DM Sans', sans-serif;
-    resize: none; outline: none; color: var(--text);
-  }
-  .cal-editeur-textarea:focus { border-color: var(--blue); }
-  .cal-pj-liste { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .cal-pj-item { position: relative; width: 84px; height: 84px; }
-  .cal-pj-vignette {
-    width: 84px; height: 84px; object-fit: cover; border-radius: 8px;
-    border: 1px solid #ddd; background: #000;
-  }
-  .cal-pj-badge {
-    position: absolute; bottom: 3px; left: 3px; font-size: 9px; font-weight: 700;
-    color: white; background: rgba(0,0,0,0.6); padding: 1px 5px; border-radius: 4px;
-  }
-  .cal-pj-retirer {
-    position: absolute; top: -6px; right: -6px; width: 22px; height: 22px;
-    border-radius: 50%; border: none; background: var(--red); color: white;
-    font-size: 12px; cursor: pointer; line-height: 1;
-  }
-  .cal-detail-medias { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .cal-media {
-    width: 120px; height: 120px; object-fit: cover; border-radius: 8px;
-    border: 1px solid #e6ebf0; background: #000; cursor: pointer;
-  }
-  video.cal-media { object-fit: contain; }
-
-  /* Banque d'idées */
-  .cal-vue-btns { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-  .cal-vue-btn {
-    padding: 8px 16px; border-radius: 10px; border: 1px solid #d7dee6;
-    background: white; color: var(--navy); font-weight: 600; font-size: 14px;
-    font-family: 'DM Sans', sans-serif; cursor: pointer;
-  }
-  .cal-vue-btn.actif { background: var(--blue); color: white; border-color: var(--blue); }
-  .cal-idees { display: flex; flex-direction: column; gap: 10px; }
-  .cal-idees.hidden { display: none; }
-  .cal-idees-astuce { font-size: 13px; color: #6b7684; margin: 2px 2px 8px; }
-  .cal-idees-vide { text-align: center; color: #999; font-size: 14px; padding: 22px 12px; line-height: 1.6; }
-
 </style>
 </head>
 <body>
@@ -1807,11 +1634,6 @@
         <span class="service-icone">📗</span>
         <span class="service-nom">Autoéditeurs</span>
         <span class="service-desc">Gestion des autoéditeurs</span>
-      </button>
-      <button class="service-btn" id="btnCalendrierAcces" style="display:none;" onclick="ouvrirCalendrier()">
-        <span class="service-icone">📅</span>
-        <span class="service-nom">Calendrier</span>
-        <span class="service-desc">Réseaux sociaux & projets</span>
       </button>
       <button class="service-btn service-admin service-gestionnaire" id="service-admin" onclick="allerAuService('admin')">
         <span class="service-icone">🔐</span>
@@ -2150,32 +1972,6 @@
     </div>
   </div>
 </div>
-
-  <!-- Écran Calendrier (réseaux sociaux & gestion de projet) -->
-  <div id="calendrierScreen" class="cal-screen hidden">
-    <div class="lots-header">
-      <span class="lots-title">📅 Calendrier</span>
-      <button class="lots-close" onclick="retourAccueil()">✕ Fermer</button>
-    </div>
-    <div class="cal-topbar">
-      <div class="cal-cat-btns">
-        <button id="cal-cat-reseaux" class="cal-cat-btn actif" onclick="calChangerCategorie('reseaux')">📱 Réseaux sociaux</button>
-        <button id="cal-cat-projets" class="cal-cat-btn" onclick="calChangerCategorie('projets')">🗂️ Gestion de projet</button>
-      </div>
-      <div id="cal-nav" class="cal-nav">
-        <button class="cal-nav-btn" onclick="calMoisPrecedent()">‹</button>
-        <span id="cal-mois-libelle" class="cal-mois"></span>
-        <button class="cal-nav-btn" onclick="calMoisSuivant()">›</button>
-      </div>
-    </div>
-    <div class="cal-vue-btns">
-      <button id="cal-vue-calendrier" class="cal-vue-btn actif" onclick="calChangerVue('calendrier')">📅 Calendrier</button>
-      <button id="cal-vue-idees" class="cal-vue-btn" onclick="calChangerVue('idees')">💡 Banque d'idées</button>
-    </div>
-    <div id="cal-grille" class="cal-grid"></div>
-    <div id="cal-idees" class="cal-idees hidden"></div>
-    <div id="cal-overlay-zone"></div>
-  </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -2835,7 +2631,7 @@ const AUTHORS = {
   "eschenazi, carole-anne": "D",
   "escure, octavie": "D",
   "esmonde-white, miranda": "D",
-  "ethier, catherine": "C/D",
+  "ethier, catherine": "A/C",
   "eugenides, jeffrey": "D",
   "evanovich, janet": "D",
   "evans, nicholas": "D",
@@ -3017,7 +2813,7 @@ const AUTHORS = {
   "goddard, robert": "D",
   "godin, patrice": "C/D",
   "goethe": "A/C",
-  "gogol, nikolai": "A",
+  "gogol, nikolai": "A/C",
   "gogol, nikolaï": "A",
   "golden, christie": "A/C",
   "golding, william": "C/D",
@@ -3898,6 +3694,7 @@ const AUTHORS = {
   "scotton, rob": "A/C",
   "seidah, amélie": "C/D",
   "semionov, julian": "D",
+  "senécal, patrick": "A",
   "serle, rebecca": "C/D",
   "sernine, daniel": "D",
   "servan-schreiber, david": "D",
@@ -3971,6 +3768,7 @@ const AUTHORS = {
   "szucsany, désirée": "D",
   "séguin, marc": "A/C",
   "sénécal, maé": "D",
+  "sénécal, patrick": "A",
   "sév": "C/D",
   "süskind, patrick": "A/C",
   "taché, joseph-charles": "C/D",
@@ -4144,264 +3942,12 @@ const AUTHORS = {
   "émond, louis": "A/C",
   "émond, nadia": "D",
   "éthier, catherine": "C/D",
-  "évanturel, eudore": "D",
-  // ── Lot 11 (ajouté juillet 2026) ──
-  "arditi, sylvia": "D",
-  "arsenault, carl": "D",
-  "bailey, alice a.": "A/C",
-  "ballard, j. g.": "C/D",
-  "barrie, j.m": "C/D",
-  "bernardin": "A/C",
-  "bingen, hildegard of": "D",
-  "bingen, matthew hildegard of": "D",
-  "biron, hervé": "D",
-  "blanchet, jean-nicolas": "A/C",
-  "blondeau, marcel": "A",
-  "bois, mario": "D",
-  "boutin, gilles": "D",
-  "chrystine, brouillet,": "D",
-  "cohen, shoshanna": "D",
-  "court, malachy mc": "D",
-  "daniken, e. von": "A/C",
-  "dantec, maurice": "C/D",
-  "dantec, maurice g.": "C/D",
-  "dubro, peggy phoenix": "D",
-  "dufresne, lucie": "D",
-  "durckheim, karlfried von graf": "A/C",
-  "durville, henri": "C/D",
-  "eichler, anja-franziska": "D",
-  "ernest, holmes": "D",
-  "fisher, steve": "D",
-  "fournier, claude": "D",
-  "fulcanelli": "A/C",
-  "g, whitney": "D",
-  "gagnon, éliane": "D",
-  "godbout, yvan": "A/C",
-  "gorny, leon": "D",
-  "green, emma": "A/C",
-  "guery, appel": "D",
-  "halévi, z'ev ben shimon": "D",
-  "hanrahan, gareth": "A/C",
-  "haonfaure, romain": "D",
-  "hermary-vieille, catherine": "D",
-  "hub, isaac": "D",
-  "jackson, steve": "A",
-  "jelloun, tahar ben": "D",
-  "ježková, alena": "C/D",
-  "jones, aurelia louise": "D",
-  "kenner, corrine": "A/C",
-  "knausgård, karl ove": "D",
-  "koontz, dean ray": "C/D",
-  "lachance, andré": "D",
-  "latulippe, gilles": "D",
-  "livingstone, ian": "A/C",
-  "lowry, lois": "D",
-  "lubicz, r. a schwaller de": "D",
-  "marcotte, joanne": "D",
-  "milosz, o.v. de l.": "C/D",
-  "milosz, oskar wladyslaw de lubicz": "C/D",
-  "monroe, mary alice": "D",
-  "naamane-guessous, soumaya": "D",
-  "normand, antoinette le": "C/D",
-  "onfray, michel": "C/D",
-  "papus": "D",
-  "parker, i.j.": "D",
-  "pollack, rachel": "A/C",
-  "pratte, josette": "D",
-  "quimper, paul": "D",
-  "riley, lucinda": "C/D",
-  "rodrigues, josé dos santos": "A/C",
-  "ryder-hanrahan, gareth": "D",
-  "safran, alexandre": "D",
-  "sigurðardóttir, lilja": "C/D",
-  "souzenelle, annick de": "D",
-  "starsky, stella": "D",
-  "strasser, todd": "C/D",
-  "tansley, david": "D",
-  "tansley, david v.": "D",
-  "ulmer, renate": "D",
-  "vacher, andré": "D",
-  "vailly, sylvie- catherine de": "D",
-  "veyrier, henri": "D",
-  "ware, joss": "D",
-  "wautier, andré": "D",
-  "weor, samael aun": "D",
-  "williams, whitney gracia": "D",
-  "wirth, oswald": "A/C",
-  "wohlleben, peter": "C/D",
-  // ── Sans-code du Lot 11 (ajouté juillet 2026) ──
-  "desjardins, arnaud": "D",
-  "galeano, eduardo": "C/D",
-  "goyen, william": "D",
-  "littell, jonathan": "D",
-  "loiseleur, véronique": "D",
-  "smith, tom rob": "C/D",
-  // ── Lot 12 (ajouté juillet 2026) ──
-  "alain, franck": "C/D",
-  "barger, ralph": "A/C",
-  "bashardoust, melissa": "D",
-  "bonhomme, anne": "D",
-  "brashares, ann": "D",
-  "bridges, morgan": "A",
-  "britt, fanny": "A/C",
-  "brotto, igor": "D",
-  "brown, eleanor": "D",
-  "burstein, daniel": "D",
-  "bélice, dïana": "C/D",
-  "bérubé, caty": "D",
-  "canfield, jack": "D",
-  "carr, patrick": "D",
-  "carrère, emmanuel": "D",
-  "champagne, alexandre": "D",
-  "chaperon, alain": "A/C",
-  "chartier, françois": "D",
-  "chicoine, jean-françois": "D",
-  "cornwell, patricia daniels": "D",
-  "cotes, gilles": "D",
-  "coupal, marie": "D",
-  "couto, mia": "D",
-  "couture, élie": "D",
-  "crombie, deborah": "D",
-  "daniel, al": "D",
-  "day, sylvia": "D",
-  "delany, shannon": "D",
-  "dibra, bashkim": "D",
-  "dostoievski": "A",
-  "dostoievski, f": "A",
-  "dostoievski, fedor": "A",
-  "dubé, martin": "A/C",
-  "duval, paul": "D",
-  "eminem": "C/D",
-  "epictete": "A/C",
-  "falk, rita": "D",
-  "fleury, jean louis": "D",
-  "fortier, denis": "D",
-  "gagnon, cécile": "D",
-  "gagnon, lisa-marie": "A/C",
-  "gaudé, laurent": "D",
-  "gombrowicz, witold": "C/D",
-  "gould, judith": "D",
-  "hage, rawi": "D",
-  "halter, marek": "C/D",
-  "han, kang": "C/D",
-  "harris, ruth": "D",
-  "jean-yves, cloutier": "D",
-  "johnson, hugh": "D",
-  "johnston, patrick": "D",
-  "kinney, jeff": "A/C",
-  "labriski, madame": "A/C",
-  "lambert, serge": "C/D",
-  "lambert-lagacé, louise": "D",
-  "larrivee, ricardo": "C/D",
-  "lavoie, stéphane": "D",
-  "light, alex": "A/C",
-  "m'souli, hassan": "D",
-  "macdonald, patricia": "D",
-  "macdonald, patricia j.": "D",
-  "magnan, mélanie": "C/D",
-  "mandal, emily st.john": "C/D",
-  "mccourt, malachy": "D",
-  "michel, la mere": "D",
-  "millette, réjean d.": "D",
-  "mondor, albert": "D",
-  "myre, andré": "D",
-  "nicholls, david": "D",
-  "o'neill, arizona": "D",
-  "pagé, lucie": "D",
-  "palahniuk, chuck": "C/D",
-  "papillon, marie": "D",
-  "patenaude, eve": "A/C",
-  "pimparé, claire": "D",
-  "prose, nita": "C/D",
-  "reford, alexander": "C/D",
-  "rivard, louise": "D",
-  "rivens, sarah": "A/C",
-  "roba, jean": "A/C",
-  "roberge, jonathan": "D",
-  "robitaille, madeleine": "A/C",
-  "roby, jean": "D",
-  "rocheleau, carl": "A/C",
-  "ron, mercedes": "C/D",
-  "sandstrom, sorrell": "D",
-  "savage, michel": "A",
-  "schroeder, alice": "C/D",
-  "scott, amanda": "D",
-  "simard, rita": "D",
-  "sinoué, gilbert": "D",
-  "stinissen, wilfrid": "D",
-  "surany, caroline de": "D",
-  "thompson, carlene": "D",
-  "thuram, lilian": "D",
-  "théberge, dominique": "C/D",
-  "wilson, mélinda": "A",
-  "winchester, simon": "D",
-  "zimmermann, laura": "D",
-  // ── Lot 13 (ajouté juillet 2026) ──
-  "archambault, audrée": "D",
-  "blade, adam": "D",
-  "boltanski, luc": "C/D",
-  "broch, hermann": "C/D",
-  "brousseau, andré": "D",
-  "brown, mark": "D",
-  "burroughs, augusten": "D",
-  "cauvin, véronique": "D",
-  "chabot, marc-andré": "D",
-  "cialdini, robert b.": "A/C",
-  "cooper, diana": "A/C",
-  "côté, stéphanie": "D",
-  "dean, sunyi": "C/D",
-  "dee, ed": "D",
-  "delaney, joseph": "D",
-  "desroches, jean-françois": "A",
-  "doeser, linda": "D",
-  "doucet, françois": "C/D",
-  "duquet, denis": "D",
-  "elizabeth baird": "D",
-  "gogol, nicolas": "A",
-  "grubb, jeff": "A/C",
-  "harari, yuval n.": "A",
-  "huot, isabelle": "D",
-  "kellerman, jonathan": "D",
-  "king, j. robert": "A/C",
-  "lefebvre, france": "D",
-  "michaud, joane": "A/C",
-  "moliterni, c.": "D",
-  "montalbán, m. v.": "D",
-  "montalbán, manuel vázquez": "D",
-  "morris, heather": "C/D",
-  "parkinson-morgan, tom": "A/C",
-  "paver, michelle": "D",
-  "pouce, coup de": "D",
-  "pouchkine, alexandre": "A/C",
-  "pushkin, aleksandr sergeevich": "A/C",
-  "queffélec, yann": "D",
-  "rahimi, atiq": "C/D",
-  "roquebert, michel": "C/D",
-  "santos, josé rodrigues dos": "A/C",
-  "saumande, juliette": "C/D",
-  "scott, amanda-": "D",
-  "sepúlveda, luis": "D",
-  "simone, sierra": "D",
-  "toboso, yana": "C/D",
-  "toro, guillermo del": "D",
-  "uderzo": "A/C",
-  "wilson, gavin": "D",
-  "yalom, irvin": "A/C",
-  "yalom, irvin d.": "A/C",
-  "zekri, arlette arnoult imane": "D",
+  "évanturel, eudore": "D"
 }
 
 // Auteurs à profils multiples (plusieurs genres → choix au scan)
 // Clé « nom, prénom » (minuscules, sans accent géré à la lecture) → liste de profils
 const AUTHORS_MULTI = {
-  "senécal, patrick": [
-    { code: "A", section: "Horreur" },
-    { code: "A", section: "Jeunesse" }
-  ],
-  "picard, isabelle": [
-    { code: "A/C", section: "Jeunesse" },
-    { code: "A", section: "Faune et Flore" }
-  ],
   "roberts, nora": [
     { code: "D", section: "New romance" },
     { code: "C/D", section: "Policier" }
@@ -5250,7 +4796,7 @@ const AUTHOR_SECTIONS = {
   "godin, patrice": "Roman québécois",
   "goethe": "Philosophie",
   "gogol, nikolai": "Classiques",
-  "gogol, nikolaï": "Classiques",
+  "gogol, nikolaï": "Classique",
   "golden, christie": "Jeunesse",
   "golding, william": "Roman international",
   "gong, chloe": "Fantasy",
@@ -6018,6 +5564,7 @@ const AUTHOR_SECTIONS = {
   "scotton, rob": "Jeunesse",
   "seidah, amélie": "Développement personnel",
   "semionov, julian": "Roman international",
+  "senécal, patrick": "Roman québécois",
   "serle, rebecca": "Roman international",
   "sernine, daniel": "Roman québécois",
   "servan-schreiber, david": "Développement personnel",
@@ -6084,6 +5631,7 @@ const AUTHOR_SECTIONS = {
   "szucsany, désirée": "Roman québécois",
   "séguin, marc": "Roman québécois",
   "sénécal, maé": "Roman québécois",
+  "sénécal, patrick": "Jeunesse",
   "sév": "Bande dessinée",
   "süskind, patrick": "Roman international",
   "taché, joseph-charles": "Roman québécois",
@@ -6319,144 +5867,6 @@ async function supabaseDelete(table, id) {
     }
   });
   if (!res.ok) throw new Error('Supabase ' + res.status + ': ' + await res.text());
-}
-
-// ═══════════════════════════════════════════════════
-// NOTIFICATIONS PUSH (gestionnaires)
-// ═══════════════════════════════════════════════════
-const VAPID_CLE_PUBLIQUE = 'BOjTWgQMF5SJnRdQ-_0-GHXcWbC2beKmhJxWdM2pDMFPYz2nRrFilsLs72VQffBZiEEMf_wM-9pVoRi0uWtfjP0';
-
-// Enregistrer le service worker (notifications seulement, aucun cache)
-if ('serviceWorker' in navigator && !location.hostname.includes('claudeusercontent')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW non enregistré:', e));
-  });
-  // Pégase déjà ouvert : clic sur notification → ouvrir les Messages
-  navigator.serviceWorker.addEventListener('message', (e) => {
-    if (e.data && e.data.action === 'ouvrir-messages' && utilisateurActuel) {
-      ouvrirMessages();
-    }
-  });
-}
-
-// Pégase lancé à froid par la notification (#messages dans l'URL)
-function verifierOuvertureMessages() {
-  if (window.location.hash === '#messages' && utilisateurActuel) {
-    ouvrirMessages();
-    history.replaceState(null, '', window.location.pathname);
-  }
-}
-
-function pushSupporte() {
-  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-}
-
-function urlBase64VersUint8Array(base64) {
-  const padding = '='.repeat((4 - base64.length % 4) % 4);
-  const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const brut = window.atob(b64);
-  const tab = new Uint8Array(brut.length);
-  for (let i = 0; i < brut.length; i++) tab[i] = brut.charCodeAt(i);
-  return tab;
-}
-
-// Activer les notifications sur CET appareil (bouton dans Messages)
-async function activerNotificationsPush() {
-  const zone = document.getElementById('push-statut');
-  if (!pushSupporte()) {
-    if (zone) zone.innerHTML = '<span style="color:#C62828;">Non supporté sur ce navigateur.</span>';
-    return;
-  }
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      if (zone) zone.innerHTML = '<span style="color:#C62828;">Permission refusée. Activez-la dans les réglages du navigateur.</span>';
-      return;
-    }
-    const reg = await navigator.serviceWorker.ready;
-    let abo = await reg.pushManager.getSubscription();
-    if (!abo) {
-      abo = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64VersUint8Array(VAPID_CLE_PUBLIQUE)
-      });
-    }
-    await sauvegarderAbonnementPush(abo);
-    if (zone) zone.innerHTML = '<span style="color:#1B5E20;">✅ Notifications activées sur cet appareil.</span>';
-    majBoutonPush();
-  } catch (e) {
-    console.error(e);
-    if (zone) zone.innerHTML = '<span style="color:#C62828;">Erreur — réessayez.</span>';
-  }
-}
-
-// Sauvegarder/rafraîchir l'abonnement dans Supabase (1 ligne par appareil)
-async function sauvegarderAbonnementPush(abo) {
-  const j = abo.toJSON();
-  const endpointEnc = encodeURIComponent(j.endpoint);
-  const existants = await supabaseSelect('push_subscriptions', 'endpoint=eq.' + endpointEnc);
-  const donnees = {
-    compte_id: utilisateurActuel.id,
-    nom_complet: utilisateurActuel.nom_complet,
-    succursale: utilisateurActuel.succursale,
-    endpoint: j.endpoint,
-    p256dh: j.keys.p256dh,
-    auth: j.keys.auth
-  };
-  if (existants && existants.length) {
-    await supabaseUpdate('push_subscriptions', existants[0].id, donnees);
-  } else {
-    await supabaseInsert('push_subscriptions', donnees);
-  }
-}
-
-// Au retour dans l'app : si déjà abonné, resynchroniser silencieusement
-async function resynchroniserPush() {
-  if (!pushSupporte() || !utilisateurActuel || utilisateurActuel.role !== 'gestionnaire') return;
-  if (Notification.permission !== 'granted') return;
-  try {
-    const reg = await navigator.serviceWorker.ready;
-    const abo = await reg.pushManager.getSubscription();
-    if (abo) await sauvegarderAbonnementPush(abo);
-  } catch (e) { console.warn('Resync push:', e); }
-}
-
-// État du bouton (déjà activé ou non)
-async function majBoutonPush() {
-  const btn = document.getElementById('push-btn');
-  if (!btn || !pushSupporte()) return;
-  try {
-    const reg = await navigator.serviceWorker.ready;
-    const abo = await reg.pushManager.getSubscription();
-    if (abo && Notification.permission === 'granted') {
-      btn.textContent = '🔔 Notifications activées';
-      btn.disabled = true;
-      btn.style.opacity = '0.6';
-    }
-  } catch (e) {}
-}
-
-// Demander à l'Edge Function d'avertir les destinataires (silencieux si absente)
-async function envoyerNotificationsPush(messageId, destinataireIds, apercu) {
-  try {
-    await fetch(SUPABASE_URL + '/functions/v1/notifier-push', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY
-      },
-      body: JSON.stringify({
-        message_id: messageId,
-        destinataire_ids: destinataireIds,
-        expediteur: utilisateurActuel.nom_complet,
-        apercu: (apercu || '').substring(0, 80)
-      })
-    });
-  } catch (e) {
-    // Jamais bloquant : le message est déjà envoyé même si la notification échoue.
-    console.warn('Notification push non envoyée:', e);
-  }
 }
 
 // ── Supabase Storage : téléversement de fichiers ──
@@ -6721,9 +6131,6 @@ function ouvrirMessages() {
       </div>
       <div class="card">
         <button class="btn-depot" onclick="ouvrirFormulaireMessage()">✏️ Nouveau message</button>
-        ${utilisateurActuel.role === 'gestionnaire' && pushSupporte() ? `
-        <button id="push-btn" class="btn-batch" style="width:100%; margin-top:8px;" onclick="activerNotificationsPush()">🔔 Activer les notifications sur cet appareil</button>
-        <div id="push-statut" style="font-size:13px; min-height:16px; margin-top:4px;"></div>` : ''}
         <div class="ponct-onglets" style="margin-top:10px;">
           <button id="msg-tab-recus" class="ponct-tab ponct-tab-actif" onclick="basculerOngletMsg('recus')">📥 Reçus</button>
           <button id="msg-tab-envoyes" class="ponct-tab" onclick="basculerOngletMsg('envoyes')">📤 Envoyés</button>
@@ -6745,7 +6152,6 @@ function ouvrirMessages() {
   document.getElementById('msg-tab-recus').classList.add('ponct-tab-actif');
   document.getElementById('msg-tab-envoyes').classList.remove('ponct-tab-actif');
   chargerMessages();
-  majBoutonPush();
 }
 
 function basculerOngletMsg(onglet) {
@@ -7114,7 +6520,7 @@ async function ouvrirFormulaireMessage(preRempli) {
   let optsPersonnes = '';
   try {
     const comptes = await supabaseSelect('comptes', 'actif=eq.true&order=nom_complet.asc');
-    optsPersonnes = comptes
+    optsPersonnes = '<option value="" selected disabled>— Choisir une personne —</option>' + comptes
       .filter(c => c.id !== utilisateurActuel.id)
       .map(c => '<option value="' + c.id + '">' + c.nom_complet + ' (' + c.succursale + ')</option>')
       .join('');
@@ -7290,10 +6696,6 @@ async function creerMessageEtDestinataires(opts) {
       statut: 'non_lu'
     });
   }
-
-  // Notifications push aux destinataires abonnés (non bloquant)
-  envoyerNotificationsPush(messageId, destinataires.map(c => c.id), opts.contenu);
-
   return messageId;
 }
 
@@ -8713,7 +8115,6 @@ async function chargerComptes() {
       html += '</div>';
       html += '<div class="compte-actions">';
       html += '<button class="compte-btn" onclick="reinitialiserMdp(\'' + c.id + '\', \'' + c.nom_complet.replace(/'/g, "") + '\')">🔑 Mot de passe</button>';
-      html += '<button class="compte-btn" onclick="basculerAccesCalendrier(\'' + c.id + '\', ' + (c.acces_calendrier ? 'false' : 'true') + ')">' + (c.acces_calendrier ? '📅 Retirer calendrier' : '📅 Donner calendrier') + '</button>';
       if (c.actif) {
         html += '<button class="compte-btn" onclick="basculerBlocage(\'' + c.id + '\', false)">🚫 Bloquer</button>';
       } else {
@@ -8913,8 +8314,7 @@ async function seConnecter(mode) {
       role: compte.role,
       succursale: compte.succursale,
       voit_tout: compte.voit_tout === true,
-      acces_autoediteurs: compte.acces_autoediteurs === true,
-      acces_calendrier: compte.acces_calendrier === true
+      acces_autoediteurs: compte.acces_autoediteurs === true
     };
 
     // Vérifier s'il existe déjà une session de travail ouverte (sur un autre appareil)
@@ -8950,8 +8350,6 @@ async function seConnecter(mode) {
 
     // Afficher l'application
     entrerDansApp();
-    resynchroniserPush();
-    verifierOuvertureMessages();
   } catch(e) {
     console.error(e);
     msg.innerHTML = '<span style="color:#C62828;">Erreur de connexion. Réessayez.</span>';
@@ -9021,11 +8419,6 @@ function appliquerPermissions() {
   if (btnAE) {
     const accesPerso = utilisateurActuel && utilisateurActuel.acces_autoediteurs === true && !estGestionnaire;
     btnAE.style.display = accesPerso ? '' : 'none';
-  }
-  // Bouton Calendrier : visible pour toute personne ayant l'attribut, peu importe le role
-  const btnCal = document.getElementById('btnCalendrierAcces');
-  if (btnCal) {
-    btnCal.style.display = (utilisateurActuel && utilisateurActuel.acces_calendrier === true) ? '' : 'none';
   }
 }
 
@@ -9388,17 +8781,6 @@ function ouvrirFormulaireClient() {
         <input type="text" id="cf-tel" class="form-input" placeholder="819-555-1234">
       </div>
       <div class="form-group">
-        <label class="form-label">💵 Offre en argent ($)</label>
-        <input type="text" id="cf-argent" class="form-input" placeholder="0.00">
-      </div>
-      <div class="form-group">
-        <label class="form-label">🎫 Offre en crédit ($)</label>
-        <input type="text" id="cf-credit" class="form-input" placeholder="0.00">
-      </div>
-      <div style="font-size:12px; color:#6B7280; margin:-4px 0 10px; line-height:1.4;">
-        Pré-rempli avec le total calculé. Vous pouvez ajuster les montants à la main (négociation, dépôt à évaluer, etc.).
-      </div>
-      <div class="form-group">
         <label class="form-label">Note au dossier (optionnel)</label>
         <textarea id="cf-note" class="form-input" rows="2" placeholder="Ex : rappeler après 17h"></textarea>
       </div>
@@ -9412,11 +8794,6 @@ function ouvrirFormulaireClient() {
   summary.insertAdjacentHTML('beforeend', formHtml);
   // Succursale par défaut = celle de l'employé connecté
   appliquerSuccursaleParDefaut('cf-succursale');
-  // Pré-remplir les offres avec les totaux calculés (modifiables ensuite)
-  if (window.lotCourant) {
-    document.getElementById('cf-argent').value = (window.lotCourant.totalCash || 0).toFixed(2);
-    document.getElementById('cf-credit').value = (window.lotCourant.totalCredit || 0).toFixed(2);
-  }
   // Pré-remplir si on évalue un dépôt existant
   if (window.depotEnCours) {
     const d = window.depotEnCours;
@@ -9447,15 +8824,6 @@ async function enregistrerLot() {
   if (!nom && !prenom) { msg.innerHTML = '<span style="color:#C62828;">Entrez au moins un nom ou un prénom.</span>'; return; }
   if (!window.lotCourant) { msg.innerHTML = '<span style="color:#C62828;">Aucun lot à enregistrer.</span>'; return; }
 
-  // Offres saisies (modifiables) — remplacent les totaux calculés
-  const argentTxt = document.getElementById('cf-argent').value.trim().replace(',', '.');
-  const creditTxt = document.getElementById('cf-credit').value.trim().replace(',', '.');
-  const offreArgent = argentTxt ? parseFloat(argentTxt) : 0;
-  const offreCredit = creditTxt ? parseFloat(creditTxt) : 0;
-  if (isNaN(offreArgent) || isNaN(offreCredit) || offreArgent < 0 || offreCredit < 0) {
-    msg.innerHTML = '<span style="color:#C62828;">Entrez des montants d\'offre valides (ou 0).</span>'; return;
-  }
-
   msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement en cours…</span>';
 
   try {
@@ -9469,8 +8837,8 @@ async function enregistrerLot() {
       client_prenom: prenom || null,
       client_telephone: tel || null,
       note: note || null,
-      total_argent: offreArgent,
-      total_credit: offreCredit,
+      total_argent: lot.totalCash,
+      total_credit: lot.totalCredit,
       total_dons: lot.totalDons,
       total_refus: lot.totalRefus,
       statut: nouveauStatut
@@ -9996,10 +9364,6 @@ function retourAccueil() {
   if (msgS) msgS.classList.add('hidden');
   const profsS = document.getElementById('profsScreen');
   if (profsS) profsS.classList.add('hidden');
-  const calS = document.getElementById('calendrierScreen');
-  if (calS) calS.classList.add('hidden');
-  const calOv = document.getElementById('cal-overlay-zone');
-  if (calOv) calOv.innerHTML = '';
   if (typeof majBadgeMessages === 'function') majBadgeMessages();
   // Fermer la caméra si elle est ouverte
   if (typeof html5QrScanner !== 'undefined' && html5QrScanner) { try { fermerScanCamera(); } catch(e) {} }
@@ -11225,14 +10589,6 @@ async function voirLot(lotId) {
       + livresHtml + totHtml
       + '<div class="detail-section"><div class="detail-label">Statut</div>'
       + '<select id="det-statut" class="form-input" onchange="changerStatut(\'' + lotId + '\')">' + statutOptions + '</select></div>'
-      + '<div class="detail-section"><div class="detail-label">💵 Offre (modifiable à la main)</div>'
-      + '<div style="display:flex; gap:8px;">'
-      + '<div style="flex:1;"><label style="font-size:12px; color:#6B7280;">Argent ($)</label>'
-      + '<input type="text" id="det-argent" class="form-input" value="' + (lot.total_argent || 0).toFixed(2) + '"></div>'
-      + '<div style="flex:1;"><label style="font-size:12px; color:#6B7280;">Crédit ($)</label>'
-      + '<input type="text" id="det-credit" class="form-input" value="' + (lot.total_credit || 0).toFixed(2) + '"></div>'
-      + '</div>'
-      + '<button class="btn-batch btn-fin" style="width:100%; margin-top:6px;" onclick="sauverOffreLot(\'' + lotId + '\')">💾 Enregistrer l\'offre</button></div>'
       + '<div class="detail-section"><div class="detail-label">Note au dossier</div>'
       + '<textarea id="det-note" class="form-input" rows="3">' + (lot.note || '') + '</textarea>'
       + '<button class="btn-batch btn-fin" style="width:100%; margin-top:6px;" onclick="sauverNote(\'' + lotId + '\')">Enregistrer la note</button></div>'
@@ -11282,24 +10638,6 @@ function montrerToast(texte, succes) {
   toast.className = 'toast-show';
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => { toast.className = ''; }, 2500);
-}
-
-async function sauverOffreLot(lotId) {
-  const argentTxt = document.getElementById('det-argent').value.trim().replace(',', '.');
-  const creditTxt = document.getElementById('det-credit').value.trim().replace(',', '.');
-  const offreArgent = argentTxt ? parseFloat(argentTxt) : 0;
-  const offreCredit = creditTxt ? parseFloat(creditTxt) : 0;
-  if (isNaN(offreArgent) || isNaN(offreCredit) || offreArgent < 0 || offreCredit < 0) {
-    montrerToast('Montants invalides', false); return;
-  }
-  try {
-    await supabaseUpdate('lots', lotId, { total_argent: offreArgent, total_credit: offreCredit });
-    montrerToast('✅ Offre enregistrée', true);
-    voirLot(lotId);  // recharger pour rafraîchir les totaux et le « si tout en crédit »
-  } catch(e) {
-    console.error(e);
-    montrerToast('Erreur — réessayez', false);
-  }
 }
 
 async function sauverNote(lotId) {
@@ -15022,529 +14360,6 @@ function reset() {
   document.getElementById('isbnInput').focus();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// ═══════════════════════════════════════════════════════
-// CALENDRIER — réseaux sociaux & gestion de projet
-// Accès individuel via l'attribut compte « acces_calendrier ».
-// ═══════════════════════════════════════════════════════
-let calCategorie = 'reseaux';
-let calAnnee = new Date().getFullYear();
-let calMois = new Date().getMonth();   // 0-11
-let calEvenements = [];                 // évènements du mois + catégorie affichés
-let calFichiers = [];                   // photos/vidéos de l'entrée en cours d'édition
-let calVue = 'calendrier';              // 'calendrier' ou 'idees'
-let calIdees = [];                      // entrées sans date (banque d'idées) de la catégorie courante
-
-const CAL_NOMS_MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-const CAL_JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-const CAL_JOURS_LONGS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
-const CAL_PLATEFORMES = {
-  facebook:  { nom:'Facebook',  court:'f',  coul:'#1877F2' },
-  instagram: { nom:'Instagram', court:'IG', coul:'#E1306C' },
-  tiktok:    { nom:'TikTok',    court:'TT', coul:'#111111' },
-  youtube:   { nom:'YouTube',   court:'YT', coul:'#FF0000' }
-};
-
-function calEsc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function calDeuxCh(n) { return (n < 10 ? '0' : '') + n; }
-function calISO(annee, mois, jour) { return annee + '-' + calDeuxCh(mois + 1) + '-' + calDeuxCh(jour); }
-
-function calStatutOptions(cat) {
-  return cat === 'projets'
-    ? [['afaire','📋 À faire'], ['encours','🔧 En cours'], ['fait','✅ Fait']]
-    : [['idee','💡 Idée'], ['planifie','📅 Planifié'], ['publie','✅ Publié']];
-}
-function calStatutLabel(statut) {
-  const tous = { idee:'💡 Idée', planifie:'📅 Planifié', publie:'✅ Publié', afaire:'📋 À faire', encours:'🔧 En cours', fait:'✅ Fait' };
-  return tous[statut] || '';
-}
-function calStatutClasse(statut) { return statut ? ('st-' + statut) : ''; }
-
-function calPastilleHTML(plateforme) {
-  const p = CAL_PLATEFORMES[plateforme];
-  if (!p) return '';
-  return '<span class="cal-pastille" style="display:inline-block;min-width:13px;height:13px;line-height:13px;text-align:center;border-radius:3px;color:white;font-weight:700;background:' + p.coul + ';">' + p.court + '</span>';
-}
-
-function ouvrirCalendrier() {
-  if (!utilisateurActuel || utilisateurActuel.acces_calendrier !== true) {
-    alert('🔐 Accès réservé. Fais activer le calendrier sur ton compte par un gestionnaire.');
-    return;
-  }
-  document.getElementById('accueilScreen').classList.add('hidden');
-  document.getElementById('btnAccueil').classList.remove('hidden');
-  document.getElementById('calendrierScreen').classList.remove('hidden');
-  const maintenant = new Date();
-  calAnnee = maintenant.getFullYear();
-  calMois = maintenant.getMonth();
-  calChangerVue('calendrier');
-}
-
-function calChangerVue(vue) {
-  calVue = vue;
-  document.getElementById('cal-vue-calendrier').classList.toggle('actif', vue === 'calendrier');
-  document.getElementById('cal-vue-idees').classList.toggle('actif', vue === 'idees');
-  const grille = document.getElementById('cal-grille');
-  const idees = document.getElementById('cal-idees');
-  const nav = document.getElementById('cal-nav');
-  if (vue === 'idees') {
-    grille.style.display = 'none';
-    idees.style.display = 'flex';
-    if (nav) nav.style.visibility = 'hidden';
-  } else {
-    idees.style.display = 'none';
-    grille.style.display = 'grid';
-    if (nav) nav.style.visibility = 'visible';
-  }
-  return calChargerVueCourante();
-}
-
-function calChargerVueCourante() {
-  return calVue === 'idees' ? calChargerIdees() : calChargerMois();
-}
-
-function calChangerCategorie(cat) {
-  calCategorie = cat;
-  document.getElementById('cal-cat-reseaux').classList.toggle('actif', cat === 'reseaux');
-  document.getElementById('cal-cat-projets').classList.toggle('actif', cat === 'projets');
-  calChargerVueCourante();
-}
-
-function calMoisPrecedent() {
-  calMois--;
-  if (calMois < 0) { calMois = 11; calAnnee--; }
-  calChargerMois();
-}
-function calMoisSuivant() {
-  calMois++;
-  if (calMois > 11) { calMois = 0; calAnnee++; }
-  calChargerMois();
-}
-
-async function calChargerMois() {
-  const libelle = document.getElementById('cal-mois-libelle');
-  if (libelle) libelle.textContent = CAL_NOMS_MOIS[calMois] + ' ' + calAnnee;
-  const grille = document.getElementById('cal-grille');
-  grille.innerHTML = '<div style="grid-column:1/8;text-align:center;color:#999;padding:20px;">Chargement…</div>';
-  const debut = calISO(calAnnee, calMois, 1);
-  const dernierJour = new Date(calAnnee, calMois + 1, 0).getDate();
-  const fin = calISO(calAnnee, calMois, dernierJour);
-  try {
-    calEvenements = await supabaseSelect('calendrier_evenements',
-      'categorie=eq.' + calCategorie + '&date_jour=gte.' + debut + '&date_jour=lte.' + fin + '&order=cree_le.asc');
-  } catch(e) {
-    console.error(e);
-    grille.innerHTML = '<div style="grid-column:1/8;text-align:center;color:#C62828;padding:20px;">Erreur de chargement. Réessayez.</div>';
-    return;
-  }
-  calRendreGrille();
-}
-
-function calRendreGrille() {
-  const grille = document.getElementById('cal-grille');
-  let html = '';
-  CAL_JOURS.forEach(j => { html += '<div class="cal-dow">' + j + '</div>'; });
-
-  const decalage = (new Date(calAnnee, calMois, 1).getDay() + 6) % 7;   // 0 = lundi
-  const dernierJour = new Date(calAnnee, calMois + 1, 0).getDate();
-  const dernierMoisPrec = new Date(calAnnee, calMois, 0).getDate();
-
-  const auj = new Date();
-  const estAuj = (jour) => (auj.getFullYear() === calAnnee && auj.getMonth() === calMois && auj.getDate() === jour);
-
-  const parJour = {};
-  calEvenements.forEach(ev => {
-    const jr = parseInt((ev.date_jour || '').split('-')[2], 10);
-    if (!parJour[jr]) parJour[jr] = [];
-    parJour[jr].push(ev);
-  });
-
-  for (let i = 0; i < decalage; i++) {
-    const num = dernierMoisPrec - decalage + 1 + i;
-    html += '<div class="cal-cell autre-mois"><span class="cal-daynum">' + num + '</span></div>';
-  }
-  for (let jour = 1; jour <= dernierJour; jour++) {
-    const dateStr = calISO(calAnnee, calMois, jour);
-    const evs = parJour[jour] || [];
-    let contenu = '<span class="cal-daynum">' + jour + '</span>';
-    evs.slice(0, 3).forEach(ev => {
-      contenu += '<div class="cal-entry ' + calStatutClasse(ev.statut) + '">' + calPastilleHTML(ev.plateforme) + calEsc(ev.titre) + '</div>';
-    });
-    if (evs.length > 3) {
-      const reste = evs.length - 3;
-      contenu += '<div class="cal-plus">+' + reste + ' autre' + (reste > 1 ? 's' : '') + '</div>';
-    }
-    html += '<div class="cal-cell' + (estAuj(jour) ? ' aujourdhui' : '') + '" onclick="calOuvrirJour(\'' + dateStr + '\')">' + contenu + '</div>';
-  }
-  const totalCases = decalage + dernierJour;
-  const reste = (7 - (totalCases % 7)) % 7;
-  for (let i = 1; i <= reste; i++) {
-    html += '<div class="cal-cell autre-mois"><span class="cal-daynum">' + i + '</span></div>';
-  }
-  grille.innerHTML = html;
-}
-
-function calDateLisible(dateStr) {
-  const p = dateStr.split('-');
-  const d = new Date(parseInt(p[0],10), parseInt(p[1],10) - 1, parseInt(p[2],10));
-  return CAL_JOURS_LONGS[d.getDay()] + ' ' + parseInt(p[2],10) + ' ' + CAL_NOMS_MOIS[parseInt(p[1],10)-1];
-}
-
-function calItemHTML(ev, origine, dateStr) {
-  let meta = '';
-  if (ev.statut) meta += '<span class="cal-tag">' + calStatutLabel(ev.statut) + '</span>';
-  if (calCategorie === 'reseaux' && ev.plateforme && CAL_PLATEFORMES[ev.plateforme]) meta += '<span class="cal-tag">' + CAL_PLATEFORMES[ev.plateforme].nom + '</span>';
-  if (ev.responsable) meta += '<span class="cal-tag">👤 ' + calEsc(ev.responsable) + '</span>';
-  let h = '<div class="cal-item ' + calStatutClasse(ev.statut) + '">';
-  h += '<div class="cal-item-titre">' + calEsc(ev.titre) + '</div>';
-  if (ev.details) h += '<div class="cal-item-details">' + calEsc(ev.details) + '</div>';
-  if (ev.fichiers && ev.fichiers.length) h += calRendreMediasDetail(ev.fichiers);
-  if (meta) h += '<div class="cal-item-meta">' + meta + '</div>';
-  const dArg = (origine === 'jour') ? ("'" + dateStr + "'") : 'null';
-  const dDel = (origine === 'jour') ? ("'" + dateStr + "'") : "''";
-  h += '<div class="cal-item-actions">';
-  h += '<button class="cal-mini-btn" onclick="calFormulaireEntree(' + dArg + ', \'' + ev.id + '\', \'' + origine + '\')">✏️ Modifier</button>';
-  h += '<button class="cal-mini-btn rouge" onclick="calSupprimerEntree(\'' + ev.id + '\', ' + dDel + ')">🗑️ Supprimer</button>';
-  h += '</div></div>';
-  return h;
-}
-
-function calOuvrirJour(dateStr) {
-  const evs = calEvenements.filter(ev => ev.date_jour === dateStr);
-  let corps = '';
-  if (!evs.length) {
-    corps = '<div class="cal-vide">Aucune entrée pour cette journée.</div>';
-  } else {
-    evs.forEach(ev => { corps += calItemHTML(ev, 'jour', dateStr); });
-  }
-  const html =
-    '<div class="cal-overlay" onclick="if(event.target===this) calFermerPopup()">' +
-      '<div class="cal-popup">' +
-        '<div class="cal-popup-tete">' +
-          '<span class="cal-popup-date">' + calDateLisible(dateStr) + '</span>' +
-          '<button class="cal-popup-fermer" onclick="calFermerPopup()">×</button>' +
-        '</div>' +
-        '<div id="cal-popup-corps">' + corps + '</div>' +
-        '<button class="btn-batch btn-fin" style="width:100%;margin-top:14px;" onclick="calFormulaireEntree(\'' + dateStr + '\', null, \'jour\')">➕ Ajouter une entrée</button>' +
-      '</div>' +
-    '</div>';
-  document.getElementById('cal-overlay-zone').innerHTML = html;
-}
-
-function calFermerPopup() {
-  document.getElementById('cal-overlay-zone').innerHTML = '';
-}
-
-async function calChargerIdees() {
-  const zone = document.getElementById('cal-idees');
-  zone.innerHTML = '<div class="cal-idees-vide">Chargement…</div>';
-  try {
-    calIdees = await supabaseSelect('calendrier_evenements', 'categorie=eq.' + calCategorie + '&date_jour=is.null&order=cree_le.desc');
-  } catch(e) {
-    console.error(e);
-    zone.innerHTML = '<div class="cal-idees-vide" style="color:#C62828;">Erreur de chargement. Réessayez.</div>';
-    return;
-  }
-  calRendreIdees();
-}
-
-function calRendreIdees() {
-  const zone = document.getElementById('cal-idees');
-  let html = '<button class="btn-batch btn-fin" style="width:100%;" onclick="calFormulaireEntree(null, null, \'idees\')">➕ Ajouter une idée</button>';
-  html += '<div class="cal-idees-astuce">Ouvre une idée et donne-lui une date pour la programmer au calendrier.</div>';
-  if (!calIdees.length) {
-    html += '<div class="cal-idees-vide">Aucune idée pour l\'instant.<br>Ajoute ta première idée de contenu 👆</div>';
-  } else {
-    calIdees.forEach(ev => { html += calItemHTML(ev, 'idees', ''); });
-  }
-  zone.innerHTML = html;
-}
-
-function calAnnulerForm(dateStr, origine) {
-  if (origine === 'jour' && dateStr) { calOuvrirJour(dateStr); }
-  else { calFermerPopup(); }
-}
-
-function calFormulaireEntree(dateStr, evtId, origine) {
-  origine = origine || 'jour';
-  const ev = evtId ? (calEvenements.find(e => String(e.id) === String(evtId)) || calIdees.find(e => String(e.id) === String(evtId))) : null;
-  calFichiers = (ev && Array.isArray(ev.fichiers)) ? ev.fichiers.slice() : [];
-  const dateInit = dateStr || (ev && ev.date_jour) || '';
-  const opts = calStatutOptions(calCategorie);
-  let statutSelect = '<select id="cal-f-statut" class="form-input">';
-  opts.forEach(o => { statutSelect += '<option value="' + o[0] + '"' + (ev && ev.statut === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; });
-  statutSelect += '</select>';
-
-  let plateformeBloc = '';
-  if (calCategorie === 'reseaux') {
-    let sel = '<select id="cal-f-plateforme" class="form-input"><option value="">— Aucune —</option>';
-    Object.keys(CAL_PLATEFORMES).forEach(k => {
-      sel += '<option value="' + k + '"' + (ev && ev.plateforme === k ? ' selected' : '') + '>' + CAL_PLATEFORMES[k].nom + '</option>';
-    });
-    sel += '</select>';
-    plateformeBloc = '<div class="form-group"><label class="form-label">Plateforme</label>' + sel + '</div>';
-  }
-
-  const evtArg = evtId ? ("'" + evtId + "'") : 'null';
-  const titreEntete = ev ? 'Modifier' : (origine === 'idees' ? 'Nouvelle idée' : 'Nouvelle entrée');
-  const annuler = 'calAnnulerForm(\'' + dateInit + '\', \'' + origine + '\')';
-  const html =
-    '<div class="cal-overlay" onclick="if(event.target===this) ' + annuler + '">' +
-      '<div class="cal-popup">' +
-        '<div class="cal-popup-tete">' +
-          '<span class="cal-popup-date">' + titreEntete + '</span>' +
-          '<button class="cal-popup-fermer" onclick="' + annuler + '">×</button>' +
-        '</div>' +
-        '<div id="cal-popup-corps">' +
-          '<div class="form-group"><label class="form-label">Titre (visible sur le calendrier)</label>' +
-            '<input type="text" id="cal-f-titre" class="form-input" value="' + calEsc(ev ? ev.titre : '') + '" placeholder="Ex : Top 5 romans policiers québécois"></div>' +
-          '<div class="form-group"><label class="form-label">Description / détails</label>' +
-            '<textarea id="cal-f-details" style="display:none;">' + calEsc(ev ? ev.details : '') + '</textarea>' +
-            '<div id="cal-f-details-apercu" class="cal-apercu-desc" onclick="calOuvrirEditeurDesc()"></div></div>' +
-          '<div class="form-group"><label class="form-label">Date — vide = reste dans la banque d\'idées</label>' +
-            '<input type="date" id="cal-f-date" class="form-input" value="' + dateInit + '"></div>' +
-          '<div class="form-group"><label class="form-label">Responsable</label>' +
-            '<input type="text" id="cal-f-responsable" class="form-input" value="' + calEsc(ev ? ev.responsable : '') + '" placeholder="Ex : Nick, Seb, Amy…"></div>' +
-          plateformeBloc +
-          '<div class="form-group"><label class="form-label">Statut</label>' + statutSelect + '</div>' +
-          '<div class="form-group"><label class="form-label">Photos et vidéos</label>' +
-            '<input type="file" id="cal-f-fichiers" class="form-input" multiple accept="image/*,video/*" onchange="calChoisirFichiers(this)">' +
-            '<div id="cal-f-pj-liste" class="cal-pj-liste"></div></div>' +
-          '<div id="cal-f-msg" style="font-size:13px;margin-bottom:8px;"></div>' +
-          '<button class="btn-batch btn-fin" style="width:100%;margin-bottom:8px;" onclick="calEnregistrerEntree(' + evtArg + ', \'' + origine + '\')">✅ Enregistrer</button>' +
-          '<button class="btn-batch btn-nouveau" style="width:100%;" onclick="' + annuler + '">Annuler</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  document.getElementById('cal-overlay-zone').innerHTML = html;
-  calRendreApercuDesc();
-  calRendreFichiersForm();
-  document.getElementById('cal-f-titre').focus();
-}
-
-async function calEnregistrerEntree(evtId, origine) {
-  const titre = document.getElementById('cal-f-titre').value.trim();
-  const msg = document.getElementById('cal-f-msg');
-  if (!titre) { msg.innerHTML = '<span style="color:#C62828;">Le titre est obligatoire.</span>'; return; }
-  const details = document.getElementById('cal-f-details').value.trim();
-  const responsable = document.getElementById('cal-f-responsable').value.trim();
-  const statut = document.getElementById('cal-f-statut').value;
-  const plateformeEl = document.getElementById('cal-f-plateforme');
-  const plateforme = plateformeEl ? plateformeEl.value : null;
-  const dateVal = document.getElementById('cal-f-date').value || null;
-  const donnees = {
-    categorie: calCategorie,
-    date_jour: dateVal,
-    titre: titre,
-    details: details || null,
-    responsable: responsable || null,
-    plateforme: plateforme || null,
-    statut: statut || null
-  };
-  msg.innerHTML = '<span style="color:#1F4E79;">Enregistrement…</span>';
-  try {
-    // Téléverser les nouvelles photos/vidéos, garder celles déjà en ligne
-    const fichiersFinal = [];
-    for (let i = 0; i < calFichiers.length; i++) {
-      const f = calFichiers[i];
-      if (f.url) { fichiersFinal.push({ nom: f.nom, url: f.url, type: f.type, taille: f.taille }); continue; }
-      msg.innerHTML = '<span style="color:#1F4E79;">Téléversement ' + (i + 1) + '/' + calFichiers.length + '…</span>';
-      fichiersFinal.push(await calTeleverserFichier(f.file));
-    }
-    donnees.fichiers = fichiersFinal;
-    if (evtId) {
-      await supabaseUpdate('calendrier_evenements', evtId, donnees);
-    } else {
-      donnees.cree_par = utilisateurActuel ? utilisateurActuel.nom_complet : null;
-      await supabaseInsert('calendrier_evenements', donnees);
-    }
-    if (typeof montrerToast === 'function') montrerToast('✅ Entrée enregistrée', true);
-    if (dateVal) {
-      const p = dateVal.split('-');
-      calAnnee = parseInt(p[0], 10);
-      calMois = parseInt(p[1], 10) - 1;
-      await calChangerVue('calendrier');
-      calOuvrirJour(dateVal);
-    } else {
-      await calChangerVue('idees');
-      calFermerPopup();
-    }
-  } catch(e) {
-    console.error(e);
-    const m = (e && e.message && /Mo|volumineux|dépasse|Téléversement/i.test(e.message)) ? e.message : 'Erreur. Réessayez.';
-    msg.innerHTML = '<span style="color:#C62828;">' + m + '</span>';
-  }
-}
-
-async function calSupprimerEntree(evtId, dateStr) {
-  if (!confirm('Supprimer cette entrée ?')) return;
-  try {
-    await supabaseDelete('calendrier_evenements', evtId);
-    if (typeof montrerToast === 'function') montrerToast('🗑️ Entrée supprimée', true);
-    if (calVue === 'idees') {
-      await calChargerIdees();
-      calFermerPopup();
-    } else {
-      await calChargerMois();
-      if (dateStr) calOuvrirJour(dateStr);
-    }
-  } catch(e) {
-    console.error(e);
-    if (typeof montrerToast === 'function') montrerToast('Erreur — réessayez', false);
-  }
-}
-
-// ── Éditeur plein écran de la description (comme une page Word) ──
-function calOuvrirEditeurDesc() {
-  const val = document.getElementById('cal-f-details').value;
-  const anc = document.getElementById('cal-editeur-plein');
-  if (anc) anc.remove();
-  const ov = document.createElement('div');
-  ov.id = 'cal-editeur-plein';
-  ov.className = 'cal-editeur-plein';
-  ov.innerHTML =
-    '<div class="cal-editeur-tete">' +
-      '<span class="cal-editeur-titre">Description</span>' +
-      '<button class="btn-batch btn-fin" style="width:auto;padding:8px 18px;" onclick="calFermerEditeurDesc(true)">✓ Terminé</button>' +
-    '</div>' +
-    '<textarea id="cal-editeur-textarea" class="cal-editeur-textarea" placeholder="Écrivez ici… script, notes, liens…"></textarea>';
-  document.body.appendChild(ov);
-  const ta = document.getElementById('cal-editeur-textarea');
-  ta.value = val;
-  ta.focus();
-}
-
-function calFermerEditeurDesc(sauver) {
-  const ta = document.getElementById('cal-editeur-textarea');
-  if (sauver && ta) {
-    document.getElementById('cal-f-details').value = ta.value;
-    calRendreApercuDesc();
-  }
-  const ov = document.getElementById('cal-editeur-plein');
-  if (ov) ov.remove();
-}
-
-function calRendreApercuDesc() {
-  const apercu = document.getElementById('cal-f-details-apercu');
-  if (!apercu) return;
-  const val = document.getElementById('cal-f-details').value.trim();
-  if (val) {
-    apercu.innerHTML = '<div class="cal-apercu-texte">' + calEsc(val) + '</div><span class="cal-apercu-agrandir">⤢ Toucher pour agrandir</span>';
-  } else {
-    apercu.innerHTML = '<span class="cal-apercu-placeholder">Toucher pour écrire (script, notes, liens…)</span><span class="cal-apercu-agrandir">⤢</span>';
-  }
-}
-
-// ── Photos et vidéos ──
-const CAL_IMG_MAX = 10 * 1024 * 1024;   // 10 Mo par image (après compression)
-const CAL_VIDEO_MAX = 50 * 1024 * 1024; // 50 Mo par vidéo
-
-function calChoisirFichiers(input) {
-  const nouveaux = [...input.files];
-  for (const f of nouveaux) {
-    const estVideo = (f.type || '').startsWith('video/');
-    const estImage = (f.type || '').startsWith('image/');
-    if (!estVideo && !estImage) { alert('« ' + f.name + ' » n\'est pas une photo ou une vidéo.'); continue; }
-    if (estVideo && f.size > CAL_VIDEO_MAX) { alert('La vidéo « ' + f.name + ' » dépasse 50 Mo. Raccourcis-la ou réduis sa qualité.'); continue; }
-    calFichiers.push({ file: f, nom: f.name, type: f.type, taille: f.size, apercu: URL.createObjectURL(f), estVideo: estVideo });
-  }
-  input.value = '';
-  calRendreFichiersForm();
-}
-
-function calRetirerFichier(index) {
-  const f = calFichiers[index];
-  if (f && f.apercu && f.file) { try { URL.revokeObjectURL(f.apercu); } catch(e) {} }
-  calFichiers.splice(index, 1);
-  calRendreFichiersForm();
-}
-
-function calRendreFichiersForm() {
-  const zone = document.getElementById('cal-f-pj-liste');
-  if (!zone) return;
-  if (!calFichiers.length) { zone.innerHTML = ''; return; }
-  let html = '';
-  calFichiers.forEach((f, i) => {
-    const estVideo = f.estVideo || (f.type || '').startsWith('video/');
-    const src = f.apercu || f.url;
-    html += '<div class="cal-pj-item">';
-    if (estVideo) {
-      html += '<video class="cal-pj-vignette" src="' + src + '" muted preload="metadata"></video><span class="cal-pj-badge">▶ vidéo</span>';
-    } else {
-      html += '<img class="cal-pj-vignette" src="' + src + '" alt="">';
-    }
-    html += '<button class="cal-pj-retirer" onclick="calRetirerFichier(' + i + ')" title="Retirer">✕</button>';
-    html += '</div>';
-  });
-  zone.innerHTML = html;
-}
-
-async function calTeleverserFichier(file) {
-  let blob = file;
-  let type = file.type || 'application/octet-stream';
-  if (type.startsWith('image/') && type !== 'image/gif' && typeof compresserImage === 'function') {
-    blob = await compresserImage(file);
-    if (blob !== file) type = 'image/jpeg';
-  }
-  const estVideo = type.startsWith('video/');
-  const max = estVideo ? CAL_VIDEO_MAX : CAL_IMG_MAX;
-  if (blob.size > max) {
-    throw new Error('« ' + file.name + ' » est trop volumineux (' + Math.round(blob.size / 1024 / 1024) + ' Mo).');
-  }
-  const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
-  const d = new Date();
-  const dossier = 'calendrier/' + d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-  const chemin = dossier + '/' + crypto.randomUUID() + '.' + ext;
-  const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + BUCKET_MESSAGES + '/' + chemin, {
-    method: 'POST',
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Content-Type': type,
-      'x-upsert': 'false'
-    },
-    body: blob
-  });
-  if (!res.ok) throw new Error('Téléversement échoué (' + res.status + ').');
-  return {
-    nom: file.name,
-    url: SUPABASE_URL + '/storage/v1/object/public/' + BUCKET_MESSAGES + '/' + chemin,
-    type: type,
-    taille: blob.size
-  };
-}
-
-function calRendreMediasDetail(fichiers) {
-  if (!fichiers || !fichiers.length) return '';
-  let html = '<div class="cal-detail-medias">';
-  fichiers.forEach(f => {
-    const type = f.type || '';
-    if (type.startsWith('video/')) {
-      html += '<video class="cal-media" src="' + f.url + '" controls preload="metadata"></video>';
-    } else {
-      html += '<a href="' + f.url + '" target="_blank" rel="noopener"><img class="cal-media" src="' + f.url + '" alt="' + calEsc(f.nom || '') + '" loading="lazy"></a>';
-    }
-  });
-  html += '</div>';
-  return html;
-}
-
-// Donner / retirer l'accès au calendrier depuis « Comptes employés »
-async function basculerAccesCalendrier(compteId, nouvelEtat) {
-  try {
-    await supabaseUpdate('comptes', compteId, { acces_calendrier: nouvelEtat });
-    if (typeof montrerToast === 'function') montrerToast(nouvelEtat ? '📅 Accès calendrier donné' : '📅 Accès calendrier retiré', true);
-    if (typeof chargerComptes === 'function') chargerComptes();
-  } catch(e) {
-    console.error(e);
-    if (typeof montrerToast === 'function') montrerToast('Erreur — réessayez', false);
-  }
-}
-
 
 // Au démarrage : tenter de restaurer une session existante (survie au F5)
 window.addEventListener('DOMContentLoaded', function() {
