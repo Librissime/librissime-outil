@@ -6327,7 +6327,7 @@ async function supabaseDelete(table, id) {
 const VAPID_CLE_PUBLIQUE = 'BOjTWgQMF5SJnRdQ-_0-GHXcWbC2beKmhJxWdM2pDMFPYz2nRrFilsLs72VQffBZiEEMf_wM-9pVoRi0uWtfjP0';
 
 // Enregistrer le service worker (notifications seulement, aucun cache)
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !location.hostname.includes('claudeusercontent')) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW non enregistré:', e));
   });
